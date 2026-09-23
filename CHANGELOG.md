@@ -6,7 +6,7 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
-#### Corrections
+### Corrections
 
 - Script de release : la Release GitHub est créée correctement quand un seul artefact est attaché
 

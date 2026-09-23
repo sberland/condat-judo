@@ -84,8 +84,8 @@ incidents du projet de référence (StrategyHub, v1.5.0 → v2.4.1) :
 
 **Secrets GitHub Actions** (Settings → Secrets and variables → Actions, ou `gh secret set`) :
 
-- `CLOUDFLARE_API_TOKEN` — **jeton d'API de compte** (pas utilisateur) avec **Workers Scripts:Edit
-  + D1:Edit**. ⚠️ Un jeton *utilisateur* est refusé par `wrangler d1 export`
+- `CLOUDFLARE_API_TOKEN` — **jeton d'API de compte** (pas utilisateur) avec **Workers
+  Scripts:Edit et D1:Edit**. ⚠️ Un jeton *utilisateur* est refusé par `wrangler d1 export`
   (`Authentication error [code: 10000]`) — constaté sur le projet de référence.
 - `CLOUDFLARE_ACCOUNT_ID` — identifiant du compte Cloudflare.
 
