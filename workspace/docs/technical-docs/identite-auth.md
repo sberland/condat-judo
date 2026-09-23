@@ -61,6 +61,13 @@ change pas. Access peut alors être retiré de la prod.
   [`installation.md`](../install/installation.md)).
 - **Fournisseur dev** : double verrou `ENVIRONMENT === 'local'` **et** `DEV_SUBJECT`, deux variables
   qui n'existent que dans `app/.dev.vars`. Vérifié : avec `ENVIRONMENT=production`, `/api/me` → 401.
+- **Où trouver le jeton Access** : en-tête `Cf-Access-Jwt-Assertion`, à défaut cookie
+  `CF_Authorization` (même JWT, même vérification). Constaté le 2026-09-23 : sur la preview
+  `*.workers.dev`, Access authentifie mais **n'injecte pas l'en-tête** — le repli cookie est
+  indispensable. Motifs de refus journalisés (`wrangler tail`), jamais le jeton.
+- **Futures routes d'écriture** : l'identité reposant sur un cookie (directement, ou via l'en-tête
+  qu'Access en dérive), toute route `POST/PUT/DELETE` devra se protéger du CSRF (contrôle de
+  l'en-tête `Origin`, ou en-tête personnalisé exigé côté API).
 - **Access non configuré** (`CF_ACCESS_TEAM_DOMAIN` / `CF_ACCESS_AUD` vides) : tout jeton est
   ignoré → 401. Chaque environnement a **son** AUD : un jeton de la preview est refusé en prod.
 - **Clés Access injoignables** : refus (401), jamais d'acceptation par défaut.
