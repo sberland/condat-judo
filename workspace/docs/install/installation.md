@@ -14,7 +14,7 @@ doc-date: "2026-09-23"
 | Navigateur web moderne | Safari iOS 17 / Chrome 120 / Firefox 120 / Edge 120 | Consultation |
 | Node.js | 24 LTS | Développement et déploiement |
 | GitHub CLI (`gh`) | 2.x | `winget install --id GitHub.cli -e` |
-| Compte Cloudflare | Plan gratuit | Workers, D1, Zero Trust (Access) |
+| Compte Cloudflare | Plan gratuit | Workers, D1, Zero Trust (verrou Access de la qualif) |
 
 ## Installation
 
@@ -38,27 +38,26 @@ npm run dev:web    # front :5173 (autre terminal)
    `app/wrangler.toml`.
 2. **Jeton d'API de compte** Cloudflare (Workers Scripts:Edit + D1:Edit) → secrets GitHub :
    `gh secret set CLOUDFLARE_API_TOKEN` et `gh secret set CLOUDFLARE_ACCOUNT_ID`.
-3. **Cloudflare Access** : applications prod et preview — voir
-   [`cloudflare-access.md`](../technical-docs/cloudflare-access.md) ; reporter
-   `CF_ACCESS_TEAM_DOMAIN` et `CF_ACCESS_AUD` dans `app/wrangler.toml`.
+3. **Cloudflare Access** : application de verrouillage de la **preview** uniquement (la prod est
+   publique) — voir [`cloudflare-access.md`](../technical-docs/cloudflare-access.md). Aucune
+   valeur à reporter dans le code : Access n'est pas une source d'identité pour l'app.
 4. **Premier déploiement** : voir `workspace/workflow-deploy-spe.md`.
 
 ## Configuration initiale
 
 ### Premier administrateur
 
-Aucun compte n'est créé ni promu automatiquement. Après la première mise en production, créer le
-premier administrateur (email **en minuscules**, identique à celui utilisé pour se connecter via
-Access) :
+Aucun compte n'est créé ni promu automatiquement. Une fois l'authentification applicative en place
+(chantier auth), créer le premier administrateur en prod (email **en minuscules**, identique à
+celui utilisé pour se connecter à l'app) :
 
 ```bash
 cd app
 npx wrangler d1 execute condat-judo --remote --command "INSERT INTO users (prenom, nom, email, role) VALUES ('Prénom', 'Nom', 'adresse@exemple.fr', 'admin');"
 ```
 
-À la première connexion via Access, l'identité est reliée à ce compte (table `identites`). Même
-opération sur `condat-judo-preview` (`--env preview`) si la preview est utilisée avant d'avoir des
-données de prod à recopier.
+À sa première connexion, son identité est reliée à ce compte (table `identites`). La preview le
+récupère ensuite à chaque recopie des données de prod.
 
 ## Désinstallation
 

@@ -49,7 +49,8 @@ paiement des licences. Besoin d'origine : [`workspace/docs/spec-fonctionnelle/ex
 
 **Application web** : Worker Cloudflare servant le front **React** (build Vite via Workers Assets) +
 une API `/api/*` (Hono/TypeScript) sur base **D1**. Aujourd'hui : socle technique (`/api/health`,
-`/api/me`), accès protégé par Cloudflare Access.
+`/api/me`). Prod publique ; qualification verrouillée par Cloudflare Access (verrou d'accès
+uniquement, sans lien avec l'authentification de l'app).
 
 ---
 
@@ -73,11 +74,12 @@ qualification `condat-judo-preview` (Worker et D1 dédiés).
 
 | Service | Rôle |
 | --- | --- |
-| `resolveUser` (`app/src/worker/identite.ts`) | **Point unique** requête → utilisateur interne (`users.id`). Fournisseurs : Cloudflare Access (JWT vérifié), dev local. Voir [`identite-auth.md`](workspace/docs/technical-docs/identite-auth.md) |
-| `verifyAccessJwt` (`app/src/worker/access-jwt.ts`) | Vérification de signature / audience / expiration du JWT Cloudflare Access |
+| `resolveUser` (`app/src/worker/identite.ts`) | **Point unique** requête → utilisateur interne (`users.id`). Fournisseurs : dev local ; auth applicative à venir. Voir [`identite-auth.md`](workspace/docs/technical-docs/identite-auth.md) |
 
-**Règle d'or identité** : aucun droit n'est rattaché à l'email ni à un artefact Access. Tous les droits
+**Règle d'or identité** : aucun droit n'est rattaché à l'email ni à un fournisseur. Tous les droits
 référencent `users.id` ; seule la table `identites` connaît le fournisseur d'authentification.
+**Cloudflare Access n'est jamais une source d'identité** : c'est uniquement le verrou d'accès à la
+qualification ([`cloudflare-access.md`](workspace/docs/technical-docs/cloudflare-access.md)).
 
 ### Commandes essentielles
 
@@ -218,7 +220,7 @@ Voir [`workspace/workflow-workspace.md`](workspace/workflow-workspace.md) — fi
 | Backend / BDD | Worker Cloudflare + Cloudflare D1 (SQLite) |
 | Plateforme cible | Navigateur mobile d'abord (iOS Safari / Chrome Android), puis desktop |
 | Hébergement | Cloudflare Workers (Assets + D1) — prod + env preview |
-| Authentification | Cloudflare Access (démarrage) derrière le seam `resolveUser` ; cible applicative à trancher (chantier auth) |
+| Authentification | Applicative, derrière le seam `resolveUser` — à construire (chantier auth). Cloudflare Access = verrou d'accès à la qualif uniquement |
 | Outillage | Node.js 24 / npm · Wrangler 4 · Vite · Vitest |
 | Packaging | ZIP via PowerShell |
 | Release | GitHub Releases + `wrangler deploy` (GitHub Actions sur tag) |
@@ -228,7 +230,7 @@ Voir [`workspace/workflow-workspace.md`](workspace/workflow-workspace.md) — fi
 ## Conventions de code
 
 - **Front React** (`app/web/src/`) — TypeScript ; composants sous `components/` et `pages/`, style **Tailwind CSS 4** (tokens dans `index.css` via `@theme`). Routing **TanStack Router**, data-fetching **TanStack Query**. **Mobile first** : toute page doit être utilisable à 360 px de large.
-- **Worker** (`app/src/worker/`) — TypeScript (Hono). Autorisation via le seam d'identité `resolveUser` — voir `workspace/docs/technical-docs/identite-auth.md` (jamais de droit keyé sur l'email ou un artefact Access).
+- **Worker** (`app/src/worker/`) — TypeScript (Hono). Autorisation via le seam d'identité `resolveUser` — voir `workspace/docs/technical-docs/identite-auth.md` (jamais de droit keyé sur l'email ; Access n'est pas une source d'identité).
 - **Base D1** — migrations numérotées dans `app/src/db/migrations/` (jamais modifier une migration déjà appliquée) ; seed réservé au `--local`. Toute nouvelle table doit être ajoutée aux listes de purge de la preview (cf. `workflow-deploy-spe.md`).
 - **Données personnelles** — minimisation (RGPD) : ne collecter que le nécessaire, pas de données de santé stockées, photos d'enfants accessibles au strict nécessaire.
 - **Version applicative** : `app/package.json` (champ `version`, source unique) — injectée dans le front via Vite (`__APP_VERSION__`) et renvoyée par `/api/health`.

@@ -19,7 +19,7 @@ CREATE TABLE users (
 );
 
 -- Identité externe (fournisseur + identifiant opaque) → utilisateur interne.
--- provider : 'cf-access' (Cloudflare Access, claim sub), 'dev' (local) ; demain l'auth applicative.
+-- provider : 'dev' (local) ; demain l'authentification applicative. Cloudflare Access n'en est pas un.
 CREATE TABLE identites (
   provider   TEXT    NOT NULL,
   subject    TEXT    NOT NULL,

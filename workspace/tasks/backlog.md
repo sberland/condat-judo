@@ -61,12 +61,13 @@
 |---|---|---|---|---|---|---|---|
 | — | Site vitrine | proposition | Élevé — première présence en ligne du club | S | P1 | — | Accueil, infos club (horaires, lieu, tarifs, bureau), contact ; contenu repris du site Jimdo / Facebook / IntraMuros ; première mise en prod |
 | — | Comptes & foyers | proposition | Élevé — prérequis de tous les modules parents | L | P1 | — | Adultes, enfants, lien parent ↔ enfant avec capacités (inscrire, récupérer), rôles club (admin, bureau, encadrant, parent), admin des comptes et invitations ; multi-enfants, parents séparés |
-| — | Auth applicative | proposition | Élevé — « connexion simple = clé du succès » | L | P1 | — | Probable chantier. Décision reportée au démarrage ; piste : [réflexion auth](../notes/2026-09-23-reflexion-auth.md) (invitation + session longue + code email + passkey). Access limité à 50 utilisateurs |
+| — | Auth applicative | proposition | Élevé — « connexion simple = clé du succès » | L | P1 | — | Probable chantier. Décision reportée au démarrage ; piste : [réflexion auth](../notes/2026-09-23-reflexion-auth.md) (invitation + session longue + code email + passkey). Prérequis de tout espace privé ; Cloudflare Access n'est qu'un verrou de la qualif, jamais l'auth de l'app |
 | — | Compétitions | proposition | Élevé — besoin d'origine | M | P1 | — | Publication (date, lieu, catégories), inscription par le parent, liste pour ressaisie fédération ; dépend de Comptes & foyers |
 | — | Conformité RGPD | proposition | Élevé — obligatoire avant ouverture aux familles | M | P1 | — | Mentions légales, confidentialité, consentements (photo), export / suppression, durées de conservation, registre ; localisation UE des données |
 | — | Garderie du mercredi | proposition | Élevé — remplace un fil WhatsApp confus | M | P2 | — | Demande du parent, liste du jour avec photo (encadrants seulement), pointage « récupéré » ; probable chantier |
 | — | Saisons & référentiels | proposition | Moyen — socle des licences et compétitions | S | P2 | — | Saisons, catégories d'âge, grades ; table `saisons` déjà amorcée |
 | — | Licences — suivi des paiements | proposition | Moyen — travail du trésorier | M | P2 | — | Mode (espèces, chèque, virement, Pass'Sport, HelloAsso), statut, validation ; pas de paiement en ligne en v1 |
+| — | Anonymisation de la copie qualif | proposition | Moyen — RGPD (données d'enfants hors prod) | S | P2 | — | La preview reçoit une copie de la prod : pseudonymiser noms, contacts, photos lors de la recopie (en plus du verrou Access) ; à livrer avant les données réelles |
 | — | Sauvegarde D1 hors-Cloudflare | proposition | Moyen — sécurité des données | S | P2 | — | Export quotidien + snapshot pré-migration vers GitHub ; à livrer avant d'héberger les données réelles (Time Travel 30 j en attendant) |
 | — | Communication | proposition | Moyen — actualités et calendrier | M | P3 | — | Actualités, calendrier du club ; WhatsApp reste le canal de notification |
 | — | Paiement en ligne HelloAsso | proposition | Faible à moyen | M | P4 | — | Gratuit pour les associations ; API + webhooks pour rapprocher automatiquement |
@@ -89,6 +90,7 @@
 ### P2 — Important
 
 - **—** — Garderie du mercredi
+- **—** — Anonymisation de la copie qualif
 - **—** — Saisons & référentiels
 - **—** — Licences — suivi des paiements
 - **—** — Sauvegarde D1 hors-Cloudflare

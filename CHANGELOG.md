@@ -19,14 +19,8 @@ fonctionnalité n'est encore ouverte aux familles.
 
 - Initialisation du projet : workspace (workflows, templates, backlog), socle applicatif
   (Worker Cloudflare, API Hono, base D1, front React), scripts de déploiement et CI GitHub Actions
-- Seam d'identité : résolution de l'utilisateur via Cloudflare Access (signature du jeton vérifiée),
-  utilisateur simulé en développement local
-- Mise en place Cloudflare : bases D1 prod et preview hébergées dans l'Union européenne, accès à
-  l'environnement de qualification protégé par Cloudflare Access
-- Journalisation des refus de connexion Cloudflare Access (motif et paramètres publics, jamais le
-  jeton) pour diagnostiquer une configuration
-
-#### Corrections
-
-- Connexion via Cloudflare Access sur les adresses `workers.dev` : l'identité est lue via le runtime
-  Cloudflare (`ctx.access`), Access n'y transmettant ni l'en-tête ni le cookie attendus
+- Seam d'identité : point unique de résolution de l'utilisateur, prêt pour l'authentification de
+  l'application ; utilisateur simulé en développement local
+- Mise en place Cloudflare : bases D1 prod et preview hébergées dans l'Union européenne ;
+  environnement de qualification verrouillé par Cloudflare Access (accès au site uniquement, sans
+  lien avec l'authentification de l'application)

@@ -16,8 +16,8 @@ Index de toute la documentation du projet.
 
 | Fichier | Contenu |
 | --- | --- |
-| [`identite-auth.md`](technical-docs/identite-auth.md) | Seam d'identité `resolveUser` — tables `users` / `identites`, fournisseurs (Access, dev), liaison de première connexion, changer de fournisseur |
-| [`cloudflare-access.md`](technical-docs/cloudflare-access.md) | Cloudflare Access prod + preview — configuration Zero Trust, AUD, vérification |
+| [`identite-auth.md`](technical-docs/identite-auth.md) | Seam d'identité `resolveUser` — tables `users` / `identites`, fournisseurs (dev ; auth applicative à venir), liaison de première connexion, Access non utilisé comme identité |
+| [`cloudflare-access.md`](technical-docs/cloudflare-access.md) | Cloudflare Access — verrou d'accès à la qualification (sans lien avec l'auth de l'app), configuration, constat technique `workers.dev` |
 | [`cloudflare-preview.md`](technical-docs/cloudflare-preview.md) | Environnement de preview — Worker + D1 dédiés, flux de qualification, pièges |
 
 Utiliser `_template.md` pour créer un nouveau fichier technique.
