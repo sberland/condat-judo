@@ -35,40 +35,52 @@ export type Resolution =
   | { statut: 'inconnu'; identite: Identite }
   | { statut: 'ok'; utilisateur: Utilisateur };
 
+/** Sous-ensemble du contexte d'exécution Workers utile au seam (ctx.access). */
+export type ContexteExecution = {
+  waitUntil(promise: Promise<unknown>): void;
+  readonly access?: CloudflareAccessContext;
+};
+
 // --- Fournisseurs ---
-
+//
 // Journalisation (visible via `wrangler tail`) : uniquement des informations non sensibles —
-// jamais le jeton, jamais l'email.
-/** Cookies de la requête (nom → valeur). */
-function lireCookies(request: Request): Map<string, string> {
-  const cookies = new Map<string, string>();
-  for (const part of (request.headers.get('Cookie') ?? '').split(';')) {
-    const i = part.indexOf('=');
-    if (i > 0) cookies.set(part.slice(0, i).trim(), part.slice(i + 1).trim());
-  }
-  return cookies;
-}
+// jamais de jeton, jamais d'email.
 
-// Le JWT Access est transmis dans l'en-tête Cf-Access-Jwt-Assertion et dans le cookie
-// CF_Authorization (même jeton, même vérification). Sur *.workers.dev, l'en-tête n'est pas
-// toujours injecté (constaté sur la preview) : le cookie sert alors de repli.
-function jetonAccess(request: Request): { jeton: string; source: 'en-tete' | 'cookie' } | null {
-  const enTete = request.headers.get('Cf-Access-Jwt-Assertion');
-  if (enTete) return { jeton: enTete, source: 'en-tete' };
-  const cookie = lireCookies(request).get('CF_Authorization');
-  return cookie ? { jeton: cookie, source: 'cookie' } : null;
-}
-
-async function identiteCloudflareAccess(request: Request, env: Env): Promise<Identite | null> {
-  const trouve = jetonAccess(request);
-  if (!trouve) {
-    if (env.ENVIRONMENT !== 'local' && new URL(request.url).pathname === '/api/me') {
-      const noms = [...lireCookies(request).keys()].join(', ') || '(aucun)';
-      console.warn(`[access] aucun jeton (ni en-tête, ni cookie CF_Authorization) sur /api/me — cookies reçus : ${noms}`);
-    }
+// 1. Access via le runtime Workers (`ctx.access`). Sur *.workers.dev, Access authentifie en
+//    amont mais ne transmet ni l'en-tête Cf-Access-Jwt-Assertion ni le cookie CF_Authorization
+//    (constaté sur la preview, 2026-09-23) : l'identité validée est exposée par la plateforme
+//    via ctx.access — non falsifiable par le client. On vérifie que l'audience est bien celle
+//    de NOTRE application Access avant de lire l'identité.
+async function identiteAccessRuntime(ctx: ContexteExecution | undefined, env: Env): Promise<Identite | null> {
+  const access = ctx?.access;
+  if (!access) return null;
+  if (!env.CF_ACCESS_AUD || access.aud !== env.CF_ACCESS_AUD) {
+    console.warn('[access] ctx.access refusé : audience', JSON.stringify({ recue: access.aud, attendue: env.CF_ACCESS_AUD ?? null }));
     return null;
   }
-  const token = trouve.jeton;
+  const identity = await access.getIdentity();
+  if (!identity) {
+    console.warn('[access] ctx.access : identité indisponible');
+    return null;
+  }
+  // user_uuid = identifiant utilisateur Access (= claim `sub` du JWT) : même `subject` quel que
+  // soit le canal (runtime ou en-tête), donc même ligne `identites`.
+  if (typeof identity.user_uuid !== 'string' || identity.user_uuid === '') {
+    console.warn('[access] ctx.access : user_uuid absent — champs reçus :', Object.keys(identity).join(', '));
+    return null;
+  }
+  return {
+    provider: 'cf-access',
+    subject: identity.user_uuid,
+    email: typeof identity.email === 'string' ? identity.email.toLowerCase() : null,
+  };
+}
+
+// 2. Access via le JWT de l'en-tête Cf-Access-Jwt-Assertion (domaine personnalisé), dont on
+//    vérifie nous-mêmes la signature (access-jwt.ts).
+async function identiteAccessJwt(request: Request, env: Env): Promise<Identite | null> {
+  const token = request.headers.get('Cf-Access-Jwt-Assertion');
+  if (!token) return null;
   if (!env.CF_ACCESS_TEAM_DOMAIN || !env.CF_ACCESS_AUD) {
     console.warn('[access] jeton reçu mais configuration absente (CF_ACCESS_TEAM_DOMAIN / CF_ACCESS_AUD)');
     return null;
@@ -79,11 +91,7 @@ async function identiteCloudflareAccess(request: Request, env: Env): Promise<Ide
       audience: env.CF_ACCESS_AUD,
     });
     if (!verification.ok) {
-      console.warn(
-        `[access] jeton refusé (${trouve.source}) :`,
-        verification.raison,
-        JSON.stringify(verification.details ?? {}),
-      );
+      console.warn('[access] jeton refusé :', verification.raison, JSON.stringify(verification.details ?? {}));
       return null;
     }
     const { claims } = verification;
@@ -95,14 +103,24 @@ async function identiteCloudflareAccess(request: Request, env: Env): Promise<Ide
   }
 }
 
+// 3. Dev local.
 function identiteDev(env: Env): Identite | null {
   // Double verrou : ENVIRONMENT=local et DEV_SUBJECT n'existent que dans .dev.vars.
   if (env.ENVIRONMENT !== 'local' || !env.DEV_SUBJECT) return null;
   return { provider: 'dev', subject: env.DEV_SUBJECT, email: null };
 }
 
-export async function resolveIdentite(request: Request, env: Env): Promise<Identite | null> {
-  return (await identiteCloudflareAccess(request, env)) ?? identiteDev(env);
+export async function resolveIdentite(
+  request: Request,
+  env: Env,
+  ctx?: ContexteExecution,
+): Promise<Identite | null> {
+  const identite =
+    (await identiteAccessRuntime(ctx, env)) ?? (await identiteAccessJwt(request, env)) ?? identiteDev(env);
+  if (!identite && env.ENVIRONMENT !== 'local' && new URL(request.url).pathname === '/api/me') {
+    console.warn('[access] aucune identité sur /api/me (ni ctx.access, ni en-tête Cf-Access-Jwt-Assertion)');
+  }
+  return identite;
 }
 
 // --- Identité → utilisateur interne ---
@@ -141,8 +159,8 @@ async function lierPremiereConnexion(env: Env, identite: Identite): Promise<Util
   return row;
 }
 
-export async function resolveUser(request: Request, env: Env): Promise<Resolution> {
-  const identite = await resolveIdentite(request, env);
+export async function resolveUser(request: Request, env: Env, ctx?: ContexteExecution): Promise<Resolution> {
+  const identite = await resolveIdentite(request, env, ctx);
   if (!identite) return { statut: 'anonyme' };
 
   const row = (await parIdentite(env, identite)) ?? (await lierPremiereConnexion(env, identite));
