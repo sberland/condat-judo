@@ -2,8 +2,17 @@
 
 ## Contexte
 
-Au démarrage, **tout le site** (statique + `/api/*`) est derrière Cloudflare Access, en prod comme
-en preview : seuls les comptes autorisés (bureau du club) y accèdent. Le Worker ne fait pas
+Périmètre protégé par Access (décision du 2026-09-23) :
+
+| Environnement | Public | Derrière Access |
+| --- | --- | --- |
+| **Prod** `condat-judo.sebastien-berland.workers.dev` | Site vitrine (accueil, infos club, contact) et assets | `/espace` (espace membres) et `/api` |
+| **Preview** `condat-judo-preview.sebastien-berland.workers.dev` | — | **Tout le host** (qualif + copie des données réelles) |
+
+Seuls les comptes autorisés (bureau du club) passent Access. Le code du front (bundle JS) est
+public par nature : il ne doit contenir **aucune donnée**, toutes les données passent par `/api`.
+L'équipe Zero Trust est celle du compte perso, **partagée avec d'autres projets** (quota gratuit de
+50 utilisateurs commun). Le Worker ne fait pas
 confiance aveuglément à l'en-tête d'Access : il **vérifie la signature** du JWT (cf.
 [`identite-auth.md`](identite-auth.md)). Limite : plan gratuit Zero Trust = **50 utilisateurs** —
 suffisant pour le bureau, pas pour ouvrir le site à toutes les familles (→ chantier auth).
@@ -25,8 +34,10 @@ Navigateur ──▶ Cloudflare Access (edge) : authentifie (code à usage uniqu
    `<equipe>.cloudflareaccess.com` (= `CF_ACCESS_TEAM_DOMAIN`). Plan **Free**.
 2. **Settings → Authentication** : activer **One-time PIN** (code par email, aucun IdP à configurer).
 3. **Access → Applications → Add an application → Self-hosted**, une par environnement :
-   - `condat-judo` — domaine `condat-judo.<sous-domaine>.workers.dev`, tout le host ;
-   - `condat-judo-preview` — domaine `condat-judo-preview.<sous-domaine>.workers.dev`.
+   - `Condat Judo — preview` — domaine `condat-judo-preview.sebastien-berland.workers.dev`,
+     **sans chemin** (tout le host) ;
+   - `Condat Judo — prod` — domaine `condat-judo.sebastien-berland.workers.dev`, **deux
+     destinations** : chemins `espace` et `api` (la vitrine reste publique).
 4. **Policy** : *Allow*, *Include → Emails* = les personnes autorisées (liste explicite).
 5. Dans chaque application : **Overview → Application Audience (AUD) Tag** → à reporter dans
    `app/wrangler.toml` (`CF_ACCESS_AUD` de `[vars]` pour la prod, de `[env.preview.vars]` pour la
@@ -39,8 +50,9 @@ Navigateur ──▶ Cloudflare Access (edge) : authentifie (code à usage uniqu
 - **Autoriser par Access ≠ donner des droits** : Access filtre l'entrée ; les droits viennent de
   `users` (rôle) via `users.id`.
 - **Preview = copie des données réelles** : même niveau de protection que la prod, obligatoire.
-- `workers.dev` : vérifier aussi que les **URL de version** (`*-<hash>.…workers.dev`, previews de
-  version Cloudflare) sont couvertes ou désactivées (Workers → Settings → Domains & Routes).
+- **URL de version** (`<version>-condat-judo….workers.dev`) : elles ne seraient pas couvertes par
+  les applications Access → désactivées par `preview_urls = false` (prod et preview, `wrangler.toml`).
+  À contrôler dans Workers → Settings → Domains & Routes après le premier déploiement.
 - AUD et domaine d'équipe ne sont pas des secrets (valeurs publiques dans le JWT) : ils peuvent
   rester dans `wrangler.toml`.
 
