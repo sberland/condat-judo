@@ -1,25 +1,64 @@
 @import 'tailwindcss';
 
-/* Jetons de design (Tailwind 4 : @theme génère les utilitaires bg-primary, text-primary…).
-   Palette provisoire — le branding du club sera repris du site existant. */
+/* Jetons de design (Tailwind 4 : @theme génère bg-brand, text-ink…).
+   Palette tirée du logo du club : noir, rouge ceinture, blanc. */
 @theme {
-  --color-primary: #1e3a8a;
-  --color-primary-foreground: #ffffff;
-  --color-accent: #b91c1c;
-  --color-background: #f8fafc;
-  --color-foreground: #0f172a;
-  --color-muted: #f1f5f9;
-  --color-muted-foreground: #64748b;
-  --color-card: #ffffff;
-  --color-border: #e2e8f0;
-  --font-sans: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --color-brand: #d9161c;
+  --color-brand-dark: #b01116;
+  --color-brand-soft: #fdecec;
+  --color-ink: #0c0c0e;
+  --color-ink-soft: #1c1c21;
+  --color-background: #ffffff;
+  --color-surface: #f6f6f7;
+  --color-foreground: #16161a;
+  --color-muted-foreground: #5d5d66;
+  --color-border: #e6e6ea;
+  --font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background font-sans text-foreground antialiased;
   }
   * {
     @apply border-border;
   }
+  /* Ancres : ne pas passer sous l'en-tête fixe. */
+  [id] {
+    scroll-margin-top: 5.5rem;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Entrée douce des pages. */
+@keyframes apparition {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility animate-apparition {
+  animation: apparition 0.45s ease-out both;
 }
