@@ -61,6 +61,12 @@ incidents du projet de référence (StrategyHub, v1.5.0 → v2.4.1) :
 - **Vérifier la Release après le script** : `gh release view vX.Y.Z` — le script de référence a
   historiquement affiché un succès alors que la Release n'était pas créée. Le script le fait
   lui-même en fin de parcours, mais le contrôle humain reste de mise.
+- **Splatting d'un résultat de pipeline** : `@var` sur le résultat d'un `ForEach-Object` qui ne
+  renvoie qu'**un** élément splatte une chaîne caractère par caractère (vu en v0.1.0 : `gh release
+  create` → « no matches found for `C` »). Toujours forcer un tableau : `$x = @(... | ForEach-Object ...)`.
+  Le script est rejouable : relancé après correction, il réutilise le tag existant.
+- **Chemins internes du ZIP** : sous PS 5.1 / .NET Framework, `ZipFile::CreateFromDirectory` écrit
+  des séparateurs `\` (sans effet sous Windows ; à revoir si l'archive doit être extraite sous Linux).
 - `Compress-Archive` peut échouer en erreur **non terminante** (verrou antivirus transitoire) :
   toujours `-ErrorAction Stop` et `Test-Path` sur l'artefact produit.
 

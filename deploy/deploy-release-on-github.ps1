@@ -103,7 +103,10 @@ if ((Invoke-Native -Command { git -C $RepoRoot push origin $TagName }) -ne 0) {
 # en argument d'exe natif sous PS 5.1).
 $NotesFile = Join-Path $CurrentDir "_release-notes-$Version.md"
 [System.IO.File]::WriteAllText($NotesFile, $releaseNotes, [System.Text.UTF8Encoding]::new($false))
-$AssetPaths = $Artifacts | ForEach-Object { Join-Path $CurrentDir $_ }
+# @(...) obligatoire : avec un seul artefact, le pipeline renverrait une simple chaîne, et le
+# splatting @AssetPaths la passerait à gh caractère par caractère (vu en v0.1.0 : « no matches
+# found for `C` »).
+$AssetPaths = @($Artifacts | ForEach-Object { Join-Path $CurrentDir $_ })
 
 try {
     if ((Invoke-Native -Quiet -Command { & $Gh release view $TagName -R $Repo }) -eq 0) {

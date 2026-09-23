@@ -6,6 +6,10 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+#### Corrections
+
+- Script de release : la Release GitHub est créée correctement quand un seul artefact est attaché
+
 ## [0.1.0] — 2026-09-23
 
 ### Initialisation
