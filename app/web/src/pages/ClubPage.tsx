@@ -1,5 +1,6 @@
 import { ArrowUpRight, MapPin, Navigation } from 'lucide-react'
 import { CLUB, CODE_MORAL, EQUIPE, ITINERAIRE, LIENS_UTILES, PARTENAIRES } from '../content/club'
+import { Provisoire, useProvisoireVisible } from '../components/Provisoire'
 import { BoutonExterne, Card, Container, PageHeader, Section, SectionTitle } from '../components/ui'
 import { usePageMeta } from '../lib/usePageMeta'
 
@@ -16,6 +17,8 @@ export function ClubPage() {
   )
 
   const personnes = [EQUIPE.professeur, ...EQUIPE.bureau]
+  const provisoireVisible = useProvisoireVisible()
+  const partenaires = PARTENAIRES.filter((p) => !p.provisoire || provisoireVisible)
 
   return (
     <div className="animate-apparition">
@@ -114,23 +117,26 @@ export function ClubPage() {
       </Section>
 
       <section id="partenaires" className="bg-surface py-14 sm:py-20">
-        <Container className="grid gap-10 lg:grid-cols-2">
-          <div>
-            <SectionTitle surtitre="Partenaires" titre="Ils soutiennent le club" />
-            <ul className="space-y-4">
-              {PARTENAIRES.map((p) => (
-                <li key={p.nom}>
-                  <Card>
-                    <p className="text-xl font-bold">{p.nom}</p>
-                    <p className="mt-1 text-muted-foreground">{p.activite}</p>
-                    <p className="mt-3 flex items-center gap-2 text-sm">
-                      <MapPin className="size-4 text-brand" aria-hidden /> {p.adresse}
-                    </p>
-                  </Card>
-                </li>
-              ))}
-            </ul>
-          </div>
+        <Container className={`grid gap-10 ${partenaires.length > 0 ? 'lg:grid-cols-2' : ''}`}>
+          {partenaires.length > 0 && (
+            <div>
+              <SectionTitle surtitre="Partenaires" titre="Ils soutiennent le club" />
+              <ul className="space-y-6">
+                {partenaires.map((p) => {
+                  const carte = (
+                    <Card>
+                      <p className="text-xl font-bold">{p.nom}</p>
+                      <p className="mt-1 text-muted-foreground">{p.activite}</p>
+                      <p className="mt-3 flex items-center gap-2 text-sm">
+                        <MapPin className="size-4 shrink-0 text-brand" aria-hidden /> {p.adresse}
+                      </p>
+                    </Card>
+                  )
+                  return <li key={p.nom}>{p.provisoire ? <Provisoire>{carte}</Provisoire> : carte}</li>
+                })}
+              </ul>
+            </div>
+          )}
           <div>
             <SectionTitle surtitre="Liens utiles" titre="Pour aller plus loin" />
             <ul className="divide-y rounded-2xl border bg-white">

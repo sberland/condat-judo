@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
 import { Menu, X } from 'lucide-react'
 import { CLUB } from '../content/club'
-import { NAVIGATION } from './navigation'
+import { useNavigation } from './navigation'
 import { Container, FacebookIcon } from './ui'
 
 export function Header() {
   const [ouvert, setOuvert] = useState(false)
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const [defile, setDefile] = useState(false)
+  const navigation = useNavigation()
 
   // Fermer le menu mobile à chaque navigation.
   useEffect(() => setOuvert(false), [pathname])
@@ -48,7 +49,7 @@ export function Header() {
 
         {/* Navigation desktop */}
         <nav aria-label="Navigation principale" className="hidden items-center gap-1 md:flex">
-          {NAVIGATION.map((item) => (
+          {navigation.map((item) => (
             <Link
               key={item.to}
               to={item.to}
@@ -91,7 +92,7 @@ export function Header() {
         }`}
       >
         <nav aria-label="Navigation mobile" className="flex h-full flex-col px-4 pt-4 pb-8">
-          {NAVIGATION.map((item) => (
+          {navigation.map((item) => (
             <Link
               key={item.to}
               to={item.to}

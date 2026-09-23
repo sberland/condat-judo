@@ -20,11 +20,12 @@ Pages :
 | `/disciplines` | Judo (dont éveil judo 4-5 ans), jujitsu, taïso — textes du club |
 | `/club` | Le club : professeur, bureau, dojo (adresse + itinéraire), code moral complet (France Judo), partenaires, affiliation France Judo, liens utiles |
 | `/reglement` | Règlement intérieur complet (sections dépliables) |
-| `/contact` | Adresse du dojo + itinéraire, page Facebook, lien de prise de licence France Judo |
+| `/horaires-tarifs` | Horaires des cours et tarifs (provisoires) |
+| `/contact` | E-mail et téléphone (provisoires), adresse du dojo + itinéraire, page Facebook, prise de licence France Judo |
 | `/mentions-legales` | Éditeur, hébergeur (Cloudflare), données personnelles (aucun cookie, aucun traceur) |
 
-Contenu **non repris** (règle : une section sans donnée n'est pas créée) : horaires, tarifs,
-inscriptions, groupes par âge (images seules), yoga et self-défense (titres sans texte),
+Contenu **non repris** (règle : une section sans donnée n'est pas créée) : inscriptions,
+groupes par âge (images seules), yoga et self-défense (titres sans texte),
 actualités (renvoi vers Facebook). Aucune photo d'enfant. Liens morts non repris (Comité 87,
 Ligue du Limousin).
 
@@ -39,11 +40,12 @@ Technique :
 
 ## Critères d'acceptation
 
-- [ ] Les 6 pages s'affichent et se naviguent sans rechargement, liens directs compris
+- [ ] Les 7 pages s'affichent et se naviguent sans rechargement, liens directs compris
 - [ ] Utilisable à 360 px de large (menu burger, pas de défilement horizontal), confortable sur desktop
 - [ ] Textes du club repris fidèlement (orthographe corrigée seulement)
 - [ ] Aucune ressource tierce chargée (police, carte, images) ; aucun cookie
 - [ ] Bandeau « pas la production » toujours visible en preview / local
+- [ ] Contenus provisoires visibles (badge « À compléter ») en local / preview, invisibles en production
 - [ ] Build, typecheck, tests OK ; prod publique après tag
 
 ## Hors périmètre
@@ -52,16 +54,22 @@ Technique :
 - Horaires / tarifs tant que le club ne les a pas fournis
 - Nom de domaine personnalisé
 
-## Notes — points à valider (valeurs par défaut appliquées)
+## Notes — décisions du porteur de projet (2026-09-23)
 
-| Point | Défaut retenu | À confirmer |
-| --- | --- | --- |
-| Contact | Page Facebook + adresse du dojo. **L'email personnel du président (visible sur Jimdo) n'est pas publié** sans son accord | Adresse email / téléphone officiels du club ? |
-| Noms (professeur, bureau) | Repris : déjà publiés par le club sur Jimdo | OK pour les publier ? |
-| Mentions légales | Éditeur « Judo Condat — Condat-sur-Vienne », directeur de publication = président du club, hébergeur Cloudflare | Nom officiel de l'association, siège, n° RNA ? |
-| Logo France Judo | Affiché dans le pied de page (« club affilié ») avec lien | Usage de la marque par un club affilié à confirmer auprès de la fédération |
-| Horaires, tarifs | Absents (aucune donnée) | Le club peut-il les fournir (IntraMuros, Facebook) ? |
-| Partenaire | Sof't Café (Tabac · Presse · Loto · PMU · Librairie · Café, 60 avenue de Limoges) | Toujours partenaire ? |
+| Point | Décision |
+| --- | --- |
+| Contact | E-mail et téléphone **provisoires** (valeurs bidon), complétés plus tard avec le club. L'e-mail personnel du président n'est pas publié |
+| Noms (professeur, bureau) | Publiés (déjà publics sur l'ancien site) |
+| Mentions légales | Identité officielle trouvée dans l'annuaire des entreprises : « Condat-sur-Vienne Judo », association loi 1901, RNA W872010702, SIREN 812 679 124, siège 13 rue des Peupliers, 87920 Condat-sur-Vienne ; directeur de la publication : le président |
+| Logo France Judo | Affiché (« club affilié ») — usage à valider avec le club et la fédération |
+| Horaires, tarifs | **Provisoires** (valeurs bidon), page dédiée `/horaires-tarifs` |
+| Partenaires | **Provisoires** : Sof't Café (à confirmer) + un emplacement à compléter |
+| Règlement | Mis à jour selon la réglementation France Judo en vigueur : questionnaire de santé (mineurs) / QS-SPORT (majeurs) au lieu du certificat systématique (décret n° 2021-564), identité en compétition par passeport sportif ou tout justificatif (textes officiels 2026/2027) — sources affichées sur la page |
+
+**Contenus provisoires** (`provisoire: true` dans `web/src/content/club.ts`) : affichés avec un badge
+« À compléter » en local et en qualification, **jamais en production** (`lib/provisoire.ts`, testé) ;
+en production, l'entrée de menu « Horaires & tarifs » est masquée et la page affiche un renvoi vers
+le contact. Pour publier une vraie valeur : la renseigner et passer `provisoire` à `false`.
 
 ## Références
 

@@ -1,12 +1,12 @@
 import { ChevronDown } from 'lucide-react'
-import { REGLEMENT } from '../content/club'
+import { REGLEMENT, REGLEMENT_SOURCES } from '../content/club'
 import { Container, PageHeader } from '../components/ui'
 import { usePageMeta } from '../lib/usePageMeta'
 
 export function ReglementPage() {
   usePageMeta(
     'Règlement intérieur',
-    'Règlement intérieur du club Judo Condat-sur-Vienne : licence, certificat médical, responsabilité des parents, tenue, hygiène, compétitions.',
+    'Règlement intérieur du club Judo Condat-sur-Vienne : licence, formalités médicales (questionnaire de santé ou certificat), responsabilité des parents, tenue, hygiène, compétitions.',
   )
 
   return (
@@ -47,6 +47,20 @@ export function ReglementPage() {
               </div>
             </details>
           ))}
+        </div>
+        <div className="mt-8 rounded-2xl bg-surface p-5 text-sm text-muted-foreground">
+          <p>
+            Mis à jour en {REGLEMENT_SOURCES.miseAJour} selon la réglementation de France Judo en vigueur :
+          </p>
+          <ul className="mt-2 space-y-1">
+            {REGLEMENT_SOURCES.liens.map((l) => (
+              <li key={l.url}>
+                <a href={l.url} target="_blank" rel="noopener noreferrer" className="underline hover:text-brand">
+                  {l.libelle}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </Container>
     </div>

@@ -4,6 +4,7 @@ import { ClubPage } from './pages/ClubPage'
 import { ContactPage } from './pages/ContactPage'
 import { DisciplinesPage } from './pages/DisciplinesPage'
 import { HomePage } from './pages/HomePage'
+import { HorairesTarifsPage } from './pages/HorairesTarifsPage'
 import { MentionsLegalesPage } from './pages/MentionsLegalesPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { ReglementPage } from './pages/ReglementPage'
@@ -16,6 +17,7 @@ const getParentRoute = () => rootRoute
 const routeTree = rootRoute.addChildren([
   createRoute({ getParentRoute, path: '/', component: HomePage }),
   createRoute({ getParentRoute, path: '/disciplines', component: DisciplinesPage }),
+  createRoute({ getParentRoute, path: '/horaires-tarifs', component: HorairesTarifsPage }),
   createRoute({ getParentRoute, path: '/club', component: ClubPage }),
   createRoute({ getParentRoute, path: '/reglement', component: ReglementPage }),
   createRoute({ getParentRoute, path: '/contact', component: ContactPage }),

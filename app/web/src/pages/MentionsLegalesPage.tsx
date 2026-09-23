@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { CLUB } from '../content/club'
+import { ASSOCIATION, CLUB, EQUIPE } from '../content/club'
 import { Container, PageHeader } from '../components/ui'
 import { usePageMeta } from '../lib/usePageMeta'
 
@@ -12,10 +12,18 @@ export function MentionsLegalesPage() {
       <Container className="max-w-3xl space-y-10 py-12 sm:py-16">
         <Bloc titre="Éditeur du site">
           <p>
-            {CLUB.nomComplet}, association sportive affiliée à France Judo, dont le dojo se situe au{' '}
-            {CLUB.dojo.adresse}, {CLUB.dojo.codePostal} {CLUB.dojo.ville}.
+            <strong className="text-foreground">{ASSOCIATION.denomination}</strong> — {ASSOCIATION.forme}, affiliée à
+            France Judo.
           </p>
-          <p>Directeur de la publication : le président du club.</p>
+          <ul className="space-y-1">
+            <li>Siège social : {ASSOCIATION.siege}</li>
+            <li>N° RNA : {ASSOCIATION.rna}</li>
+            <li>SIREN : {ASSOCIATION.siren}</li>
+            <li>
+              Lieu de pratique : {CLUB.dojo.nom}, {CLUB.dojo.adresse}, {CLUB.dojo.codePostal} {CLUB.dojo.ville}
+            </li>
+          </ul>
+          <p>Directeur de la publication : {EQUIPE.bureau[0]?.nom}, président de l’association.</p>
           <p>
             Contact : via la{' '}
             <a href={CLUB.facebook} target="_blank" rel="noopener noreferrer" className="text-brand underline">

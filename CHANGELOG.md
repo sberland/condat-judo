@@ -17,7 +17,12 @@ itinéraire vers le dojo en un geste. Le site ne dépose aucun cookie et ne coll
 
 #### Ajouts
 
-- Pages Accueil, Disciplines, Le club, Règlement intérieur, Contact et Mentions légales
+- Pages Accueil, Disciplines, Horaires et tarifs, Le club, Règlement intérieur, Contact et Mentions légales
+- Règlement intérieur mis à jour selon la réglementation France Judo en vigueur (questionnaire de
+  santé pour les mineurs, formalités médicales des majeurs, pièces demandées en compétition)
+- Mentions légales avec l'identité officielle de l'association
+- Horaires, tarifs, coordonnées et partenaires préparés en qualification, publiés dès que le club
+  les aura confirmés
 - Textes repris de l'ancien site du club ; code moral officiel de France Judo
 - Liens d'itinéraire vers le dojo, page Facebook du club, prise de licence France Judo
 - Identité visuelle reprise du logo du club (noir, rouge, blanc) ; affiliation France Judo

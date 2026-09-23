@@ -1,10 +1,11 @@
 import { Link } from '@tanstack/react-router'
 import { MapPin } from 'lucide-react'
 import { CLUB, ITINERAIRE, SAISON } from '../content/club'
-import { NAVIGATION } from './navigation'
+import { useNavigation } from './navigation'
 import { Container, FacebookIcon } from './ui'
 
 export function Footer() {
+  const navigation = useNavigation()
   return (
     <footer className="bg-ink text-white/75">
       <Container className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
@@ -35,7 +36,7 @@ export function Footer() {
         <nav aria-label="Pied de page">
           <p className="mb-3 text-sm font-semibold text-white">Le site</p>
           <ul className="space-y-2 text-sm">
-            {NAVIGATION.map((item) => (
+            {navigation.map((item) => (
               <li key={item.to}>
                 <Link to={item.to} className="hover:text-white">
                   {item.libelle}

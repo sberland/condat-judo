@@ -16,6 +16,16 @@ export const CLUB = {
   facebook: 'https://www.facebook.com/p/Judo-Condat-100010470662307/',
 } as const
 
+// Identité officielle de l'association (annuaire des entreprises — recherche-entreprises.api.gouv.fr).
+export const ASSOCIATION = {
+  denomination: 'Condat-sur-Vienne Judo',
+  forme: 'Association déclarée (loi du 1er juillet 1901)',
+  rna: 'W872010702',
+  siren: '812 679 124',
+  siege: '13 rue des Peupliers, 87920 Condat-sur-Vienne',
+  creation: 'avril 2015',
+}
+
 const adresseComplete = `${CLUB.dojo.adresse}, ${CLUB.dojo.codePostal} ${CLUB.dojo.ville}`
 
 // Liens d'itinéraire (pas de carte intégrée : elle déposerait des cookies tiers).
@@ -165,16 +175,25 @@ export const CODE_MORAL: Valeur[] = [
 
 export type ArticleReglement = { titre: string; paragraphes?: string[]; liste?: string[]; apresListe?: string }
 
+// Règlement intérieur du club, mis à jour selon la réglementation France Judo en vigueur
+// (septembre 2026) : formalités médicales (décret n° 2021-564 du 7 mai 2021) et contrôle
+// d'identité en compétition (textes officiels 2026/2027). Voir REGLEMENT_SOURCES.
 export const REGLEMENT: ArticleReglement[] = [
   {
     titre: 'Licence',
-    paragraphes: ['Le participant doit être licencié à la Fédération française de judo et disciplines associées.'],
+    paragraphes: [
+      'Chaque pratiquant doit être licencié à France Judo (Fédération française de judo, jujitsu, kendo et disciplines associées) pour la saison en cours.',
+      'La licence se prend chaque saison, en ligne sur l’espace licencié de la fédération ou par l’intermédiaire du club.',
+    ],
   },
   {
-    titre: 'Certificat médical',
-    paragraphes: [
-      'Le certificat médical attestant l’aptitude à la pratique du judo en compétition est obligatoire pour l’inscription. Ce certificat doit être renouvelé chaque année. Si le club n’est pas en possession de ce document, l’accès au tatami sera refusé au pratiquant.',
+    titre: 'Santé : questionnaire ou certificat médical',
+    paragraphes: ['Les formalités médicales dépendent de l’âge du pratiquant :'],
+    liste: [
+      'Pratiquant mineur : plus de certificat médical systématique. Le questionnaire de santé du sportif mineur est rempli en famille (ses réponses restent confidentielles) et les parents signent une attestation, remise au club. Si l’une des réponses est positive, un certificat médical d’absence de contre-indication datant de moins de 6 mois est nécessaire.',
+      'Pratiquant majeur : un certificat médical d’absence de contre-indication à la pratique du judo est demandé pour la première licence. Au renouvellement, le questionnaire de santé QS-SPORT suffit si toutes les réponses sont négatives ; sinon, un certificat médical datant de moins de 6 mois est nécessaire.',
     ],
+    apresListe: 'Si le club n’est pas en possession de ces documents, l’accès au tatami sera refusé au pratiquant.',
   },
   {
     titre: 'Responsabilité des parents',
@@ -193,8 +212,8 @@ export const REGLEMENT: ArticleReglement[] = [
   {
     titre: 'Tenue',
     liste: [
-      'Le pratiquant ne peut pénétrer sur le tatami qu’en kimono.',
-      'Port du tee-shirt sous le kimono pour les filles.',
+      'Le pratiquant ne peut pénétrer sur le tatami qu’en judogi (kimono).',
+      'Port du tee-shirt sous le judogi pour les filles.',
       'Tous les bijoux sont interdits sur les tatamis (montres, bracelets, etc.).',
       'Le pratiquant doit se déplacer dans le dojo et ses abords immédiats en claquettes.',
       'Prévoir une petite bouteille d’eau à déposer au bord des tatamis.',
@@ -205,8 +224,8 @@ export const REGLEMENT: ArticleReglement[] = [
     paragraphes: ['Le dossier d’inscription se compose :'],
     liste: [
       'd’une fiche de renseignements ;',
-      'd’un certificat médical d’aptitude à la pratique du judo en compétition ;',
-      'de la licence.',
+      'de l’attestation du questionnaire de santé (mineur), ou du certificat médical ou de l’attestation QS-SPORT (majeur) — voir l’article « Santé » ;',
+      'de la licence France Judo de la saison.',
     ],
   },
   {
@@ -216,8 +235,13 @@ export const REGLEMENT: ArticleReglement[] = [
   },
   {
     titre: 'Animation et compétition',
-    paragraphes: ['Les judokas devront être en possession de leur :'],
-    liste: ['passeport (obligatoire à partir de poussins) ;', 'certificat médical ;', 'licence en cours.'],
+    paragraphes: ['Pour participer aux animations et aux compétitions, les judokas doivent avoir :'],
+    liste: [
+      'une licence France Judo de la saison en cours ;',
+      'un justificatif d’identité : le passeport sportif France Judo ou tout autre document ;',
+      'des formalités médicales en règle (questionnaire ou certificat, selon l’âge).',
+    ],
+    apresListe: 'Pour les pratiquants mineurs, la mention « compétition » figure par défaut sur la licence.',
   },
   {
     titre: 'Saison sportive',
@@ -225,15 +249,76 @@ export const REGLEMENT: ArticleReglement[] = [
   },
 ]
 
-export const PARTENAIRES = [
+export const REGLEMENT_SOURCES = {
+  miseAJour: 'septembre 2026',
+  liens: [
+    {
+      libelle: 'France Judo — licences : le certificat médical n’est plus obligatoire (mineurs)',
+      url: 'https://www.ffjudo.com/actualite/licences-questionnaire-mineurs',
+    },
+    {
+      libelle: 'France Judo — textes officiels 2026/2027, règlement des compétitions',
+      url: 'https://www.ffjudo.com/resource-file/document/1788351916_934d7a5b8ec332121fc7.pdf',
+    },
+  ],
+}
+
+// --- Contenus PROVISOIRES -------------------------------------------------------------------
+// Valeurs de remplacement, à compléter avec le club (`provisoire: true`). Elles s'affichent en
+// local et en qualification avec un badge « À compléter », JAMAIS en production (Provisoire.tsx).
+
+export const CONTACT = {
+  provisoire: true,
+  email: 'contact@judo-condat.example',
+  telephone: '05 00 00 00 00',
+}
+
+export type Creneau = { jour: string; horaire: string; cours: string; public: string }
+
+export const HORAIRES: { provisoire: boolean; creneaux: Creneau[] } = {
+  provisoire: true,
+  creneaux: [
+    { jour: 'Mercredi', horaire: '16 h 00 – 16 h 45', cours: 'Éveil judo', public: '4-5 ans' },
+    { jour: 'Mercredi', horaire: '17 h 00 – 18 h 00', cours: 'Judo enfants', public: '6-9 ans' },
+    { jour: 'Vendredi', horaire: '18 h 00 – 19 h 30', cours: 'Judo jeunes', public: '10-15 ans' },
+    { jour: 'Mardi', horaire: '19 h 00 – 20 h 00', cours: 'Taïso', public: 'Adultes' },
+    { jour: 'Jeudi', horaire: '19 h 30 – 21 h 00', cours: 'Jujitsu', public: 'Ados et adultes' },
+  ],
+}
+
+export type Tarif = { formule: string; prix: string }
+
+export const TARIFS: { provisoire: boolean; lignes: Tarif[]; notes: string[] } = {
+  provisoire: true,
+  lignes: [
+    { formule: 'Éveil judo (4-5 ans)', prix: '120 €' },
+    { formule: 'Judo enfants et jeunes (6-15 ans)', prix: '150 €' },
+    { formule: 'Judo, jujitsu ou taïso adultes', prix: '180 €' },
+  ],
+  notes: [
+    'Cotisation annuelle, licence France Judo comprise.',
+    'Réduction à partir du deuxième membre d’une même famille.',
+    'Pass’Sport accepté.',
+  ],
+}
+
+export const PARTENAIRES: { nom: string; activite: string; adresse: string; provisoire: boolean }[] = [
   {
     nom: 'Sof’t Café',
     activite: 'Tabac · Presse · Loto · PMU · Librairie · Café',
     adresse: '60 avenue de Limoges, 87920 Condat-sur-Vienne',
+    provisoire: true, // repris de l'ancien site : partenariat à confirmer
+  },
+  {
+    nom: 'Partenaire à compléter',
+    activite: 'Activité du partenaire',
+    adresse: 'Adresse du partenaire, 87920 Condat-sur-Vienne',
+    provisoire: true,
   },
 ]
 
 export const LIENS_UTILES = [
+
   { libelle: 'France Judo', description: 'Fédération française de judo et disciplines associées', url: 'https://www.ffjudo.com/' },
   { libelle: 'Prendre sa licence', description: 'Espace licencié France Judo', url: 'https://moncompte.ffjudo.com/prise-licence' },
   { libelle: 'Passages de grades', description: 'Règles et programmes, France Judo', url: 'https://www.ffjudo.com/passages-de-grades' },

@@ -1,5 +1,6 @@
-import { IdCard, MapPin, Navigation } from 'lucide-react'
-import { CLUB, ITINERAIRE, SAISON } from '../content/club'
+import { IdCard, Mail, MapPin, Navigation, Phone } from 'lucide-react'
+import { CLUB, CONTACT, ITINERAIRE, SAISON } from '../content/club'
+import { Provisoire } from '../components/Provisoire'
 import { BoutonExterne, Card, Container, FacebookIcon, PageHeader } from '../components/ui'
 import { usePageMeta } from '../lib/usePageMeta'
 
@@ -17,6 +18,16 @@ export function ContactPage() {
       </PageHeader>
 
       <Container className="grid gap-4 py-12 sm:py-16 md:grid-cols-2 lg:grid-cols-3">
+        {CONTACT.provisoire ? (
+          <Provisoire className="md:col-span-2 lg:col-span-3">
+            <CarteCoordonnees />
+          </Provisoire>
+        ) : (
+          <div className="md:col-span-2 lg:col-span-3">
+            <CarteCoordonnees />
+          </div>
+        )}
+
         <Card className="flex flex-col">
           <span className="flex size-12 items-center justify-center rounded-full bg-[#1877f2] text-white">
             <FacebookIcon />
@@ -66,5 +77,30 @@ export function ContactPage() {
         </Card>
       </Container>
     </div>
+  )
+}
+
+function CarteCoordonnees() {
+  return (
+    <Card className="grid gap-4 sm:grid-cols-2">
+      <a href={`mailto:${CONTACT.email}`} className="flex items-center gap-4 rounded-xl p-2 hover:bg-surface">
+        <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
+          <Mail className="size-5" aria-hidden />
+        </span>
+        <span>
+          <span className="block text-sm text-muted-foreground">E-mail</span>
+          <span className="block font-semibold break-all">{CONTACT.email}</span>
+        </span>
+      </a>
+      <a href={`tel:${CONTACT.telephone.replace(/\s/g, '')}`} className="flex items-center gap-4 rounded-xl p-2 hover:bg-surface">
+        <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
+          <Phone className="size-5" aria-hidden />
+        </span>
+        <span>
+          <span className="block text-sm text-muted-foreground">Téléphone</span>
+          <span className="block font-semibold">{CONTACT.telephone}</span>
+        </span>
+      </a>
+    </Card>
   )
 }
