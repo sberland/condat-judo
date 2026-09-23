@@ -59,7 +59,6 @@
 
 | Fichier | Scope | Type | Impact utilisateur | Effort estimé | Priorité | Date cible | Notes |
 |---|---|---|---|---|---|---|---|
-| — | Site vitrine | proposition | Élevé — première présence en ligne du club | S | P1 | — | Accueil, infos club (horaires, lieu, tarifs, bureau), contact ; contenu repris du site Jimdo / Facebook / IntraMuros ; première mise en prod |
 | — | Comptes & foyers | proposition | Élevé — prérequis de tous les modules parents | L | P1 | — | Adultes, enfants, lien parent ↔ enfant avec capacités (inscrire, récupérer), rôles club (admin, bureau, encadrant, parent), admin des comptes et invitations ; multi-enfants, parents séparés |
 | — | Auth applicative | proposition | Élevé — « connexion simple = clé du succès » | L | P1 | — | Probable chantier. Décision reportée au démarrage ; piste : [réflexion auth](../notes/2026-09-23-reflexion-auth.md) (invitation + session longue + code email + passkey). Prérequis de tout espace privé ; Cloudflare Access n'est qu'un verrou de la qualif, jamais l'auth de l'app |
 | — | Compétitions | proposition | Élevé — besoin d'origine | M | P1 | — | Publication (date, lieu, catégories), inscription par le parent, liste pour ressaisie fédération ; dépend de Comptes & foyers |
@@ -79,7 +78,6 @@
 
 ### P1 — Critique
 
-- **—** — Site vitrine (première mise en prod)
 - **—** — Comptes & foyers
 - **—** — Auth applicative
 - **—** — Compétitions
