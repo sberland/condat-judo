@@ -25,3 +25,8 @@ fonctionnalité n'est encore ouverte aux familles.
   l'environnement de qualification protégé par Cloudflare Access
 - Journalisation des refus de connexion Cloudflare Access (motif et paramètres publics, jamais le
   jeton) pour diagnostiquer une configuration
+
+#### Corrections
+
+- Connexion via Cloudflare Access : le jeton est aussi lu dans le cookie `CF_Authorization`, Access
+  ne transmettant pas toujours l'en-tête dédié sur les adresses `workers.dev`

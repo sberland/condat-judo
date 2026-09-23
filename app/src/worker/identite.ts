@@ -39,14 +39,36 @@ export type Resolution =
 
 // Journalisation (visible via `wrangler tail`) : uniquement des informations non sensibles —
 // jamais le jeton, jamais l'email.
+/** Cookies de la requête (nom → valeur). */
+function lireCookies(request: Request): Map<string, string> {
+  const cookies = new Map<string, string>();
+  for (const part of (request.headers.get('Cookie') ?? '').split(';')) {
+    const i = part.indexOf('=');
+    if (i > 0) cookies.set(part.slice(0, i).trim(), part.slice(i + 1).trim());
+  }
+  return cookies;
+}
+
+// Le JWT Access est transmis dans l'en-tête Cf-Access-Jwt-Assertion et dans le cookie
+// CF_Authorization (même jeton, même vérification). Sur *.workers.dev, l'en-tête n'est pas
+// toujours injecté (constaté sur la preview) : le cookie sert alors de repli.
+function jetonAccess(request: Request): { jeton: string; source: 'en-tete' | 'cookie' } | null {
+  const enTete = request.headers.get('Cf-Access-Jwt-Assertion');
+  if (enTete) return { jeton: enTete, source: 'en-tete' };
+  const cookie = lireCookies(request).get('CF_Authorization');
+  return cookie ? { jeton: cookie, source: 'cookie' } : null;
+}
+
 async function identiteCloudflareAccess(request: Request, env: Env): Promise<Identite | null> {
-  const token = request.headers.get('Cf-Access-Jwt-Assertion');
-  if (!token) {
+  const trouve = jetonAccess(request);
+  if (!trouve) {
     if (env.ENVIRONMENT !== 'local' && new URL(request.url).pathname === '/api/me') {
-      console.warn('[access] aucun en-tête Cf-Access-Jwt-Assertion sur /api/me');
+      const noms = [...lireCookies(request).keys()].join(', ') || '(aucun)';
+      console.warn(`[access] aucun jeton (ni en-tête, ni cookie CF_Authorization) sur /api/me — cookies reçus : ${noms}`);
     }
     return null;
   }
+  const token = trouve.jeton;
   if (!env.CF_ACCESS_TEAM_DOMAIN || !env.CF_ACCESS_AUD) {
     console.warn('[access] jeton reçu mais configuration absente (CF_ACCESS_TEAM_DOMAIN / CF_ACCESS_AUD)');
     return null;
@@ -57,7 +79,11 @@ async function identiteCloudflareAccess(request: Request, env: Env): Promise<Ide
       audience: env.CF_ACCESS_AUD,
     });
     if (!verification.ok) {
-      console.warn('[access] jeton refusé :', verification.raison, JSON.stringify(verification.details ?? {}));
+      console.warn(
+        `[access] jeton refusé (${trouve.source}) :`,
+        verification.raison,
+        JSON.stringify(verification.details ?? {}),
+      );
       return null;
     }
     const { claims } = verification;
