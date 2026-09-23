@@ -6,7 +6,30 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
-### Corrections
+## [0.2.0] — 2026-09-23
+
+### Site vitrine du club
+
+#### Notes client
+
+Le nouveau site du club remplace l'ancien site : il présente le club, ses trois disciplines
+(judo avec l'éveil judo dès 4 ans, jujitsu, taïso), le code moral du judo, l'équipe, le dojo et
+le règlement intérieur. Il est pensé d'abord pour le téléphone : menu simple, gros boutons,
+itinéraire vers le dojo en un geste. Le site ne dépose aucun cookie et ne collecte aucune donnée.
+
+#### Ajouts
+
+- Pages Accueil, Disciplines, Horaires et tarifs, Le club, Règlement intérieur, Contact et Mentions légales
+- Règlement intérieur mis à jour selon la réglementation France Judo en vigueur (questionnaire de
+  santé pour les mineurs, formalités médicales des majeurs, pièces demandées en compétition)
+- Mentions légales avec l'identité officielle de l'association
+- Horaires, tarifs, coordonnées et partenaires préparés en qualification, publiés dès que le club
+  les aura confirmés
+- Textes repris de l'ancien site du club ; code moral officiel de France Judo
+- Liens d'itinéraire vers le dojo, page Facebook du club, prise de licence France Judo
+- Identité visuelle reprise du logo du club (noir, rouge, blanc) ; affiliation France Judo
+
+#### Corrections
 
 - Script de release : la Release GitHub est créée correctement quand un seul artefact est attaché
 
