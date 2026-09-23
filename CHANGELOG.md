@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-09-23
+
 ### Site vitrine du club
 
 #### Notes client
