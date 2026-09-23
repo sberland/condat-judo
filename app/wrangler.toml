@@ -4,17 +4,14 @@ compatibility_date = "2026-09-01"
 # account_id non épinglé : fourni par CLOUDFLARE_ACCOUNT_ID (secret GitHub) en CI,
 # ou par `wrangler login` sur le poste.
 
-# URL : https://condat-judo.sebastien-berland.workers.dev
+# URL : https://condat-judo.sebastien-berland.workers.dev — site public (pas de Cloudflare Access).
 workers_dev = true
-# Pas d'URL de version (<version>-condat-judo.…workers.dev) : elles contourneraient Access.
+# Pas d'URL de version (<version>-condat-judo.…workers.dev) : une seule URL par environnement
+# (en preview, elles échapperaient au verrou Access posé sur le nom d'hôte).
 preview_urls = false
 
 [vars]
 ENVIRONMENT = "production"
-# Cloudflare Access (seam d'identité — cf. workspace/docs/technical-docs/cloudflare-access.md).
-# À renseigner après création de l'application Access de prod. Tant que vides, /api/me répond 401.
-CF_ACCESS_TEAM_DOMAIN = "thera-soft.cloudflareaccess.com"   # équipe Zero Trust du compte (partagée)
-CF_ACCESS_AUD = ""           # « Application Audience (AUD) Tag » de l'application Access prod
 
 # Front React (build Vite) servi par Workers Assets. SPA : toute route non-fichier renvoie
 # index.html (routing client TanStack). /api/* passe TOUJOURS par le Worker (run_worker_first),
@@ -40,18 +37,17 @@ migrations_dir = "src/db/migrations"
 # • Worker déployé : `condat-judo-preview` (suffixe `-preview` automatique).
 # • D1 dédiée `condat-judo-preview` : (re)peuplée depuis un snapshot prod (lecture seule sur la
 #   prod) par le workflow GitHub `preview.yml` ou `deploy/refresh-preview-db.ps1`.
-# • ⚠️ Contient une COPIE des données réelles : le host de preview DOIT être couvert par une
-#   application Cloudflare Access (cf. workflow-deploy-spe.md).
+# • ⚠️ Contient une COPIE des données réelles : l'accès au site est VERROUILLÉ par une application
+#   Cloudflare Access (« Condat Judo — preview », dashboard Zero Trust). Verrou d'accès uniquement :
+#   aucune identité n'est transmise à l'app, qui a sa propre authentification (cf. cloudflare-access.md).
 # ─────────────────────────────────────────────────────────────────────────────
 [env.preview]
-# URL : https://condat-judo-preview.sebastien-berland.workers.dev (tout le host derrière Access)
+# URL : https://condat-judo-preview.sebastien-berland.workers.dev (tout le host derrière le verrou Access)
 workers_dev = true
 preview_urls = false
 
 [env.preview.vars]
 ENVIRONMENT = "preview"
-CF_ACCESS_TEAM_DOMAIN = "thera-soft.cloudflareaccess.com"   # même équipe Zero Trust que la prod
-CF_ACCESS_AUD = "81d3a8cc057ab93aa90d1881869cc0ae36ad31ede3b9d73517fe927076b4e324"   # application Access « Condat Judo — preview »
 
 [env.preview.assets]
 directory = "web/dist"

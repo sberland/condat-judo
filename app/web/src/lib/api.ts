@@ -28,7 +28,7 @@ export function useHealth() {
   })
 }
 
-// Utilisateur connecté résolu par le Worker (seam d'identité) : Cloudflare Access en ligne,
+// Utilisateur connecté résolu par le Worker (seam d'identité) : authentification applicative en ligne (à venir),
 // utilisateur simulé (DEV_SUBJECT) en dev local via le proxy Vite.
 export function useMe() {
   return useQuery<MeResult>({
