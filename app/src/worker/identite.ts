@@ -37,18 +37,35 @@ export type Resolution =
 
 // --- Fournisseurs ---
 
+// Journalisation (visible via `wrangler tail`) : uniquement des informations non sensibles —
+// jamais le jeton, jamais l'email.
 async function identiteCloudflareAccess(request: Request, env: Env): Promise<Identite | null> {
   const token = request.headers.get('Cf-Access-Jwt-Assertion');
-  if (!token || !env.CF_ACCESS_TEAM_DOMAIN || !env.CF_ACCESS_AUD) return null;
+  if (!token) {
+    if (env.ENVIRONMENT !== 'local' && new URL(request.url).pathname === '/api/me') {
+      console.warn('[access] aucun en-tête Cf-Access-Jwt-Assertion sur /api/me');
+    }
+    return null;
+  }
+  if (!env.CF_ACCESS_TEAM_DOMAIN || !env.CF_ACCESS_AUD) {
+    console.warn('[access] jeton reçu mais configuration absente (CF_ACCESS_TEAM_DOMAIN / CF_ACCESS_AUD)');
+    return null;
+  }
   try {
-    const claims = await verifyAccessJwt(token, {
+    const verification = await verifyAccessJwt(token, {
       teamDomain: env.CF_ACCESS_TEAM_DOMAIN,
       audience: env.CF_ACCESS_AUD,
     });
-    if (!claims) return null;
+    if (!verification.ok) {
+      console.warn('[access] jeton refusé :', verification.raison, JSON.stringify(verification.details ?? {}));
+      return null;
+    }
+    const { claims } = verification;
     return { provider: 'cf-access', subject: claims.sub, email: claims.email?.toLowerCase() ?? null };
-  } catch {
-    return null; // clés Access injoignables : on refuse plutôt que de deviner
+  } catch (error) {
+    // Clés Access injoignables ou illisibles : on refuse plutôt que de deviner.
+    console.error('[access] vérification impossible :', error instanceof Error ? error.message : String(error));
+    return null;
   }
 }
 

@@ -58,55 +58,64 @@ beforeAll(async () => {
   publicJwk = { ...((await crypto.subtle.exportKey('jwk', pair.publicKey)) as JsonWebKey), kid: 'k1' };
 });
 
+const refusePour = async (token: string) => {
+  const result = await verifyAccessJwt(token, options());
+  return result.ok ? 'accepté' : result.raison;
+};
+
 describe('verifyAccessJwt', () => {
   it('accepte un jeton valide et renvoie ses claims', async () => {
-    const claims = await verifyAccessJwt(await signToken(validClaims()), options());
-    expect(claims?.sub).toBe('sub-123');
-    expect(claims?.email).toBe('Parent@Example.test');
+    const result = await verifyAccessJwt(await signToken(validClaims()), options());
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.claims.sub).toBe('sub-123');
+      expect(result.claims.email).toBe('Parent@Example.test');
+    }
   });
 
   it('accepte une audience fournie en chaîne simple', async () => {
-    expect(await verifyAccessJwt(await signToken(validClaims({ aud: AUD })), options())).not.toBeNull();
+    expect(await refusePour(await signToken(validClaims({ aud: AUD })))).toBe('accepté');
   });
 
   it('refuse une signature faite avec une autre clé', async () => {
-    expect(await verifyAccessJwt(await signToken(validClaims(), { key: otherKey }), options())).toBeNull();
+    expect(await refusePour(await signToken(validClaims(), { key: otherKey }))).toBe('signature');
   });
 
   it('refuse un kid inconnu', async () => {
-    expect(await verifyAccessJwt(await signToken(validClaims(), { kid: 'inconnu' }), options())).toBeNull();
+    expect(await refusePour(await signToken(validClaims(), { kid: 'inconnu' }))).toBe('cle-inconnue');
   });
 
   it('refuse un algorithme autre que RS256', async () => {
-    expect(await verifyAccessJwt(await signToken(validClaims(), { alg: 'none' }), options())).toBeNull();
+    expect(await refusePour(await signToken(validClaims(), { alg: 'none' }))).toBe('algorithme');
   });
 
-  it('refuse une autre audience (application Access d’un autre environnement)', async () => {
-    expect(await verifyAccessJwt(await signToken(validClaims({ aud: ['aud-preview'] })), options())).toBeNull();
+  it('refuse une autre audience et indique les deux valeurs', async () => {
+    const result = await verifyAccessJwt(await signToken(validClaims({ aud: ['aud-preview'] })), options());
+    expect(result).toEqual({ ok: false, raison: 'audience', details: { recue: ['aud-preview'], attendue: AUD } });
   });
 
   it('refuse un autre émetteur', async () => {
     const token = await signToken(validClaims({ iss: 'https://autre-equipe.cloudflareaccess.com' }));
-    expect(await verifyAccessJwt(token, options())).toBeNull();
+    expect(await refusePour(token)).toBe('emetteur');
   });
 
   it('refuse un jeton expiré (au-delà de la tolérance d’horloge)', async () => {
-    expect(await verifyAccessJwt(await signToken(validClaims({ exp: NOW_S - 120 })), options())).toBeNull();
+    expect(await refusePour(await signToken(validClaims({ exp: NOW_S - 120 })))).toBe('expire');
   });
 
   it('refuse un jeton sans subject', async () => {
-    expect(await verifyAccessJwt(await signToken(validClaims({ sub: '' })), options())).toBeNull();
+    expect(await refusePour(await signToken(validClaims({ sub: '' })))).toBe('subject-absent');
   });
 
   it('refuse un jeton altéré', async () => {
     const token = await signToken(validClaims());
     const [h, , s] = token.split('.');
     const forged = `${h}.${encodeJson(validClaims({ sub: 'intrus' }))}.${s}`;
-    expect(await verifyAccessJwt(forged, options())).toBeNull();
+    expect(await refusePour(forged)).toBe('signature');
   });
 
   it('refuse un jeton mal formé', async () => {
-    expect(await verifyAccessJwt('pas.un-jwt', options())).toBeNull();
-    expect(await verifyAccessJwt('a.b.c', options())).toBeNull();
+    expect(await refusePour('pas.un-jwt')).toBe('jeton-mal-forme');
+    expect(await refusePour('a.b.c')).toBe('jeton-mal-forme');
   });
 });

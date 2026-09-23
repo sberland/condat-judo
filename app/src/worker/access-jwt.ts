@@ -54,9 +54,27 @@ export const fetchAccessKeys: KeyFetcher = async (teamDomain) => {
   return keys;
 };
 
-export async function verifyAccessJwt(token: string, options: VerifyOptions): Promise<AccessClaims | null> {
+/** Motif de refus — non sensible, journalisable tel quel. */
+export type RaisonRefus =
+  | 'jeton-mal-forme'
+  | 'algorithme'
+  | 'cle-inconnue'
+  | 'signature'
+  | 'audience'
+  | 'emetteur'
+  | 'expire'
+  | 'pas-encore-valide'
+  | 'subject-absent';
+
+export type Verification =
+  | { ok: true; claims: AccessClaims }
+  | { ok: false; raison: RaisonRefus; details?: Record<string, unknown> };
+
+const refus = (raison: RaisonRefus, details?: Record<string, unknown>): Verification => ({ ok: false, raison, details });
+
+export async function verifyAccessJwt(token: string, options: VerifyOptions): Promise<Verification> {
   const parts = token.split('.');
-  if (parts.length !== 3) return null;
+  if (parts.length !== 3) return refus('jeton-mal-forme');
   const [headerPart, payloadPart, signaturePart] = parts as [string, string, string];
 
   let header: Record<string, unknown>;
@@ -65,9 +83,9 @@ export async function verifyAccessJwt(token: string, options: VerifyOptions): Pr
     header = decodeJson(headerPart);
     claims = decodeJson(payloadPart);
   } catch {
-    return null;
+    return refus('jeton-mal-forme');
   }
-  if (header.alg !== 'RS256' || typeof header.kid !== 'string') return null;
+  if (header.alg !== 'RS256' || typeof header.kid !== 'string') return refus('algorithme', { alg: header.alg });
 
   const fetchKeys = options.fetchKeys ?? fetchAccessKeys;
   let jwk = (await fetchKeys(options.teamDomain)).find((k) => k.kid === header.kid);
@@ -75,7 +93,7 @@ export async function verifyAccessJwt(token: string, options: VerifyOptions): Pr
     keyCache = null; // rotation de clés : un seul rechargement
     jwk = (await fetchKeys(options.teamDomain)).find((k) => k.kid === header.kid);
   }
-  if (!jwk) return null;
+  if (!jwk) return refus('cle-inconnue', { kid: header.kid });
 
   const key = await crypto.subtle.importKey(
     'jwk',
@@ -86,15 +104,21 @@ export async function verifyAccessJwt(token: string, options: VerifyOptions): Pr
   );
   const signedData = new TextEncoder().encode(`${headerPart}.${payloadPart}`);
   const valid = await crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, base64UrlToBytes(signaturePart), signedData);
-  if (!valid) return null;
+  if (!valid) return refus('signature');
 
+  // Les détails ci-dessous (audience, émetteur, dates) sont publics : ils aident au diagnostic
+  // d'une configuration (AUD / domaine d'équipe) sans rien exposer du jeton.
   const now = Math.floor((options.now ?? Date.now()) / 1000);
   const audiences = Array.isArray(claims.aud) ? claims.aud : [claims.aud];
-  if (!audiences.includes(options.audience)) return null;
-  if (claims.iss !== `https://${options.teamDomain}`) return null;
-  if (typeof claims.exp !== 'number' || claims.exp + CLOCK_SKEW_S < now) return null;
-  if (typeof claims.nbf === 'number' && claims.nbf - CLOCK_SKEW_S > now) return null;
-  if (typeof claims.sub !== 'string' || claims.sub === '') return null;
+  if (!audiences.includes(options.audience)) return refus('audience', { recue: claims.aud, attendue: options.audience });
+  if (claims.iss !== `https://${options.teamDomain}`) {
+    return refus('emetteur', { recu: claims.iss, attendu: `https://${options.teamDomain}` });
+  }
+  if (typeof claims.exp !== 'number' || claims.exp + CLOCK_SKEW_S < now) return refus('expire', { exp: claims.exp, now });
+  if (typeof claims.nbf === 'number' && claims.nbf - CLOCK_SKEW_S > now) {
+    return refus('pas-encore-valide', { nbf: claims.nbf, now });
+  }
+  if (typeof claims.sub !== 'string' || claims.sub === '') return refus('subject-absent');
 
-  return claims as AccessClaims;
+  return { ok: true, claims: claims as AccessClaims };
 }

@@ -23,3 +23,5 @@ fonctionnalité n'est encore ouverte aux familles.
   utilisateur simulé en développement local
 - Mise en place Cloudflare : bases D1 prod et preview hébergées dans l'Union européenne, accès à
   l'environnement de qualification protégé par Cloudflare Access
+- Journalisation des refus de connexion Cloudflare Access (motif et paramètres publics, jamais le
+  jeton) pour diagnostiquer une configuration
