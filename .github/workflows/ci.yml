@@ -1,0 +1,37 @@
+# CI — vérifie chaque PR et chaque push sur les branches protégées.
+# Pas de filtre de chemins : ce job est destiné à devenir un « check requis » du ruleset,
+# il doit donc tourner sur toutes les PR (y compris doc seule), sinon la PR resterait bloquée.
+name: CI
+
+on:
+  pull_request:
+    branches: [main, preview]
+  push:
+    branches: [main, preview]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verifier:
+    name: Typecheck, tests, build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck        # worker (Hono/TS)
+      - run: npm run typecheck:web    # front React
+      - run: npm test                 # tests unitaires (vitest)
+      - run: npm run build:web        # valide le bundle Vite

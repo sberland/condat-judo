@@ -1,0 +1,56 @@
+name = "condat-judo"
+main = "src/worker/index.ts"
+compatibility_date = "2026-09-01"
+# account_id non épinglé : fourni par CLOUDFLARE_ACCOUNT_ID (secret GitHub) en CI,
+# ou par `wrangler login` sur le poste.
+
+[vars]
+ENVIRONMENT = "production"
+# Cloudflare Access (seam d'identité — cf. workspace/docs/technical-docs/cloudflare-access.md).
+# À renseigner après création de l'application Access de prod. Tant que vides, /api/me répond 401.
+CF_ACCESS_TEAM_DOMAIN = ""   # ex. "<equipe>.cloudflareaccess.com"
+CF_ACCESS_AUD = ""           # « Application Audience (AUD) Tag » de l'application Access prod
+
+# Front React (build Vite) servi par Workers Assets. SPA : toute route non-fichier renvoie
+# index.html (routing client TanStack). /api/* passe TOUJOURS par le Worker (run_worker_first),
+# y compris pour une navigation directe dans le navigateur.
+# ⚠️ Nécessite `npm run build:web` avant `wrangler dev` / `wrangler deploy`.
+[assets]
+directory = "web/dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
+
+# D1 de PRODUCTION — porte les données réelles des familles.
+# ⚠️ Jamais de seed ni de reset en --remote : le seed (src/db/seed.sql) est réservé au --local.
+[[d1_databases]]
+binding = "DB"
+database_name = "condat-judo"
+database_id = "00000000-0000-0000-0000-000000000000"   # TODO setup : `npx wrangler d1 create condat-judo`
+migrations_dir = "src/db/migrations"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Environnement de PREVIEW (qualification) — Worker + D1 DÉDIÉS, isolés de la prod.
+#
+# • Worker déployé : `condat-judo-preview` (suffixe `-preview` automatique).
+# • D1 dédiée `condat-judo-preview` : (re)peuplée depuis un snapshot prod (lecture seule sur la
+#   prod) par le workflow GitHub `preview.yml` ou `deploy/refresh-preview-db.ps1`.
+# • ⚠️ Contient une COPIE des données réelles : le host de preview DOIT être couvert par une
+#   application Cloudflare Access (cf. workflow-deploy-spe.md).
+# ─────────────────────────────────────────────────────────────────────────────
+[env.preview.vars]
+ENVIRONMENT = "preview"
+CF_ACCESS_TEAM_DOMAIN = ""   # même équipe Zero Trust que la prod
+CF_ACCESS_AUD = ""           # AUD de l'application Access PREVIEW (distinct de la prod)
+
+[env.preview.assets]
+directory = "web/dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
+
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "condat-judo-preview"
+database_id = "00000000-0000-0000-0000-000000000001"   # TODO setup : `npx wrangler d1 create condat-judo-preview`
+migrations_dir = "src/db/migrations"

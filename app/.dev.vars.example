@@ -1,0 +1,10 @@
+# Variables du développement local — copier ce fichier en `.dev.vars` (non commité).
+# wrangler dev les superpose aux [vars] de wrangler.toml.
+
+# Active le fournisseur d'identité de dev (jamais actif hors ENVIRONMENT=local).
+ENVIRONMENT=local
+
+# Utilisateur simulé : subject de la table `identites` (provider 'dev') — cf. src/db/seed.sql.
+#   dev-admin  → Admin Dev (rôle admin)
+#   dev-parent → Parent Dev (rôle membre)
+DEV_SUBJECT=dev-admin

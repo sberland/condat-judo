@@ -1,0 +1,37 @@
+# .NET
+*.user
+*.suo
+.vs/
+bin/
+obj/
+
+# Build artifacts
+publish/
+deploy/current/
+
+# Logs
+*.log
+logs/
+
+# Packages
+*.nupkg
+*.snupkg
+
+# Secrets
+*.pfx
+*.p12
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+
+# Claude Code
+.claude/scheduled_tasks.lock
+
+# Node / Wrangler
+node_modules/
+.wrangler/
+.dev.vars
+
+# Front build (Vite)
+dist/
+.vite/

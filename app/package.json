@@ -1,0 +1,41 @@
+{
+  "name": "condat-judo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "dev:web": "cd web && vite",
+    "build:web": "cd web && vite build",
+    "deploy": "wrangler deploy",
+    "deploy:preview": "wrangler deploy --env preview",
+    "typecheck": "tsc --noEmit",
+    "typecheck:web": "cd web && tsc --noEmit",
+    "test": "vitest run",
+    "db:migrate:local": "wrangler d1 migrations apply condat-judo --local",
+    "db:seed:local": "wrangler d1 execute condat-judo --local --file=src/db/seed.sql",
+    "db:reset:local": "wrangler d1 execute condat-judo --local --command \"DROP TABLE IF EXISTS identites; DROP TABLE IF EXISTS saisons; DROP TABLE IF EXISTS users; DROP TABLE IF EXISTS d1_migrations;\" && npm run db:migrate:local && npm run db:seed:local",
+    "db:migrate:remote": "wrangler d1 migrations apply condat-judo --remote",
+    "db:migrate:preview": "wrangler d1 migrations apply condat-judo-preview --env preview --remote"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.103.2",
+    "@tanstack/react-router": "^1.170.39",
+    "hono": "^4.13.8",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260923.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.6.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.1",
+    "wrangler": "^4.137.0"
+  }
+}
