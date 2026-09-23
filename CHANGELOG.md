@@ -21,3 +21,5 @@ fonctionnalité n'est encore ouverte aux familles.
   (Worker Cloudflare, API Hono, base D1, front React), scripts de déploiement et CI GitHub Actions
 - Seam d'identité : résolution de l'utilisateur via Cloudflare Access (signature du jeton vérifiée),
   utilisateur simulé en développement local
+- Mise en place Cloudflare : bases D1 prod et preview hébergées dans l'Union européenne, accès à
+  l'environnement de qualification protégé par Cloudflare Access
