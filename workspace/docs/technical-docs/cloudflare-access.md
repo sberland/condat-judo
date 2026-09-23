@@ -1,58 +1,66 @@
-# Cloudflare Access — configuration (prod + preview)
+# Cloudflare Access — verrou d'accès à la qualification
 
 ## Contexte
 
-Au démarrage, **tout le site** (statique + `/api/*`) est derrière Cloudflare Access, en prod comme
-en preview : seuls les comptes autorisés (bureau du club) y accèdent. Le Worker ne fait pas
-confiance aveuglément à l'en-tête d'Access : il **vérifie la signature** du JWT (cf.
-[`identite-auth.md`](identite-auth.md)). Limite : plan gratuit Zero Trust = **50 utilisateurs** —
-suffisant pour le bureau, pas pour ouvrir le site à toutes les familles (→ chantier auth).
+Décision du 2026-09-23 : **Cloudflare Access sert uniquement de verrou d'accès au site de
+qualification. Il n'a aucun lien avec l'authentification de l'application.**
+
+| Environnement | Cloudflare Access | Authentification de l'app |
+| --- | --- | --- |
+| **Prod** `condat-judo.sebastien-berland.workers.dev` | Aucune (site public : vitrine) | Auth applicative (chantier auth, à venir) |
+| **Preview** `condat-judo-preview.sebastien-berland.workers.dev` | **Tout le host verrouillé** (bureau / testeurs autorisés) | Idem prod — indépendante du verrou |
+
+Pourquoi un verrou sur la qualif : elle reçoit une **copie des données de prod** et fait tourner du
+code non encore validé. Access en bloque l'accès à toute personne non autorisée, sans rien changer
+au fonctionnement de l'app.
+
+Pourquoi aucune identité tirée d'Access : l'app aura sa propre authentification (parents sur
+mobile, cf. [`identite-auth.md`](identite-auth.md)). Lire l'identité Access créerait un second
+chemin de connexion, différent entre qualif et prod. Le seam `resolveUser` ignore donc tout ce
+qui vient d'Access (en-tête, cookie, `ctx.access`) — un test le vérifie.
 
 ## Description / Flux
 
 ```text
-Navigateur ──▶ Cloudflare Access (edge) : authentifie (code à usage unique par email…), refuse l'anonyme
-                 │  injecte Cf-Access-Jwt-Assertion
+Navigateur ──▶ Cloudflare Access (edge, preview uniquement) : code PIN par email, refuse l'anonyme (302)
                  ▼
-              Worker condat-judo[-preview] : verifyAccessJwt (signature, aud, iss, exp)
+              Worker condat-judo-preview : ne lit RIEN d'Access
                  ▼
-              identites (cf-access, sub) ──▶ users.id
+              /api/me ──▶ seam resolveUser ──▶ auth applicative (à venir) — 401 d'ici là
 ```
 
-### Mise en place (dashboard Cloudflare Zero Trust)
+### Configuration en place (dashboard Cloudflare One, compte perso)
 
-1. **Zero Trust** → première ouverture : choisir un **nom d'équipe** → domaine
-   `<equipe>.cloudflareaccess.com` (= `CF_ACCESS_TEAM_DOMAIN`). Plan **Free**.
-2. **Settings → Authentication** : activer **One-time PIN** (code par email, aucun IdP à configurer).
-3. **Access → Applications → Add an application → Self-hosted**, une par environnement :
-   - `condat-judo` — domaine `condat-judo.<sous-domaine>.workers.dev`, tout le host ;
-   - `condat-judo-preview` — domaine `condat-judo-preview.<sous-domaine>.workers.dev`.
-4. **Policy** : *Allow*, *Include → Emails* = les personnes autorisées (liste explicite).
-5. Dans chaque application : **Overview → Application Audience (AUD) Tag** → à reporter dans
-   `app/wrangler.toml` (`CF_ACCESS_AUD` de `[vars]` pour la prod, de `[env.preview.vars]` pour la
-   preview), ainsi que `CF_ACCESS_TEAM_DOMAIN`.
-6. Créer les comptes correspondants dans `users` (le premier admin : cf. `installation.md`) : une
-   personne autorisée par Access mais absente de `users` reçoit « compte non reconnu ».
+- **Équipe Zero Trust** : `thera-soft.cloudflareaccess.com` (partagée avec d'autres projets du
+  compte — son quota gratuit de 50 utilisateurs aussi ; la page de connexion est commune à toute
+  l'équipe et ne se personnalise pas par application).
+- **Méthode de connexion** : code PIN à usage unique (fournisseur d'identité déjà présent).
+- **Application** `Condat Judo — preview` : auto-hébergée, destination
+  `condat-judo-preview.sebastien-berland.workers.dev`, sans chemin (tout le host).
+- **Politique** `Condat Judo — bureau` : *Autoriser*, *Inclure → E-mails* = personnes habilitées
+  à la qualification. Ajouter / retirer une personne = modifier cette liste.
 
 ## Points de vigilance
 
-- **Autoriser par Access ≠ donner des droits** : Access filtre l'entrée ; les droits viennent de
-  `users` (rôle) via `users.id`.
-- **Preview = copie des données réelles** : même niveau de protection que la prod, obligatoire.
-- `workers.dev` : vérifier aussi que les **URL de version** (`*-<hash>.…workers.dev`, previews de
-  version Cloudflare) sont couvertes ou désactivées (Workers → Settings → Domains & Routes).
-- AUD et domaine d'équipe ne sont pas des secrets (valeurs publiques dans le JWT) : ils peuvent
-  rester dans `wrangler.toml`.
+- **Verrou ≠ compte** : passer Access ne donne aucun droit dans l'app ; l'app demandera sa propre
+  connexion quand l'auth applicative existera.
+- **URL de version** (`<version>-condat-judo-preview….workers.dev`) : elles échapperaient au verrou
+  posé sur le nom d'hôte → désactivées par `preview_urls = false` (`app/wrangler.toml`).
+- **Constat technique (2026-09-23)** : avec une application Access créée par nom d'hôte sur
+  `*.workers.dev`, le Worker ne reçoit ni l'en-tête `Cf-Access-Jwt-Assertion`, ni le cookie
+  `CF_Authorization`, ni `ctx.access`. Seul le mécanisme « Protéger ce Worker derrière Access »
+  (Workers & Pages → Worker → Access) alimente `ctx.access`. Sans objet ici, puisqu'on ne lit pas
+  l'identité Access — à savoir si la question revient.
+- **Prod** : jamais de verrou Access (le site doit rester public). La protection des données passe
+  par l'auth applicative et les droits côté API.
 
-## Vérification (après premier déploiement)
+## Vérification
 
-- [ ] Accès anonyme → écran Access (redirection 302)
-- [ ] Après code OTP : page d'accueil, carte « Utilisateur connecté » renseignée, via `cf-access`
-- [ ] Personne autorisée par Access mais sans compte → « Compte non reconnu »
-- [ ] `/api/health` affiche l'environnement attendu (`production` / `preview`)
+- [x] Accès anonyme à la preview → redirection 302 vers `thera-soft.cloudflareaccess.com` (2026-09-23)
+- [x] Après code PIN : le site s'affiche ; `/api/me` → « Non connecté » (normal : l'app n'a pas encore d'auth)
 
 ## Références
 
-- Code : `app/src/worker/identite.ts`, `app/src/worker/access-jwt.ts`
-- Config : `app/wrangler.toml`
-- Doc Cloudflare Access (self-hosted apps) : <https://developers.cloudflare.com/cloudflare-one/applications/configure-apps/self-hosted-public-app/>
+- Config : `app/wrangler.toml` (`preview_urls = false`)
+- Seam d'identité : `app/src/worker/identite.ts` (+ `identite.test.ts`)
+- Doc Cloudflare — Access pour les Workers : <https://developers.cloudflare.com/workers/configuration/cloudflare-access/>

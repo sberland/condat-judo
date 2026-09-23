@@ -19,5 +19,8 @@ fonctionnalité n'est encore ouverte aux familles.
 
 - Initialisation du projet : workspace (workflows, templates, backlog), socle applicatif
   (Worker Cloudflare, API Hono, base D1, front React), scripts de déploiement et CI GitHub Actions
-- Seam d'identité : résolution de l'utilisateur via Cloudflare Access (signature du jeton vérifiée),
-  utilisateur simulé en développement local
+- Seam d'identité : point unique de résolution de l'utilisateur, prêt pour l'authentification de
+  l'application ; utilisateur simulé en développement local
+- Mise en place Cloudflare : bases D1 prod et preview hébergées dans l'Union européenne ;
+  environnement de qualification verrouillé par Cloudflare Access (accès au site uniquement, sans
+  lien avec l'authentification de l'application)

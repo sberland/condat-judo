@@ -2,18 +2,23 @@
 //
 // Frontière unique requête → utilisateur interne. Un fournisseur produit une Identite
 // { provider, subject, email } ; la table `identites` la relie à `users.id`, seule identité
-// que le reste du code connaisse. Tous les droits référencent `users.id` — jamais l'email,
-// jamais un artefact Access. Changer d'authentification = ajouter un fournisseur ici.
+// que le reste du code connaisse. Tous les droits référencent `users.id` — jamais l'email.
+// Ajouter un mode d'authentification = ajouter un fournisseur ici.
+//
+// ⚠️ Cloudflare Access n'est PAS un fournisseur d'identité de l'application : c'est un simple
+// verrou d'accès au site de qualification, sans aucun lien avec l'authentification de l'app
+// (décision du 2026-09-23). Aucune information d'Access n'est lue ici.
+//
+// Fournisseurs : `dev` (local uniquement) ; demain l'authentification applicative (chantier auth).
 // Détail : workspace/docs/technical-docs/identite-auth.md
 
-import { verifyAccessJwt } from './access-jwt';
 import type { Env } from './env';
 
-export type Provider = 'cf-access' | 'dev';
+export type Provider = 'dev';
 
 export type Identite = {
   provider: Provider;
-  /** Identifiant opaque et stable chez le fournisseur (claim `sub` pour Access). */
+  /** Identifiant opaque et stable chez le fournisseur. */
   subject: string;
   /** Email vérifié par le fournisseur — sert UNIQUEMENT à lier une première connexion. */
   email: string | null;
@@ -37,29 +42,14 @@ export type Resolution =
 
 // --- Fournisseurs ---
 
-async function identiteCloudflareAccess(request: Request, env: Env): Promise<Identite | null> {
-  const token = request.headers.get('Cf-Access-Jwt-Assertion');
-  if (!token || !env.CF_ACCESS_TEAM_DOMAIN || !env.CF_ACCESS_AUD) return null;
-  try {
-    const claims = await verifyAccessJwt(token, {
-      teamDomain: env.CF_ACCESS_TEAM_DOMAIN,
-      audience: env.CF_ACCESS_AUD,
-    });
-    if (!claims) return null;
-    return { provider: 'cf-access', subject: claims.sub, email: claims.email?.toLowerCase() ?? null };
-  } catch {
-    return null; // clés Access injoignables : on refuse plutôt que de deviner
-  }
-}
-
 function identiteDev(env: Env): Identite | null {
   // Double verrou : ENVIRONMENT=local et DEV_SUBJECT n'existent que dans .dev.vars.
   if (env.ENVIRONMENT !== 'local' || !env.DEV_SUBJECT) return null;
   return { provider: 'dev', subject: env.DEV_SUBJECT, email: null };
 }
 
-export async function resolveIdentite(request: Request, env: Env): Promise<Identite | null> {
-  return (await identiteCloudflareAccess(request, env)) ?? identiteDev(env);
+export async function resolveIdentite(_request: Request, env: Env): Promise<Identite | null> {
+  return identiteDev(env);
 }
 
 // --- Identité → utilisateur interne ---

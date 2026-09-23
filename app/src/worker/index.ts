@@ -6,7 +6,7 @@ import { resolveUser } from './identite';
 const app = new Hono<{ Bindings: Env }>();
 const api = new Hono<{ Bindings: Env }>();
 
-// --- /api/health : public (sous réserve d'Access en amont) ---
+// --- /api/health : public ---
 
 api.get('/health', (c) =>
   c.json({ status: 'ok', version: pkg.version, environment: c.env.ENVIRONMENT }),

@@ -103,10 +103,11 @@ Prérequis : `npx wrangler login` (OAuth) ou `CLOUDFLARE_API_TOKEN` dans l'envir
 
 | Environnement | Base D1 | Worker | URL |
 | --- | --- | --- | --- |
-| Prod | `condat-judo` | `condat-judo` | `https://condat-judo.<sous-domaine>.workers.dev` |
-| Preview | `condat-judo-preview` | `condat-judo-preview` | `https://condat-judo-preview.<sous-domaine>.workers.dev` |
+| Prod | `condat-judo` (`a58cc624-…`, juridiction UE) | `condat-judo` | `https://condat-judo.sebastien-berland.workers.dev` |
+| Preview | `condat-judo-preview` (`0bf6338c-…`, juridiction UE) | `condat-judo-preview` | `https://condat-judo-preview.sebastien-berland.workers.dev` |
 
-- Les `database_id` sont renseignés dans `app/wrangler.toml` après création (setup initial).
+- Bases créées le 2026-09-23 avec `--jurisdiction eu` (données stockées et traitées dans l'UE — RGPD) ; `database_id` dans `app/wrangler.toml`.
+- Compte Cloudflare : compte perso `Sebastien.berland@gmail.com's Account` (partagé avec d'autres projets — l'équipe Zero Trust et son quota gratuit de 50 utilisateurs Access aussi).
 - ⚠️ **Ne jamais `db:seed` ni `db:reset` sur une base distante** : le seed est réservé au `--local`.
 - `migrations apply --remote` n'applique que les migrations en attente.
 - Sauvegarde : D1 **Time Travel** (restauration à un instant des 30 derniers jours) couvre le
@@ -151,8 +152,10 @@ branche `preview` ──Actions(preview.yml)──▶ deploy --env preview
 Un déploiement prod ne concerne que **l'app (code + assets)** ; la D1 de prod conserve ses données.
 
 ⚠️ **Données personnelles en preview** : la preview contient une *copie* des données réelles →
-elle doit être protégée par Cloudflare Access **au même niveau que la prod**, et réservée aux
-personnes habilitées.
+l'accès au site est **verrouillé par Cloudflare Access** (application « Condat Judo — preview »,
+politique « Condat Judo — bureau ») et réservé aux personnes habilitées. Ce verrou n'a **aucun lien
+avec l'authentification de l'app** (cf. [`cloudflare-access.md`](docs/technical-docs/cloudflare-access.md)).
+La prod, elle, n'a pas de verrou Access : le site est public.
 
 ### Tables purgées avant import
 
@@ -177,9 +180,9 @@ npm run deploy:preview            # wrangler deploy --env preview
 
 Suivi dans [`installation.md`](docs/install/installation.md) § « Mise en place Cloudflare / GitHub » :
 
-- [ ] D1 `condat-judo` et `condat-judo-preview` créées, `database_id` reportés dans `app/wrangler.toml`
-- [ ] Jeton d'API de compte Cloudflare créé ; secrets `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` dans GitHub
-- [ ] Applications Cloudflare Access prod + preview ; `CF_ACCESS_TEAM_DOMAIN` / `CF_ACCESS_AUD` dans `app/wrangler.toml`
-- [ ] Ruleset GitHub sur `main` et `preview`
-- [ ] Premier administrateur créé en prod
-- [ ] Premier tag `v0.1.0` (ou version suivante) → déploiement prod vérifié (anonyme refusé par Access)
+- [x] D1 `condat-judo` et `condat-judo-preview` créées (juridiction UE), `database_id` reportés dans `app/wrangler.toml`
+- [x] Jeton d'API de compte `condat-judo-github-actions` (Workers Scripts:Edit + D1:Edit) ; secrets `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` dans GitHub
+- [x] Verrou Access sur la **preview** (application `Condat Judo — preview`, tout le host, politique `Condat Judo — bureau`, code PIN à usage unique) — vérifié : anonyme → 302
+- [x] Ruleset GitHub sur `main` et `preview` (PR obligatoire, check CI « Typecheck, tests, build »)
+- [ ] Premier tag (vitrine v1) → déploiement prod vérifié (site public accessible)
+- [ ] Premier administrateur créé en prod — après le chantier auth applicative
