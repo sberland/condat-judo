@@ -28,5 +28,5 @@ fonctionnalité n'est encore ouverte aux familles.
 
 #### Corrections
 
-- Connexion via Cloudflare Access : le jeton est aussi lu dans le cookie `CF_Authorization`, Access
-  ne transmettant pas toujours l'en-tête dédié sur les adresses `workers.dev`
+- Connexion via Cloudflare Access sur les adresses `workers.dev` : l'identité est lue via le runtime
+  Cloudflare (`ctx.access`), Access n'y transmettant ni l'en-tête ni le cookie attendus

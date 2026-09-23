@@ -47,6 +47,13 @@ Navigateur ──▶ Cloudflare Access (edge) : authentifie (code à usage uniqu
 
 ## Points de vigilance
 
+- **Identité transmise au Worker sur `workers.dev`** : ni en-tête `Cf-Access-Jwt-Assertion`, ni
+  cookie — uniquement `ctx.access` (runtime). Le seam lit les deux canaux (cf.
+  [`identite-auth.md`](identite-auth.md)).
+- **Mécanisme « Protéger ce Worker derrière Access »** (Workers & Pages → Worker → Access) : non
+  retenu. Il protège le Worker entier (« tout le trafic » ou « préversions uniquement ») et ne sait
+  pas limiter la protection à `/espace` et `/api` ; la prod doit garder la vitrine publique. On
+  garde une seule méthode partout : application Access par nom d'hôte (+ chemins en prod).
 - **Autoriser par Access ≠ donner des droits** : Access filtre l'entrée ; les droits viennent de
   `users` (rôle) via `users.id`.
 - **Preview = copie des données réelles** : même niveau de protection que la prod, obligatoire.

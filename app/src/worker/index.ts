@@ -15,7 +15,7 @@ api.get('/health', (c) =>
 // --- /api/me : utilisateur connecté, via le seam d'identité ---
 
 api.get('/me', async (c) => {
-  const resolution = await resolveUser(c.req.raw, c.env);
+  const resolution = await resolveUser(c.req.raw, c.env, c.executionCtx);
   if (resolution.statut === 'anonyme') return c.json({ error: 'Non authentifié' }, 401);
   if (resolution.statut === 'inconnu') return c.json({ error: 'Compte non reconnu' }, 403);
 
