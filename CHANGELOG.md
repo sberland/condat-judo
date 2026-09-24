@@ -6,6 +6,38 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.9.0] — 2026-09-24
+
+### Compétitions : publication et inscription des enfants
+
+#### Notes client
+
+Le bureau publie chaque compétition sur le site (date, lieu, catégories, date limite, informations
+pratiques) et en poste le lien dans le groupe WhatsApp du club, message prêt. Depuis ce lien, un
+parent connecté inscrit son enfant d'un geste, et peut annuler jusqu'à la date limite ; seuls les
+enfants des catégories concernées peuvent l'être, par un responsable qui en a le droit. La page
+d'une compétition est publique mais n'affiche aucune information sur les enfants. Le bureau suit
+les inscrits, avec une alerte quand une licence, un dossier ou une formalité médicale manque,
+récupère la liste prête à ressaisir sur le site de la fédération (copie ou fichier Excel), coche
+les inscriptions ressaisies, et peut inscrire un enfant à la place de ses parents.
+
+#### Ajouts
+
+- Menu « Compétitions » : compétitions à venir, et pour un parent connecté, ses enfants inscrits
+  ou pas encore inscrits
+- Page de chaque compétition : informations pratiques, itinéraire, page officielle, inscription et
+  désinscription des enfants jusqu'à la date limite incluse
+- Espace bureau : création, modification, clôture, annulation ; partage WhatsApp ; liste des
+  inscrits avec alertes, copie ou fichier CSV, case « ressaisi sur le site fédéral » ; inscription
+  par le bureau, même après la date limite
+- Historique des compétitions sur la fiche de chaque enfant (famille et bureau)
+- Aide intégrée : rubriques « Inscrire mon enfant à une compétition » et « Compétitions » (bureau)
+- Page « Données personnelles » et registre : traitement « Compétitions »
+
+#### Modifications
+
+- Menu du site : entrée « Compétitions », espacement resserré sur grand écran
+
 ## [0.8.0] — 2026-09-24
 
 ### Données personnelles : information des familles

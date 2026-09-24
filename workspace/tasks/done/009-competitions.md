@@ -25,11 +25,11 @@ téléphone ; la personne du club a une liste propre à ressaisir sur le site f�
 
 ## Critères d'acceptation
 
-- [ ] Un parent inscrit un enfant à une compétition en moins de 3 gestes depuis le lien WhatsApp
-- [ ] Un parent ne voit et n'inscrit que ses propres enfants, éligibles, avant la date limite
-- [ ] Le bureau obtient la liste des inscrits prête à ressaisir (copie ou CSV)
-- [ ] Une inscription après la date limite est refusée côté API
-- [ ] Utilisable à 360 px
+- [x] Un parent inscrit un enfant à une compétition en moins de 3 gestes depuis le lien WhatsApp
+- [x] Un parent ne voit et n'inscrit que ses propres enfants, éligibles, avant la date limite
+- [x] Le bureau obtient la liste des inscrits prête à ressaisir (copie ou CSV)
+- [x] Une inscription après la date limite est refusée côté API
+- [x] Utilisable à 360 px
 
 ## Hors périmètre
 
