@@ -1,4 +1,4 @@
-import type { Formule } from '../content/club'
+import type { Formule } from '../content/tarifs'
 
 /** Total d'une formule (participation + licence), en centimes. */
 export const totalFormule = (f: Formule): number => f.participation + f.licence

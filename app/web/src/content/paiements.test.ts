@@ -1,21 +1,23 @@
 import { describe, expect, it } from 'vitest'
-import { cumul, ECHEANCES_3_FOIS, echeancier, exigible, repartir, situation } from './paiements'
+import { cumul, echeancier, exigible, repartir, situation } from './paiements'
+import { REFERENTIEL_2026_2027 } from './referentiel-initial'
 
 const comptant = { montant_total: 14700, paiement_3_fois: 0, echeance_1: 8000, echeance_2: 3400, echeance_3: 3300 }
 const en3fois = { ...comptant, paiement_3_fois: 1 }
-const [date2, date3] = ECHEANCES_3_FOIS.dates
+const DATES = REFERENTIEL_2026_2027.echeances3Fois.dates
+const [date2, date3] = DATES
 
 describe('échéancier', () => {
   it('comptant : tout est dû à l’inscription', () => {
-    expect(echeancier(comptant)).toEqual([{ montant: 14700, date: null }])
-    expect(exigible(comptant, '2026-09-01')).toBe(14700)
+    expect(echeancier(comptant, DATES)).toEqual([{ montant: 14700, date: null }])
+    expect(exigible(comptant, '2026-09-01', DATES)).toBe(14700)
   })
 
   it('en 3 fois : 1er versement tout de suite, les suivants à leur date', () => {
-    expect(echeancier(en3fois).map((v) => v.montant)).toEqual([8000, 3400, 3300])
-    expect(exigible(en3fois, '2026-10-01')).toBe(8000)
-    expect(exigible(en3fois, date2)).toBe(11400)
-    expect(exigible(en3fois, date3)).toBe(14700)
+    expect(echeancier(en3fois, DATES).map((v) => v.montant)).toEqual([8000, 3400, 3300])
+    expect(exigible(en3fois, '2026-10-01', DATES)).toBe(8000)
+    expect(exigible(en3fois, date2, DATES)).toBe(11400)
+    expect(exigible(en3fois, date3, DATES)).toBe(14700)
   })
 })
 

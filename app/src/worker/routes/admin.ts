@@ -9,6 +9,8 @@ import { journaliser } from '../journal';
 import { critere, DERNIERE_SAISON, seuilPurge } from '../purge';
 import { RGPD } from '../../../web/src/content/rgpd';
 import { categorieDe, eligible } from '../../../web/src/content/categories';
+import { saisonCourante, saisonPourDate } from '../saison';
+import { saisons } from './saisons';
 import { aujourdhuiParis, COLONNES_COMPETITION, inscriptionsOuvertes, lireCompetition, versCompetition } from './competitions';
 import {
   calculerMontant,
@@ -16,7 +18,6 @@ import {
   etatDossier,
   formuleJudoSuggeree,
   horsCommuneSuggere,
-  SAISON,
   type Recueil,
 } from '../../../web/src/content/adhesion';
 import {
@@ -398,6 +399,7 @@ type Dossier = {
 const nombre = (r: D1Result | undefined) => (r?.results[0] as { n: number } | undefined)?.n ?? 0;
 
 async function contexteDossier(c: Context<AppEnv>, adherentId: number) {
+  const saison = await saisonCourante(c);
   const adherent = await c.env.DB.prepare('SELECT id, date_naissance, code_postal FROM adherents WHERE id = ? AND supprime_le IS NULL')
     .bind(adherentId)
     .first<{ id: number; date_naissance: string; code_postal: string | null }>();
@@ -413,18 +415,18 @@ async function contexteDossier(c: Context<AppEnv>, adherentId: number) {
        JOIN adhesions d ON d.adherent_id = l2.adherent_id AND d.saison = ?1
        JOIN adherents a ON a.id = d.adherent_id AND a.supprime_le IS NULL
        WHERE l1.adherent_id = ?2`,
-    ).bind(SAISON.id, adherentId),
-    c.env.DB.prepare('SELECT * FROM adhesions WHERE adherent_id = ? AND saison = ?').bind(adherentId, SAISON.id),
+    ).bind(saison.id, adherentId),
+    c.env.DB.prepare('SELECT * FROM adhesions WHERE adherent_id = ? AND saison = ?').bind(adherentId, saison.id),
   ]);
   const contexte = {
     mineur: estMineur(adherent.date_naissance),
     responsables: nombre(responsables),
     autresDossiersFamille: nombre(famille),
     horsCommune: horsCommuneSuggere(adherent.code_postal),
-    formuleJudo: formuleJudoSuggeree(Number(adherent.date_naissance.slice(0, 4))),
+    formuleJudo: formuleJudoSuggeree(saison.referentiel.tarifs, Number(adherent.date_naissance.slice(0, 4))),
   };
   const adhesion = (dossier?.results[0] as Dossier | undefined) ?? null;
-  return { saison: SAISON, contexte, adhesion, etat: adhesion ? etatDossier(adhesion, contexte) : null };
+  return { saison: { id: saison.id, libelle: saison.libelle }, contexte, adhesion, etat: adhesion ? etatDossier(adhesion, contexte) : null };
 }
 
 admin.get('/adherents/:id/adhesion', async (c) => {
@@ -434,12 +436,13 @@ admin.get('/adherents/:id/adhesion', async (c) => {
 
 admin.put('/adherents/:id/adhesion', async (c) => {
   const adherentId = id(c, 'id') ?? 0;
-  const r = validerAdhesion((await corps(c)) ?? {});
+  const saison = await saisonCourante(c);
+  const r = validerAdhesion((await corps(c)) ?? {}, saison.referentiel.tarifs);
   if (!r.ok) return invalide(c, r);
   const avant = await contexteDossier(c, adherentId);
   if (!avant) return c.json({ error: 'Adhérent introuvable' }, 404);
   const s = r.valeur;
-  const m = calculerMontant({ formule: s.formule, passeport: !!s.passeport, horsCommune: !!s.hors_commune, reductionFamille: !!s.reduction_famille });
+  const m = calculerMontant(saison.referentiel.tarifs, { formule: s.formule, passeport: !!s.passeport, horsCommune: !!s.hors_commune, reductionFamille: !!s.reduction_famille });
   if (!m) return c.json({ error: 'Saisie invalide', erreurs: { formule: 'Formule inconnue' } }, 400);
   const moi = c.get('utilisateur').id;
   // Consentement / autorisation : date et auteur mis à jour quand la réponse change.
@@ -472,7 +475,7 @@ admin.put('/adherents/:id/adhesion', async (c) => {
        valide_le = NULL, valide_par = NULL, updated_at = datetime('now')`,
   )
     .bind(
-      adherentId, SAISON.id, s.formule, s.passeport, s.hors_commune, s.reduction_famille,
+      adherentId, saison.id, s.formule, s.passeport, s.hors_commune, s.reduction_famille,
       m.participation, m.licence, m.supplements, m.reduction, m.total,
       s.paiement_mode, s.paiement_3_fois, m.echeancier[0], m.echeancier[1], m.echeancier[2],
       s.formalite_type, s.formalite_recue_le,
@@ -488,20 +491,21 @@ admin.post('/adherents/:id/adhesion/valider', async (c) => {
   if (!r?.adhesion || !r.etat) return c.json({ error: 'Dossier introuvable' }, 404);
   if (r.etat.manques.length) return c.json({ error: `Dossier incomplet : ${r.etat.manques.join(', ')}` }, 409);
   await c.env.DB.prepare("UPDATE adhesions SET valide_le = datetime('now'), valide_par = ? WHERE adherent_id = ? AND saison = ?")
-    .bind(c.get('utilisateur').id, adherentId, SAISON.id)
+    .bind(c.get('utilisateur').id, adherentId, (await saisonCourante(c)).id)
     .run();
   return c.json(await contexteDossier(c, adherentId));
 });
 
 admin.delete('/adherents/:id/adhesion', async (c) => {
+  const saison = (await saisonCourante(c)).id;
   // Un dossier sur lequel des paiements sont enregistrés (spec 011) ne se supprime pas.
   const paye = await c.env.DB.prepare(
     'SELECT 1 FROM paiement_parts p JOIN adhesions d ON d.id = p.adhesion_id WHERE d.adherent_id = ? AND d.saison = ? LIMIT 1',
   )
-    .bind(id(c, 'id'), SAISON.id)
+    .bind(id(c, 'id'), saison)
     .first();
   if (paye) return c.json({ error: 'Des paiements sont enregistrés sur ce dossier : voir avec le trésorier' }, 409);
-  const res = await c.env.DB.prepare('DELETE FROM adhesions WHERE adherent_id = ? AND saison = ?').bind(id(c, 'id'), SAISON.id).run();
+  const res = await c.env.DB.prepare('DELETE FROM adhesions WHERE adherent_id = ? AND saison = ?').bind(id(c, 'id'), saison).run();
   if (!res.meta.changes) return c.json({ error: 'Dossier introuvable' }, 404);
   return c.json({ ok: true });
 });
@@ -524,6 +528,7 @@ type LigneDossiers = {
 
 // Tous les adhérents actifs, avec leur dossier de la saison s'il existe (« sans dossier » sinon).
 admin.get('/adhesions', async (c) => {
+  const saison = await saisonCourante(c);
   const { results } = await c.env.DB.prepare(
     `SELECT a.id, a.prenom, a.nom, a.date_naissance,
             (SELECT count(*) FROM liens l JOIN users u ON u.id = l.user_id WHERE l.adherent_id = a.id AND u.supprime_le IS NULL) AS responsables,
@@ -532,7 +537,7 @@ admin.get('/adhesions', async (c) => {
      WHERE a.supprime_le IS NULL
      ORDER BY a.nom, a.prenom`,
   )
-    .bind(SAISON.id)
+    .bind(saison.id)
     .all<LigneDossiers>();
   const lignes = results.map((l) => ({
     adherent: { id: l.id, prenom: l.prenom, nom: l.nom, date_naissance: l.date_naissance },
@@ -551,7 +556,7 @@ admin.get('/adhesions', async (c) => {
         )
       : null,
   }));
-  return c.json({ saison: SAISON, lignes });
+  return c.json({ saison: { id: saison.id, libelle: saison.libelle }, lignes });
 });
 
 // --- Compétitions (spec 009) ---
@@ -569,8 +574,15 @@ admin.get('/competitions', async (c) => {
 const lierCompetition = (s: CompetitionSaisie) =>
   [s.nom, s.date, s.lieu, s.adresse, s.lien_officiel, s.infos, JSON.stringify(s.categories), s.sexe, s.date_limite, s.statut] as const;
 
+/** Catégories de la saison d'une compétition : celle de sa date (saisie), sinon la saison courante. */
+async function categoriesPour(c: Context<AppEnv>, b: Record<string, unknown>) {
+  const date = typeof b.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(b.date) ? b.date : aujourdhuiParis();
+  return (await saisonPourDate(c, date)).referentiel.categories;
+}
+
 admin.post('/competitions', async (c) => {
-  const r = validerCompetition((await corps(c)) ?? {});
+  const b = (await corps(c)) ?? {};
+  const r = validerCompetition(b, await categoriesPour(c, b));
   if (!r.ok) return invalide(c, r);
   const cree = await c.env.DB.prepare(
     `INSERT INTO competitions (nom, date, lieu, adresse, lien_officiel, infos, categories, sexe, date_limite, statut, cree_par)
@@ -582,7 +594,8 @@ admin.post('/competitions', async (c) => {
 });
 
 admin.put('/competitions/:id', async (c) => {
-  const r = validerCompetition((await corps(c)) ?? {});
+  const b = (await corps(c)) ?? {};
+  const r = validerCompetition(b, await categoriesPour(c, b));
   if (!r.ok) return invalide(c, r);
   const res = await c.env.DB.prepare(
     `UPDATE competitions SET nom = ?, date = ?, lieu = ?, adresse = ?, lien_officiel = ?, infos = ?, categories = ?, sexe = ?,
@@ -624,6 +637,9 @@ type LigneInscrit = {
 admin.get('/competitions/:id/inscriptions', async (c) => {
   const comp = await lireCompetition(c, id(c, 'id') ?? 0);
   if (!comp) return c.json({ error: 'Compétition introuvable' }, 404);
+  // Catégories et dossiers d'adhésion : ceux de la saison de la compétition.
+  const saison = await saisonPourDate(c, comp.date);
+  const cats = saison.referentiel.categories;
   const { results } = await c.env.DB.prepare(
     `SELECT a.id, a.prenom, a.nom, a.date_naissance, a.sexe, a.grade, a.numero_licence,
             i.adherent_id IS NOT NULL AS inscrit, i.inscrit_le, i.ressaisi_le,
@@ -635,7 +651,7 @@ admin.get('/competitions/:id/inscriptions', async (c) => {
      WHERE a.supprime_le IS NULL
      ORDER BY a.nom, a.prenom`,
   )
-    .bind(comp.id, SAISON.id)
+    .bind(comp.id, saison.id)
     .all<LigneInscrit>();
   const vers = (l: LigneInscrit) => ({
     id: l.id,
@@ -643,7 +659,7 @@ admin.get('/competitions/:id/inscriptions', async (c) => {
     nom: l.nom,
     date_naissance: l.date_naissance,
     sexe: l.sexe,
-    categorie: categorieDe(l.date_naissance)?.nom ?? null,
+    categorie: categorieDe(cats, l.date_naissance)?.nom ?? null,
     grade: l.grade,
     numero_licence: l.numero_licence,
     inscrit_le: l.inscrit_le,
@@ -658,7 +674,7 @@ admin.get('/competitions/:id/inscriptions', async (c) => {
   return c.json({
     competition: { ...comp, inscriptionsOuvertes: inscriptionsOuvertes(comp) },
     inscrits: results.filter((l) => l.inscrit).map(vers),
-    candidats: results.filter((l) => !l.inscrit && eligible(l, comp)).map(vers),
+    candidats: results.filter((l) => !l.inscrit && eligible(cats, l, comp)).map(vers),
   });
 });
 
@@ -671,7 +687,8 @@ admin.put('/competitions/:id/inscriptions/:adherentId', async (c) => {
     .bind(id(c, 'adherentId'))
     .first<{ date_naissance: string; sexe: 'F' | 'M' }>();
   if (!a) return c.json({ error: 'Adhérent introuvable' }, 404);
-  if (!eligible(a, comp)) return c.json({ error: 'Cet adhérent n’est pas dans les catégories de la compétition' }, 409);
+  if (!eligible((await saisonPourDate(c, comp.date)).referentiel.categories, a, comp))
+    return c.json({ error: 'Cet adhérent n’est pas dans les catégories de la compétition' }, 409);
   await c.env.DB.prepare('INSERT OR IGNORE INTO inscriptions_competition (competition_id, adherent_id, inscrit_par) VALUES (?, ?, ?)')
     .bind(comp.id, id(c, 'adherentId'), c.get('utilisateur').id)
     .run();
@@ -758,3 +775,7 @@ admin.get('/journal', roleRequis('admin'), async (c) => {
     .all();
   return c.json(results);
 });
+
+// --- Saisons et référentiels (spec 003) ---
+
+admin.route('/saisons', saisons);

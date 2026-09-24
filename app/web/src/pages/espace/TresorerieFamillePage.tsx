@@ -10,6 +10,7 @@ import { formuleParId, MODES_PAIEMENT, type ModePaiement } from '../../content/a
 import { echeancier, LIBELLES_STATUT_PAIEMENT, MODES_ENCAISSEMENT } from '../../content/paiements'
 import { appel, dateFr, ErreurApi } from '../../lib/api'
 import type { DossierTresorerie, FicheFamille, Paiement } from '../../lib/paiements'
+import { useReferentiel } from '../../lib/saison'
 import { euros } from '../../lib/tarifs'
 
 const aujourdhui = () => new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' })
@@ -93,7 +94,8 @@ export function TresorerieFamillePage() {
 
 function Dossier({ dossier: d, dates, rafraichir }: { dossier: DossierTresorerie; dates: [string, string]; rafraichir: () => Promise<void> }) {
   const [troisCheques, setTroisCheques] = useState(false)
-  const versements = echeancier(d)
+  const versements = echeancier(d, dates)
+  const tarifs = useReferentiel()?.tarifs
   return (
     <Bloc
       titre={`${d.prenom} ${d.nom}`}
@@ -104,7 +106,7 @@ function Dossier({ dossier: d, dates, rafraichir }: { dossier: DossierTresorerie
       }
     >
       <p className="text-sm text-muted-foreground">
-        {formuleParId(d.formule)?.nom ?? d.formule} · {euros(d.montant_total)}
+        {(tarifs && formuleParId(tarifs, d.formule)?.nom) || d.formule} · {euros(d.montant_total)}
         {d.paiement_mode ? ` · prévu : ${MODES_PAIEMENT[d.paiement_mode as ModePaiement] ?? d.paiement_mode}` : ''}
         {d.paiement_3_fois ? ' en 3 fois' : ''}
       </p>

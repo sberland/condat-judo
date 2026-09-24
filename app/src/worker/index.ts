@@ -8,6 +8,7 @@ import { famille } from './routes/famille';
 import { tresorerie } from './routes/tresorerie';
 import type { Env } from './env';
 import { purgerRgpd } from './purge';
+import { saisonCourante, saisonPublique } from './saison';
 import { cookieSession, jetonSession, prolongerSession } from './session';
 
 const app = new Hono<AppEnv>();
@@ -42,6 +43,10 @@ api.route('/auth', auth);
 // --- Compétitions (spec 009) — informations publiques ---
 
 api.route('/competitions', competitions);
+
+// --- Saison courante (spec 003) — publique : tarifs, horaires, catégories de la vitrine ---
+
+api.get('/saison', async (c) => c.json(saisonPublique(await saisonCourante(c))));
 
 // --- Espaces connectés (spec 004) ---
 

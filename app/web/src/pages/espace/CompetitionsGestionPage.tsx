@@ -7,6 +7,7 @@ import { FormulaireCompetition } from '../../components/espace/FormulaireCompeti
 import { Bouton } from '../../components/formulaire'
 import { Pastille } from '../../components/ui'
 import { appel, dateFr } from '../../lib/api'
+import { useReferentiel } from '../../lib/saison'
 import { libelleCriteres, LIBELLES_STATUT_COMPETITION, type CompetitionBureau } from '../../lib/competitions'
 
 const aujourdhui = () => new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' })
@@ -61,6 +62,7 @@ export function CompetitionsGestionPage() {
 }
 
 function Liste({ titre, competitions, vide }: { titre: string; competitions: CompetitionBureau[]; vide?: string }) {
+  const categories = useReferentiel()?.categories ?? []
   return (
     <section>
       <h2 className="mb-3 text-lg font-bold">{titre}</h2>
@@ -80,7 +82,7 @@ function Liste({ titre, competitions, vide }: { titre: string; competitions: Com
                 <span className="block text-sm text-muted-foreground">
                   {dateFr(c.date)} · {c.lieu}
                 </span>
-                <span className="block text-sm text-muted-foreground">{libelleCriteres(c)}</span>
+                <span className="block text-sm text-muted-foreground">{libelleCriteres(c, categories)}</span>
                 <span className="block text-sm">
                   {c.inscrits} inscrit{c.inscrits > 1 ? 's' : ''}
                   {c.inscrits > 0 && (

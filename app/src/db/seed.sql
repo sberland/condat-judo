@@ -36,9 +36,7 @@ INSERT OR IGNORE INTO liens (user_id, adherent_id, qualite, peut_inscrire, peut_
 INSERT OR IGNORE INTO personnes_autorisees (id, adherent_id, prenom, nom, lien, telephone) VALUES
   (1, 1, 'Jeanne', 'Dev', 'grand-mère', '06 00 00 00 09');
 
-INSERT OR IGNORE INTO saisons (id, libelle, debut, fin) VALUES
-  (1, '2025-2026', '2025-09-01', '2026-08-31'),
-  (2, '2026-2027', '2026-09-01', '2027-08-31');
+-- Saison 2026/2027 et son référentiel : insérés par la migration 0008 (spec 003).
 
 -- Dossiers d'adhésion 2026/2027 (spec 010a) : Léa complet (3 fois), Nina à compléter (hors
 -- commune), Hugo sans dossier (réduction famille proposée : sa sœur Léa a déjà un dossier).

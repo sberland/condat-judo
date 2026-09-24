@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
-import { CATEGORIES, libelleCategorie } from '../../content/categories'
+import { libelleCategorie } from '../../content/categories'
+import { useReferentiel } from '../../lib/saison'
 import { appel, ErreurApi } from '../../lib/api'
 import { LIBELLES_STATUT_COMPETITION, type Competition, type StatutCompetition } from '../../lib/competitions'
 import { Alerte, Bouton, Champ, Selection, ZoneTexte } from '../formulaire'
@@ -51,6 +52,8 @@ export function FormulaireCompetition({
   onEnregistre: (id: number) => void
   onAnnule: () => void
 }) {
+  // Catégories de la saison courante (spec 003) ; identifiants stables d'une saison à l'autre.
+  const categories = useReferentiel()?.categories ?? []
   const [s, setS] = useState<Saisie>(competition ? depuis(competition) : vide)
   const [erreurs, setErreurs] = useState<Record<string, string>>({})
   const [erreur, setErreur] = useState('')
@@ -120,7 +123,7 @@ export function FormulaireCompetition({
           Catégories <span className="text-brand">*</span>
         </legend>
         <div className="grid gap-2 sm:grid-cols-2">
-          {CATEGORIES.map((c) => (
+          {categories.map((c) => (
             <label key={c.id} htmlFor={`${p}-cat-${c.id}`} className="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border bg-white px-3.5">
               <input
                 id={`${p}-cat-${c.id}`}

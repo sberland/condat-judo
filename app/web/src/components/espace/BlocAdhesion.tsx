@@ -15,7 +15,8 @@ import {
   type ModePaiement,
   type Recueil,
 } from '../../content/adhesion'
-import { TARIFS } from '../../content/tarifs'
+import type { Tarifs } from '../../content/tarifs'
+import { useReferentiel } from '../../lib/saison'
 import { appel, aUnRole, dateFr, ErreurApi, useMe, type Adhesion, type DossierAdhesion } from '../../lib/api'
 import { euros } from '../../lib/tarifs'
 import { Alerte, Bouton, Case, Champ, Selection } from '../formulaire'
@@ -60,6 +61,8 @@ export function BlocAdhesion({ adherentId }: { adherentId: number }) {
   const [confirmer, setConfirmer] = useState(false)
   const [message, setMessage] = useState('')
   const { data: me } = useMe()
+  // Grille de la saison courante (spec 003) : calcul affiché, formules proposées.
+  const tarifs = useReferentiel()?.tarifs
 
   const mettreAJour = async (d: DossierAdhesion | null) => {
     if (d) client.setQueryData(cle, d)
@@ -67,7 +70,7 @@ export function BlocAdhesion({ adherentId }: { adherentId: number }) {
   }
 
   if (isError) return <Alerte>Impossible de charger le dossier d’adhésion.</Alerte>
-  if (!data) return null
+  if (!data || !tarifs) return null
   const titre = `Adhésion ${data.saison.libelle}`
 
   if (edition) {
@@ -75,6 +78,7 @@ export function BlocAdhesion({ adherentId }: { adherentId: number }) {
       <Bloc titre={titre}>
         <FormulaireAdhesion
           dossier={data}
+          tarifs={tarifs}
           annuler={() => setEdition(false)}
           enregistrer={async (s) => {
             await mettreAJour(await appel<DossierAdhesion>('PUT', url, s))
@@ -115,7 +119,7 @@ export function BlocAdhesion({ adherentId }: { adherentId: number }) {
             À recueillir auprès de la famille : {data.etat.aRecueillir.join(', ')}.
           </p>
         )}
-        <Resume a={a} mineur={data.contexte.mineur} />
+        <Resume a={a} mineur={data.contexte.mineur} tarifs={tarifs} />
         <Alerte>{message}</Alerte>
         <div className="flex flex-col gap-3 border-t pt-4 sm:flex-row">
           <Bouton variante="secondaire" onClick={() => setEdition(true)}>
@@ -183,8 +187,8 @@ function Ligne({ libelle, children }: { libelle: string; children: ReactNode }) 
   )
 }
 
-function Resume({ a, mineur }: { a: Adhesion; mineur: boolean }) {
-  const f = formuleParId(a.formule)
+function Resume({ a, mineur, tarifs }: { a: Adhesion; mineur: boolean; tarifs: Tarifs }) {
+  const f = formuleParId(tarifs, a.formule)
   const options = [a.passeport && 'passeport', a.hors_commune && 'hors commune', a.reduction_famille && 'réduction famille'].filter(Boolean)
   return (
     <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
@@ -248,10 +252,12 @@ function ChoixRecueil({ id, libelle, aide, valeur, onChange }: { id: string; lib
 
 function FormulaireAdhesion({
   dossier,
+  tarifs,
   enregistrer,
   annuler,
 }: {
   dossier: DossierAdhesion
+  tarifs: Tarifs
   enregistrer: (s: Saisie) => Promise<void>
   annuler: () => void
 }) {
@@ -275,7 +281,7 @@ function FormulaireAdhesion({
   const [message, setMessage] = useState('')
   const [enCours, setEnCours] = useState(false)
   const maj = <K extends keyof Saisie>(champ: K) => (v: Saisie[K]) => setS((p) => ({ ...p, [champ]: v }))
-  const montant = calculerMontant({ formule: s.formule, passeport: s.passeport, horsCommune: s.hors_commune, reductionFamille: s.reduction_famille })
+  const montant = calculerMontant(tarifs, { formule: s.formule, passeport: s.passeport, horsCommune: s.hors_commune, reductionFamille: s.reduction_famille })
 
   async function soumettre(e: FormEvent) {
     e.preventDefault()
@@ -283,7 +289,7 @@ function FormulaireAdhesion({
     setErreurs({})
     setMessage('')
     try {
-      await enregistrer({ ...s, passeport: s.passeport && passeportPossible(s.formule) })
+      await enregistrer({ ...s, passeport: s.passeport && passeportPossible(tarifs, s.formule) })
     } catch (err) {
       if (err instanceof ErreurApi) {
         setErreurs(err.erreurs)
@@ -298,7 +304,7 @@ function FormulaireAdhesion({
     <form onSubmit={soumettre} className="grid gap-6" noValidate>
       <fieldset className="grid gap-3">
         <legend className="mb-1 font-bold">Formule</legend>
-        {TARIFS.groupes.map((g) => (
+        {tarifs.groupes.map((g) => (
           <div key={g.titre} className="grid gap-2">
             <p className="text-sm font-semibold text-muted-foreground">{g.titre}</p>
             {g.formules.map((f) => (
@@ -324,7 +330,7 @@ function FormulaireAdhesion({
 
       <fieldset className="grid gap-2">
         <legend className="mb-1 font-bold">Suppléments et réduction</legend>
-        {passeportPossible(s.formule) && (
+        {passeportPossible(tarifs, s.formule) && (
           <Case id="passeport" libelle="Passeport sportif (+8 €)" aide="Recommandé pour les compétiteurs" coche={s.passeport} onChange={maj('passeport')} />
         )}
         <Case

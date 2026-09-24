@@ -1,27 +1,34 @@
 import type { ReactNode } from 'react'
 import { ArrowRight, BadgeEuro, BadgeMinus, BadgePlus, Clock, CreditCard } from 'lucide-react'
-import { HORAIRES, SAISON, TARIFS, type Formule } from '../content/club'
+import { SAISON } from '../content/club'
+import { coursTries, heure } from '../content/referentiel'
+import type { Formule } from '../content/tarifs'
 import { Provisoire, useProvisoireVisible } from '../components/Provisoire'
 import { BoutonLien, Card, Container, PageHeader } from '../components/ui'
+import { useSaisonCourante } from '../lib/saison'
 import { euros, totalFormule } from '../lib/tarifs'
 import { usePageMeta } from '../lib/usePageMeta'
 
 export function HorairesTarifsPage() {
   const provisoireVisible = useProvisoireVisible()
-  const horairesVisibles = !HORAIRES.provisoire || provisoireVisible
-  const tarifsVisibles = !TARIFS.provisoire || provisoireVisible
-  const titre = horairesVisibles ? 'Horaires et tarifs' : 'Tarifs'
+  // Horaires et grille : référentiel de la saison courante (spec 003).
+  const { data: saison, isError } = useSaisonCourante()
+  const r = saison?.referentiel
+  const horairesVisibles = !!r && (!r.horaires.provisoire || provisoireVisible)
+  const tarifsVisibles = !!r && (!r.tarifs.provisoire || provisoireVisible)
+  const titre = !r || horairesVisibles ? 'Horaires et tarifs' : 'Tarifs'
 
-  usePageMeta(titre, `Tarifs de la saison ${TARIFS.saison} du club Judo Condat-sur-Vienne : judo, taïso et yoga, licence comprise, paiement en 3 fois.`)
+  usePageMeta(titre, `Tarifs de la saison ${saison?.libelle ?? ''} du club Judo Condat-sur-Vienne : judo, taïso et yoga, licence comprise, paiement en 3 fois.`)
 
   return (
     <div className="animate-apparition">
-      <PageHeader surtitre={`Saison ${TARIFS.saison}`} titre={titre}>
+      <PageHeader surtitre={saison ? `Saison ${saison.libelle}` : 'Saison'} titre={titre}>
         {SAISON.resume}, hors vacances scolaires et jours fériés. Licence France Judo comprise.
       </PageHeader>
 
       <Container className="space-y-14 py-12 sm:py-16">
-        {!horairesVisibles && !tarifsVisibles && (
+        {!r && !isError && <p className="text-muted-foreground">Chargement…</p>}
+        {(isError || (r && !horairesVisibles && !tarifsVisibles)) && (
           <Card className="text-center">
             <p className="text-lg font-bold">Horaires et tarifs bientôt en ligne</p>
             <p className="mt-2 text-muted-foreground">En attendant, le club répond à vos questions.</p>
@@ -33,17 +40,19 @@ export function HorairesTarifsPage() {
           </Card>
         )}
 
-        {horairesVisibles && (
-          <BlocProvisoire provisoire={HORAIRES.provisoire}>
+        {r && horairesVisibles && (
+          <BlocProvisoire provisoire={r.horaires.provisoire}>
             <section aria-labelledby="titre-horaires">
               <TitreBloc id="titre-horaires" icone={<Clock className="size-6 text-brand" aria-hidden />}>
                 Horaires des cours
               </TitreBloc>
               <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {HORAIRES.creneaux.map((c) => (
-                  <li key={`${c.jour}-${c.horaire}`} className="rounded-2xl border bg-white p-5 shadow-sm">
-                    <p className="text-sm font-semibold text-brand">{c.jour}</p>
-                    <p className="mt-1 text-xl font-bold">{c.horaire}</p>
+                {coursTries(r.horaires.cours).map((c) => (
+                  <li key={`${c.jour}-${c.debut}-${c.cours}`} className="rounded-2xl border bg-white p-5 shadow-sm">
+                    <p className="text-sm font-semibold text-brand capitalize">{c.jour}</p>
+                    <p className="mt-1 text-xl font-bold">
+                      {heure(c.debut)} – {heure(c.fin)}
+                    </p>
                     <p className="mt-2 font-semibold">{c.cours}</p>
                     <p className="text-sm text-muted-foreground">{c.public}</p>
                   </li>
@@ -53,10 +62,10 @@ export function HorairesTarifsPage() {
           </BlocProvisoire>
         )}
 
-        {tarifsVisibles && (
-          <BlocProvisoire provisoire={TARIFS.provisoire}>
+        {r && tarifsVisibles && (
+          <BlocProvisoire provisoire={r.tarifs.provisoire}>
             <div className="space-y-12">
-              {TARIFS.groupes.map((g) => (
+              {r.tarifs.groupes.map((g) => (
                 <section key={g.titre} aria-labelledby={`tarifs-${g.titre}`}>
                   <TitreBloc id={`tarifs-${g.titre}`} icone={<BadgeEuro className="size-6 text-brand" aria-hidden />}>
                     {g.titre}
@@ -77,18 +86,18 @@ export function HorairesTarifsPage() {
                     <BadgePlus className="size-5 text-brand" aria-hidden /> Suppléments et réductions
                   </h2>
                   <ul className="mt-4 divide-y">
-                    {TARIFS.supplements.map((a) => (
-                      <LigneAjustement key={a.libelle} libelle={a.libelle} precision={a.precision} montant={`+ ${euros(a.montant)}`} />
-                    ))}
-                    {TARIFS.reductions.map((a) => (
-                      <LigneAjustement
-                        key={a.libelle}
-                        libelle={a.libelle}
-                        precision={a.precision}
-                        montant={`− ${euros(a.montant)}`}
-                        reduction
-                      />
-                    ))}
+                    <LigneAjustement libelle="Passeport sportif" precision={r.tarifs.passeport.precision} montant={`+ ${euros(r.tarifs.passeport.montant)}`} />
+                    <LigneAjustement
+                      libelle="Résident hors commune"
+                      precision={r.tarifs.horsCommune.precision}
+                      montant={`+ ${euros(r.tarifs.horsCommune.montant)}`}
+                    />
+                    <LigneAjustement
+                      libelle="Réduction famille"
+                      precision={r.tarifs.reductionFamille.precision}
+                      montant={`− ${euros(r.tarifs.reductionFamille.montant)}`}
+                      reduction
+                    />
                   </ul>
                 </Card>
                 <Card>
@@ -96,7 +105,7 @@ export function HorairesTarifsPage() {
                     <CreditCard className="size-5 text-brand" aria-hidden /> Paiement
                   </h2>
                   <ul className="mt-4 flex flex-wrap gap-2">
-                    {TARIFS.modesPaiement.map((m) => (
+                    {r.tarifs.modesPaiement.map((m) => (
                       <li key={m} className="rounded-full bg-surface px-3 py-1.5 text-sm font-medium">
                         {m}
                       </li>

@@ -1,10 +1,9 @@
 // Dossier d'adhésion (spec 010a) — règles partagées par l'écran (calcul en direct) et le Worker
 // (calcul de référence : c'est lui qui fige les montants). ⚠️ Importé par le Worker : pas de DOM,
 // pas de React ; compatible `noUncheckedIndexedAccess`.
-import { MONTANTS, TARIFS, type Formule } from './tarifs'
+import { formulesDe, type Formule, type Tarifs } from './tarifs'
 
-/** Saison des dossiers ressaisis (grille 2026/2027 en dur ; saisons en base avec la spec 003). */
-export const SAISON = { id: '2026-2027', libelle: '2026/2027' } as const
+// La grille vient du référentiel de la saison (spec 003) : chaque fonction la reçoit en paramètre.
 
 /** Ceintures, dans l'ordre de progression (France Judo) ; aucune = taïso, yoga ou débutant. */
 export const CEINTURES = [
@@ -26,15 +25,16 @@ export const CEINTURES = [
   'Noire 5e dan',
 ] as const
 
-export const FORMULES: Formule[] = TARIFS.groupes.flatMap((g) => g.formules)
-export const formuleParId = (id: string): Formule | undefined => FORMULES.find((f) => f.id === id)
-const estJudo = (id: string) => id.startsWith('judo-')
+export const formuleParId = (t: Tarifs, id: string): Formule | undefined => formulesDe(t).find((f) => f.id === id)
 
-/** Tranche judo du formulaire 2026/2027 d'après l'année de naissance. */
-export function formuleJudoSuggeree(anneeNaissance: number): string {
-  if (anneeNaissance >= 2019) return 'judo-micro-mini'
-  if (anneeNaissance >= 2007) return 'judo-poussins-juniors'
-  return 'judo-adulte'
+/**
+ * Formule judo d'après l'année de naissance : celle dont les années la couvrent, sinon la plus
+ * proche (un enfant plus jeune que la grille va dans la plus jeune tranche). '' sans formule judo.
+ */
+export function formuleJudoSuggeree(t: Tarifs, anneeNaissance: number): string {
+  const judo = formulesDe(t).filter((f) => f.judo && f.annees)
+  const ecart = (f: Formule) => (f.annees ? Math.max(f.annees.de - anneeNaissance, anneeNaissance - f.annees.a, 0) : Infinity)
+  return [...judo].sort((x, y) => ecart(x) - ecart(y))[0]?.id ?? ''
 }
 
 /** Résident hors commune : suggestion d'après l'adresse (Condat-sur-Vienne = 87920). */
@@ -53,11 +53,11 @@ export type Montant = {
 }
 
 /** Montant d'un dossier (centimes) ; null si la formule est inconnue. Passeport : judo seulement. */
-export function calculerMontant(o: OptionsMontant): Montant | null {
-  const f = formuleParId(o.formule)
+export function calculerMontant(t: Tarifs, o: OptionsMontant): Montant | null {
+  const f = formuleParId(t, o.formule)
   if (!f) return null
-  const supplements = (o.passeport && estJudo(f.id) ? MONTANTS.passeport : 0) + (o.horsCommune ? MONTANTS.horsCommune : 0)
-  const reduction = o.reductionFamille ? MONTANTS.reductionFamille : 0
+  const supplements = (o.passeport && f.judo ? t.passeport.montant : 0) + (o.horsCommune ? t.horsCommune.montant : 0)
+  const reduction = o.reductionFamille ? t.reductionFamille.montant : 0
   const [premier, deuxieme, troisieme] = f.echeancier
   return {
     participation: f.participation,
@@ -69,7 +69,7 @@ export function calculerMontant(o: OptionsMontant): Montant | null {
   }
 }
 
-export const passeportPossible = (formule: string) => estJudo(formule)
+export const passeportPossible = (t: Tarifs, formule: string) => !!formuleParId(t, formule)?.judo
 
 export const MODES_PAIEMENT = { cheque: 'Chèque', especes: 'Espèces', cb: 'Carte bancaire', autre: 'Chèques vacances et autres' } as const
 export type ModePaiement = keyof typeof MODES_PAIEMENT

@@ -4,7 +4,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { CalendarDays, Check, ChevronLeft, ExternalLink, Info, MapPin, Navigation, Settings, Users } from 'lucide-react'
 import { Alerte, Bouton } from '../components/formulaire'
 import { BoutonExterne, Card, Container, PageHeader, Pastille } from '../components/ui'
-import { CATEGORIES, libelleCategorie } from '../content/categories'
+import { libelleCategorie } from '../content/categories'
+import { useReferentiel } from '../lib/saison'
 import { aUnRole, appel, ErreurApi, useMe } from '../lib/api'
 import {
   dateLongue,
@@ -22,6 +23,7 @@ export function CompetitionPage() {
     queryFn: () => appel<CompetitionDetail>('GET', `/api/competitions/${id}`),
     retry: false,
   })
+  const categories = useReferentiel()?.categories ?? []
   usePageMeta(c?.nom ?? 'Compétition', c ? `${c.nom} — ${dateLongue(c.date)}, ${c.lieu}.` : 'Compétition du club Judo Condat-sur-Vienne.')
 
   if (isPending || isError) {
@@ -71,7 +73,7 @@ export function CompetitionPage() {
             </Info2>
             <Info2 icone={<Users className="size-5" />} titre={c.sexe === 'F' ? 'Filles' : c.sexe === 'M' ? 'Garçons' : 'Catégories'}>
               <ul>
-                {CATEGORIES.filter((cat) => c.categories.includes(cat.id)).map((cat) => (
+                {categories.filter((cat) => c.categories.includes(cat.id)).map((cat) => (
                   <li key={cat.id}>{libelleCategorie(cat)}</li>
                 ))}
               </ul>

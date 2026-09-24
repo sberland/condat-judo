@@ -10,6 +10,7 @@ import {
   validerPaiement,
   validerPersonneAutorisee,
 } from './validation';
+import { REFERENTIEL_2026_2027 as REF } from '../../web/src/content/referentiel-initial';
 
 const AUJOURDHUI = new Date('2026-09-24T12:00:00Z');
 
@@ -102,7 +103,7 @@ describe('ceinture (liste officielle)', () => {
 
 describe('validerAdhesion', () => {
   it('accepte un dossier minimal : formule seule, consentements non recueillis', () => {
-    const r = validerAdhesion({ formule: 'judo-micro-mini' }, AUJOURDHUI);
+    const r = validerAdhesion({ formule: 'judo-micro-mini' }, REF.tarifs, AUJOURDHUI);
     expect(r.ok && r.valeur).toMatchObject({
       formule: 'judo-micro-mini',
       paiement_mode: null,
@@ -125,17 +126,18 @@ describe('validerAdhesion', () => {
         droit_image: 'non',
         whatsapp: 'oui',
       },
+      REF.tarifs,
       AUJOURDHUI,
     );
     expect(r.ok && r.valeur).toMatchObject({ passeport: 1, paiement_3_fois: 1, paiement_mode: 'cheque', droit_image: 'non' });
   });
   it('refuse formule, mode, pièce et consentement inconnus', () => {
-    const r = validerAdhesion({ formule: 'karate', paiement_mode: 'bitcoin', formalite_type: 'radio', droit_image: 'peut-etre' }, AUJOURDHUI);
+    const r = validerAdhesion({ formule: 'karate', paiement_mode: 'bitcoin', formalite_type: 'radio', droit_image: 'peut-etre' }, REF.tarifs, AUJOURDHUI);
     expect(!r.ok && Object.keys(r.erreurs).sort()).toEqual(['droit_image', 'formalite_type', 'formule', 'paiement_mode']);
   });
   it('exige la pièce quand une date de réception est saisie, et refuse une date future', () => {
-    expect(!validerAdhesion({ formule: 'taiso', formalite_recue_le: '2026-09-10' }, AUJOURDHUI).ok).toBe(true);
-    const r = validerAdhesion({ formule: 'taiso', formalite_type: 'certificat', formalite_recue_le: '2027-01-01' }, AUJOURDHUI);
+    expect(!validerAdhesion({ formule: 'taiso', formalite_recue_le: '2026-09-10' }, REF.tarifs, AUJOURDHUI).ok).toBe(true);
+    const r = validerAdhesion({ formule: 'taiso', formalite_type: 'certificat', formalite_recue_le: '2027-01-01' }, REF.tarifs, AUJOURDHUI);
     expect(!r.ok && r.erreurs.formalite_recue_le).toBeTruthy();
   });
 });
@@ -143,19 +145,19 @@ describe('validerAdhesion', () => {
 describe('validerCompetition', () => {
   const base = { nom: 'Tournoi de Limoges', date: '2026-11-15', lieu: 'Limoges', categories: ['poussins', 'benjamins'], date_limite: '2026-11-08' };
   it('accepte une compétition minimale (mixte, ouverte)', () => {
-    const r = validerCompetition(base);
+    const r = validerCompetition(base, REF.categories);
     expect(r.ok && r.valeur).toMatchObject({ sexe: null, statut: 'ouverte', adresse: null, categories: ['poussins', 'benjamins'] });
   });
   it('refuse une date limite après la compétition, une catégorie inconnue, un lien non web', () => {
-    const r = validerCompetition({ ...base, date_limite: '2026-11-20', categories: ['poussins', 'dragons'], lien_officiel: 'ftp://x' });
+    const r = validerCompetition({ ...base, date_limite: '2026-11-20', categories: ['poussins', 'dragons'], lien_officiel: 'ftp://x' }, REF.categories);
     expect(!r.ok && Object.keys(r.erreurs).sort()).toEqual(['categories', 'date_limite', 'lien_officiel']);
   });
   it('exige au moins une catégorie', () => {
-    const r = validerCompetition({ ...base, categories: [] });
+    const r = validerCompetition({ ...base, categories: [] }, REF.categories);
     expect(!r.ok && r.erreurs.categories).toBeTruthy();
   });
   it('garde les sauts de ligne des infos pratiques', () => {
-    const r = validerCompetition({ ...base, infos: 'Pesée 9 h\nCombats 10 h' });
+    const r = validerCompetition({ ...base, infos: 'Pesée 9 h\nCombats 10 h' }, REF.categories);
     expect(r.ok && r.valeur.infos).toBe('Pesée 9 h\nCombats 10 h');
   });
 });

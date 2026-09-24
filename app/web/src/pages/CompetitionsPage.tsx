@@ -4,6 +4,7 @@ import { ChevronRight, MapPin, Settings } from 'lucide-react'
 import { Container, PageHeader, Pastille } from '../components/ui'
 import { aUnRole, appel, useMe } from '../lib/api'
 import { etatInscriptions, libelleCriteres, paveDate, type CompetitionDetail, type EnfantsConcernes } from '../lib/competitions'
+import { useReferentiel } from '../lib/saison'
 import { usePageMeta } from '../lib/usePageMeta'
 
 export function CompetitionsPage() {
@@ -58,6 +59,7 @@ export function CompetitionsPage() {
 function CarteCompetition({ competition: c, enfants }: { competition: CompetitionDetail; enfants?: EnfantsConcernes[number]['enfants'] }) {
   const d = paveDate(c.date)
   const etat = etatInscriptions(c)
+  const categories = useReferentiel()?.categories ?? []
   const inscrits = enfants?.filter((e) => e.inscrit).map((e) => e.prenom) ?? []
   const aInscrire = enfants?.filter((e) => !e.inscrit).map((e) => e.prenom) ?? []
   return (
@@ -79,7 +81,7 @@ function CarteCompetition({ competition: c, enfants }: { competition: Competitio
           <MapPin className="size-3.5 shrink-0" aria-hidden />
           <span className="truncate">{c.lieu}</span>
         </span>
-        <span className="mt-0.5 block text-sm text-muted-foreground">{libelleCriteres(c)}</span>
+        <span className="mt-0.5 block text-sm text-muted-foreground">{libelleCriteres(c, categories)}</span>
         <Pastille ton={etat.ton} className="mt-2">
           {etat.libelle}
         </Pastille>

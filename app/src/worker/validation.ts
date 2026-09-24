@@ -10,7 +10,8 @@ import {
   type ModePaiement,
   type Recueil,
 } from '../../web/src/content/adhesion';
-import { categorieParId } from '../../web/src/content/categories';
+import { categorieParId, type Categorie } from '../../web/src/content/categories';
+import type { Tarifs } from '../../web/src/content/tarifs';
 import { MODES_ENCAISSEMENT, type ModeEncaissement } from '../../web/src/content/paiements';
 
 export type Resultat<T> = { ok: true; valeur: T } | { ok: false; erreurs: Record<string, string> };
@@ -177,11 +178,11 @@ export type AdhesionSaisie = {
 
 const dansListe = <T extends string>(liste: Record<T, string>, v: unknown): v is T => typeof v === 'string' && Object.hasOwn(liste, v);
 
-export function validerAdhesion(corps: Corps, aujourdhui = new Date()): Resultat<AdhesionSaisie> {
+export function validerAdhesion(corps: Corps, tarifs: Tarifs, aujourdhui = new Date()): Resultat<AdhesionSaisie> {
   const c = new Collecteur();
   const bool = (v: unknown): 0 | 1 => (v === true || v === 1 ? 1 : 0);
   const formule = texte(corps.formule);
-  if (!formuleParId(formule)) c.erreurs.formule = 'Formule obligatoire';
+  if (!formuleParId(tarifs, formule)) c.erreurs.formule = 'Formule obligatoire';
   const mode = corps.paiement_mode || null;
   if (mode !== null && !dansListe(MODES_PAIEMENT, mode)) c.erreurs.paiement_mode = 'Mode de paiement inconnu';
   const type = corps.formalite_type || null;
@@ -231,7 +232,7 @@ export type CompetitionSaisie = {
   statut: (typeof STATUTS_COMPETITION)[number];
 };
 
-export function validerCompetition(corps: Corps): Resultat<CompetitionSaisie> {
+export function validerCompetition(corps: Corps, connues: Categorie[]): Resultat<CompetitionSaisie> {
   const c = new Collecteur();
   const nom = c.requis(corps, 'nom', 'Nom', 120);
   const lieu = c.requis(corps, 'lieu', 'Lieu', 120);
@@ -244,7 +245,7 @@ export function validerCompetition(corps: Corps): Resultat<CompetitionSaisie> {
   if (lien && !/^https?:\/\/\S+$/.test(lien)) c.erreurs.lien_officiel = 'Adresse web invalide (https://…)';
   const categories = Array.isArray(corps.categories) ? [...new Set(corps.categories.filter((x): x is string => typeof x === 'string'))] : [];
   if (!categories.length) c.erreurs.categories = 'Choisir au moins une catégorie';
-  else if (!categories.every((id) => categorieParId(id))) c.erreurs.categories = 'Catégorie inconnue';
+  else if (!categories.every((id) => categorieParId(connues, id))) c.erreurs.categories = 'Catégorie inconnue';
   const sexe = corps.sexe || null;
   if (sexe !== null && sexe !== 'F' && sexe !== 'M') c.erreurs.sexe = 'Valeur inconnue';
   const statut = corps.statut ?? 'ouverte';

@@ -6,6 +6,31 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.12.0] — 2026-09-24
+
+### Saisons et tarifs gérés par le bureau
+
+#### Notes client
+
+Le bureau gère lui-même, saison par saison, les catégories d’âge, la grille tarifaire, les dates
+du paiement en 3 fois et les horaires des cours : plus besoin d’un développeur pour les changer.
+Pour la rentrée suivante, il prépare la nouvelle saison en un clic (copie de la précédente, années
+et dates décalées d’un an), l’ajuste tranquillement, puis la rend « courante » quand il le décide :
+dossiers d’adhésion, trésorerie, compétitions et page publique « Horaires & tarifs » passent
+alors dessus. Rien ne change pour la saison 2026/2027 : ses valeurs sont reprises à l’identique.
+
+#### Ajouts
+
+- Écran « Saisons et tarifs » : catégories, formules et tarifs, suppléments et réduction, dates du
+  paiement en 3 fois, horaires des cours ; contrôles à l’enregistrement (versements = total…)
+- Préparation de la saison suivante par copie, bascule de la saison courante, inscriptions
+  ouvertes (pour le futur dossier en ligne)
+
+#### Modifications
+
+- Page publique « Horaires & tarifs », dossiers d’adhésion, trésorerie et compétitions lisent la
+  saison courante (compétitions : la saison de leur date, si elle est préparée)
+
 ## [0.11.0] — 2026-09-24
 
 ### Données personnelles : droits des familles et effacement automatique

@@ -78,6 +78,7 @@ et des familles pour la comptabilité. Le rôle « bureau » seul ne voit pas le
 
 | Écran | Usage |
 | --- | --- |
+| **Saisons et tarifs** | Catégories d’âge, grille tarifaire, dates du paiement en 3 fois et horaires des cours, saison par saison. « Préparer la saison … » copie la dernière (années et dates décalées d’un an) ; « Rendre cette saison courante » bascule dossiers, trésorerie, compétitions et page publique. « À confirmer » masque tarifs ou horaires sur le site public |
 | **Compétitions** | Créer une compétition (date, lieu, catégories, date limite, infos pratiques), « Envoyer sur WhatsApp » (message prêt avec le lien), suivre les inscrits avec leurs alertes (licence, dossier, formalité médicale), « Copier » ou « CSV » pour la ressaisie sur le site fédéral, case « Ressaisi », inscrire un enfant à la place de ses parents (même après la date limite), clôturer ou annuler |
 | **Dossiers 2026/2027** | Dossiers d'adhésion de la saison : filtres (sans dossier, à compléter, complets, validés), ce qui manque pour chacun, total des montants ; « Saisir un nouvel adhérent » pour ressaisir un formulaire papier |
 | **Adhérents** | Liste des pratiquants avec recherche ; « aucun responsable » signale une fiche à compléter |
@@ -97,8 +98,9 @@ production » en bas à droite de chaque page, qui indique aussi la version test
 
 ## Mettre à jour le contenu
 
-Les textes du site (disciplines, équipe, règlement, partenaires, liens) sont regroupés dans un seul
-fichier : `app/web/src/content/club.ts`. Ajouter ou retirer une discipline dans cette liste met à
+Les horaires des cours et la grille tarifaire se modifient dans l’espace (Mon espace → Saisons et
+tarifs). Les autres textes du site (disciplines, équipe, règlement, partenaires, liens) sont
+regroupés dans un seul fichier : `app/web/src/content/club.ts`. Ajouter ou retirer une discipline dans cette liste met à
 jour tout le site (accroches, nombre de disciplines, pied de page) ; seul `app/web/index.html`
 (référencement) est à reprendre à la main — un test le signale. Toute modification passe par le circuit habituel
 (branche, revue en local, qualification, mise en production).

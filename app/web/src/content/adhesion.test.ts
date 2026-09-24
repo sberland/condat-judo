@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { calculerMontant, CEINTURES, estMineur, etatDossier, formuleJudoSuggeree, FORMULES, horsCommuneSuggere, type DossierPourEtat } from './adhesion'
+import { calculerMontant, CEINTURES, estMineur, etatDossier, formuleJudoSuggeree, horsCommuneSuggere, type DossierPourEtat } from './adhesion'
+import { REFERENTIEL_2026_2027 } from './referentiel-initial'
+import { formulesDe } from './tarifs'
+
+const T = REFERENTIEL_2026_2027.tarifs
+const FORMULES = formulesDe(T)
 
 const sans = { passeport: false, horsCommune: false, reductionFamille: false }
 
@@ -13,16 +18,16 @@ describe('montant du dossier (grille 2026/2027)', () => {
       'yoga-1': 10300,
       'yoga-2': 16300,
     }
-    for (const f of FORMULES) expect(calculerMontant({ formule: f.id, ...sans })?.total, f.id).toBe(attendus[f.id])
+    for (const f of FORMULES) expect(calculerMontant(T, { formule: f.id, ...sans })?.total, f.id).toBe(attendus[f.id])
   })
 
   it('ajoute passeport (judo seulement) et hors commune, retire la réduction famille', () => {
-    expect(calculerMontant({ formule: 'judo-poussins-juniors', passeport: true, horsCommune: true, reductionFamille: true })).toMatchObject({
+    expect(calculerMontant(T, { formule: 'judo-poussins-juniors', passeport: true, horsCommune: true, reductionFamille: true })).toMatchObject({
       supplements: 1000,
       reduction: 800,
       total: 14900,
     })
-    expect(calculerMontant({ formule: 'taiso', passeport: true, horsCommune: false, reductionFamille: false })?.supplements).toBe(0)
+    expect(calculerMontant(T, { formule: 'taiso', passeport: true, horsCommune: false, reductionFamille: false })?.supplements).toBe(0)
   })
 
   it('paiement en 3 fois : la somme des versements égale toujours le total', () => {
@@ -30,23 +35,23 @@ describe('montant du dossier (grille 2026/2027)', () => {
       for (const passeport of [false, true])
         for (const horsCommune of [false, true])
           for (const reductionFamille of [false, true]) {
-            const m = calculerMontant({ formule: f.id, passeport, horsCommune, reductionFamille })
+            const m = calculerMontant(T, { formule: f.id, passeport, horsCommune, reductionFamille })
             expect(m && m.echeancier.reduce((a, b) => a + b, 0), f.id).toBe(m?.total)
           }
   })
 
   it('refuse une formule inconnue', () => {
-    expect(calculerMontant({ formule: 'karate', ...sans })).toBeNull()
+    expect(calculerMontant(T, { formule: 'karate', ...sans })).toBeNull()
   })
 })
 
 describe('suggestions', () => {
   it('tranche judo d’après l’année de naissance (formulaire 2026/2027)', () => {
-    expect(formuleJudoSuggeree(2021)).toBe('judo-micro-mini')
-    expect(formuleJudoSuggeree(2019)).toBe('judo-micro-mini')
-    expect(formuleJudoSuggeree(2018)).toBe('judo-poussins-juniors')
-    expect(formuleJudoSuggeree(2007)).toBe('judo-poussins-juniors')
-    expect(formuleJudoSuggeree(2006)).toBe('judo-adulte')
+    expect(formuleJudoSuggeree(T, 2021)).toBe('judo-micro-mini')
+    expect(formuleJudoSuggeree(T, 2019)).toBe('judo-micro-mini')
+    expect(formuleJudoSuggeree(T, 2018)).toBe('judo-poussins-juniors')
+    expect(formuleJudoSuggeree(T, 2007)).toBe('judo-poussins-juniors')
+    expect(formuleJudoSuggeree(T, 2006)).toBe('judo-adulte')
   })
 
   it('hors commune d’après le code postal', () => {

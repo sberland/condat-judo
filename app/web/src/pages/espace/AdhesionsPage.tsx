@@ -7,6 +7,7 @@ import { Espace } from '../../components/espace/Garde'
 import { Bouton } from '../../components/formulaire'
 import { formuleParId, LIBELLES_STATUT, type EtatDossier } from '../../content/adhesion'
 import { appel, type ListeDossiers } from '../../lib/api'
+import { useReferentiel } from '../../lib/saison'
 import { euros } from '../../lib/tarifs'
 
 type Filtre = 'tous' | 'sans' | EtatDossier['statut']
@@ -14,6 +15,7 @@ type Filtre = 'tous' | 'sans' | EtatDossier['statut']
 export function AdhesionsPage() {
   const navigate = useNavigate()
   const [filtre, setFiltre] = useState<Filtre>('tous')
+  const tarifs = useReferentiel()?.tarifs
   const { data, isPending, isError } = useQuery({
     queryKey: ['admin', 'adhesions'],
     queryFn: () => appel<ListeDossiers>('GET', '/api/admin/adhesions'),
@@ -79,7 +81,7 @@ export function AdhesionsPage() {
                       <StatutDossier etat={etat} />
                     </span>
                     <span className="block truncate text-sm text-muted-foreground">
-                      {dossier ? `${formuleParId(dossier.formule)?.nom ?? dossier.formule} · ${euros(dossier.montant_total)}` : 'Aucun dossier pour cette saison'}
+                      {dossier ? `${(tarifs ? formuleParId(tarifs, dossier.formule)?.nom : undefined) ?? dossier.formule} · ${euros(dossier.montant_total)}` : 'Aucun dossier pour cette saison'}
                     </span>
                     {etat && etat.manques.length > 0 && <span className="block text-sm font-medium text-brand">Manque : {etat.manques.join(', ')}</span>}
                     {etat && etat.manques.length === 0 && etat.aRecueillir.length > 0 && (

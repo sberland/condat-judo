@@ -4,7 +4,7 @@ import { MODES_ENCAISSEMENT } from '../content/paiements'
 import { dateFr } from './api'
 
 type Saison = { id: string; libelle: string }
-type Echeances = { saison: string; dates: [string, string]; provisoire: boolean }
+type Echeances = { dates: [string, string]; provisoire: boolean }
 
 export type Membre = { adhesion_id: number; prenom: string; nom: string }
 

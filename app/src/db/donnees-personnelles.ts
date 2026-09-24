@@ -43,7 +43,12 @@ export const TABLES: Record<string, Table> = {
     },
   },
   user_roles: { colonnes: { user_id: 'conservee', role: 'conservee' } },
-  saisons: { colonnes: { id: 'conservee', libelle: 'conservee', debut: 'conservee', fin: 'conservee' } },
+  // Saisons et référentiels (003) : aucune donnée personnelle (modifie_par = id d'un membre du bureau).
+  saisons: {
+    colonnes: Object.fromEntries(
+      ['id', 'libelle', 'debut', 'fin', 'courante', 'inscriptions_ouvertes', 'referentiel', 'modifie_le', 'modifie_par'].map((c) => [c, 'conservee' as const]),
+    ),
+  },
   adherents: {
     conserveesSi: `adherents.user_id IS NOT NULL AND ${COMPTE_AVEC_ROLE('adherents.user_id')}`,
     colonnes: {

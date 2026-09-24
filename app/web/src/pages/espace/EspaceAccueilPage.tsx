@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
-import { ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, ShieldCheck, Trophy, Users, UsersRound, Wallet } from 'lucide-react'
-import { SAISON } from '../../content/adhesion'
+import { CalendarRange, ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, ShieldCheck, Trophy, Users, UsersRound, Wallet } from 'lucide-react'
+import { useSaisonCourante } from '../../lib/saison'
 import { Espace } from '../../components/espace/Garde'
 import { Bouton } from '../../components/formulaire'
 import { aUnRole, ROLES, seDeconnecter } from '../../lib/api'
@@ -10,6 +10,7 @@ import { aUnRole, ROLES, seDeconnecter } from '../../lib/api'
 export function EspaceAccueilPage() {
   const client = useQueryClient()
   const navigate = useNavigate()
+  const { data: saison } = useSaisonCourante()
   return (
     <Espace titre="Mon espace">
       {(me) => (
@@ -40,7 +41,7 @@ export function EspaceAccueilPage() {
             )}
             {aUnRole(me, 'bureau', 'admin') && (
               <>
-                <Tuile to="/espace/adhesions" icone={<ClipboardList className="size-6" />} titre={`Dossiers ${SAISON.libelle}`}>
+                <Tuile to="/espace/adhesions" icone={<ClipboardList className="size-6" />} titre={`Dossiers ${saison?.libelle ?? ''}`.trim()}>
                   Dossiers d’adhésion de la saison : ce qui manque, montants, validation.
                 </Tuile>
                 <Tuile to="/espace/adherents" icone={<Users className="size-6" />} titre="Adhérents">
@@ -48,6 +49,9 @@ export function EspaceAccueilPage() {
                 </Tuile>
                 <Tuile to="/espace/comptes" icone={<Contact className="size-6" />} titre="Comptes">
                   Parents, adhérents majeurs, bureau{aUnRole(me, 'admin') ? ' — et leurs rôles' : ''}.
+                </Tuile>
+                <Tuile to="/espace/saisons" icone={<CalendarRange className="size-6" />} titre="Saisons et tarifs">
+                  Catégories d’âge, tarifs, paiement en 3 fois et horaires ; préparer la saison suivante.
                 </Tuile>
               </>
             )}
@@ -86,7 +90,7 @@ function Tuile({
   titre,
   children,
 }: {
-  to: '/espace/famille' | '/espace/adherents' | '/espace/adhesions' | '/espace/comptes' | '/espace/aide' | '/espace/competitions' | '/competitions' | '/espace/tresorerie' | '/espace/rgpd'
+  to: '/espace/famille' | '/espace/adherents' | '/espace/adhesions' | '/espace/comptes' | '/espace/aide' | '/espace/competitions' | '/competitions' | '/espace/tresorerie' | '/espace/rgpd' | '/espace/saisons'
   icone: ReactNode
   titre: string
   children: ReactNode
