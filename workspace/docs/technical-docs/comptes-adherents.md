@@ -62,8 +62,34 @@ personnes autorisées), `/espace/comptes` (comptes, rôles, liens de connexion �
 l'API vérifie les mêmes droits. L'entrée « Mon espace » n'apparaît dans le menu que pour un
 utilisateur connecté.
 
+### Dossiers d'adhésion (spec 010a)
+
+Table `adhesions` (migration `0004`) : un dossier par adhérent **et par saison**
+(`UNIQUE (adherent_id, saison)`), saison `2026-2027` en dur tant que la 003 n'a pas mis les
+référentiels en base.
+
+- **Règles partagées** : `app/web/src/content/adhesion.ts` (formule suggérée d'après l'année de
+  naissance, suppléments, réduction famille, échéancier en 3 fois, statut, ceintures) et
+  `content/tarifs.ts` (grille) sont importés **par l'écran et par le Worker**. L'écran calcule
+  en direct ; le Worker recalcule et **fige** les montants à l'enregistrement (la saisie du
+  client n'est jamais prise pour un montant).
+- **Statut** : `a_completer` (manque un responsable pour un mineur, le mode de paiement ou la
+  formalité reçue) → `complet` → `valide` (action du bureau, refusée si incomplet). Toute
+  modification annule la validation. Consentements et autorisations « non recueillis » : signalés
+  « à recueillir », non bloquants.
+- **Traçabilité** : `soins_urgence`, `droit_image`, `whatsapp` → `*_le` / `*_par` mis à jour
+  quand la réponse change (remis à vide si « non recueilli ») ; `valide_par`, `cree_par`.
+- **Réduction famille** suggérée si un autre enfant d'un même responsable a déjà un dossier de la
+  saison ; **hors commune** si le code postal n'est pas 87920.
+- Routes (`bureau` / `admin`) : `GET|PUT|DELETE /api/admin/adherents/:id/adhesion`,
+  `POST …/adhesion/valider`, `GET /api/admin/adhesions` (tous les adhérents actifs + dossier).
+
 ## Points de vigilance
 
+- **Aucune donnée de santé** dans un dossier : formalité = type de pièce + date de réception ;
+  aucun champ de texte libre (on y écrirait des informations médicales).
+- **Ceinture** : liste officielle (`CEINTURES`) validée côté API ; une valeur saisie avant la
+  liste reste affichée dans l'écran pour ne pas être perdue.
 - **Au moins un administrateur** : l'API refuse de retirer le rôle `admin` au dernier admin et de
   supprimer son compte (409). Un utilisateur ne peut pas supprimer son propre compte.
 - **E-mail unique** : créer un compte avec un e-mail déjà utilisé → 409 avec l'`id` du compte
@@ -78,7 +104,9 @@ utilisateur connecté.
 
 ## Références
 
-- Fichiers source : `app/src/db/migrations/0002_comptes_adherents.sql`, `app/src/worker/droits.ts`,
-  `app/src/worker/validation.ts`, `app/src/worker/routes/`, `app/web/src/pages/espace/`
+- Fichiers source : `app/src/db/migrations/0002_comptes_adherents.sql`, `0004_adhesions.sql`,
+  `app/src/worker/droits.ts`, `app/src/worker/validation.ts`, `app/src/worker/routes/`,
+  `app/web/src/content/adhesion.ts`, `app/web/src/pages/espace/`
+- Spec 010a : [`010a-dossier-saisie-bureau.md`](../../tasks/pending/010a-dossier-saisie-bureau.md)
 - Spec : [`004-comptes-foyers-roles.md`](../../tasks/done/004-comptes-foyers-roles.md)
 - Seam d'identité : [`identite-auth.md`](identite-auth.md)

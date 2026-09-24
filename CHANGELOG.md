@@ -6,6 +6,31 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+### Dossiers d'adhésion de la saison
+
+#### Notes client
+
+Le bureau peut désormais ressaisir sur le site les formulaires d'inscription papier de la saison
+2026/2027. Pour chaque adhérent : la formule (proposée d'après l'âge), le montant calculé
+automatiquement (passeport, hors commune, réduction famille, paiement en 3 fois), le mode de
+paiement, la formalité médicale reçue (sans aucune information de santé), l'autorisation de soins
+d'urgence et les consentements (droit à l'image, groupe WhatsApp). Un écran « Dossiers » montre
+d'un coup d'œil ce qui manque pour chacun et le total des montants. La ceinture se choisit dans la
+liste officielle de France Judo.
+
+#### Ajouts
+
+- Bloc « Adhésion 2026/2027 » sur la fiche de chaque adhérent : saisie guidée, montant en direct,
+  statut « à compléter / complet / validé », enchaînement vers l'adhérent suivant
+- Écran « Dossiers 2026/2027 » : tous les adhérents, filtres, ce qui manque, total des montants
+- Consentements et autorisations datés, avec le nom de qui les a saisis
+- Aide intégrée : rubrique « Dossiers d'adhésion »
+
+#### Modifications
+
+- Ceinture : liste officielle (dont ceintures bicolores des enfants) au lieu d'un texte libre
+- Fiche d'un enfant sans responsable : le formulaire d'ajout s'ouvre directement
+
 ## [0.6.1] — 2026-09-24
 
 ### Site de qualification sans données réelles des familles

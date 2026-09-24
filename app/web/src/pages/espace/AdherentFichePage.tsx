@@ -3,7 +3,9 @@ import { useNavigate, useParams } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Mail, Pencil, Phone, Plus, Trash2, UserCheck, UserPlus } from 'lucide-react'
 import { Bloc, Espace } from '../../components/espace/Garde'
+import { BlocAdhesion } from '../../components/espace/BlocAdhesion'
 import { FormulaireAdherent } from '../../components/espace/FormulaireAdherent'
+import { estMineur } from '../../content/adhesion'
 import { LienConnexion } from '../../components/espace/LienConnexion'
 import { Alerte, Bouton, Case, Champ, Selection } from '../../components/formulaire'
 import {
@@ -44,6 +46,7 @@ export function AdherentFichePage() {
           <div className="grid gap-6">
             <Identite fiche={data} rafraichir={rafraichir} />
             <Responsables fiche={data} rafraichir={rafraichir} />
+            {!data.adherent.supprime_le && <BlocAdhesion adherentId={data.adherent.id} />}
             <PersonnesAutorisees fiche={data} rafraichir={rafraichir} />
           </div>
         )
@@ -205,7 +208,8 @@ function ChoixCapacites({
 }
 
 function Responsables({ fiche, rafraichir }: PropsBloc) {
-  const [ajout, setAjout] = useState(false)
+  // Ressaisie : un mineur sans responsable → formulaire d'ajout ouvert d'emblée.
+  const [ajout, setAjout] = useState(() => fiche.responsables.length === 0 && estMineur(fiche.adherent.date_naissance))
   const inactif = !!fiche.adherent.supprime_le
   return (
     <Bloc
