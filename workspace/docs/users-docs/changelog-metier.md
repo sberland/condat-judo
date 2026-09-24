@@ -4,6 +4,31 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.15.0 — 24 septembre 2026
+
+La garderie du mercredi est désormais complète sur le site. Le mercredi, l'encadrant pointe
+chaque enfant « Récupéré » à la garderie (ou « Absent », et il prévient la famille), puis, à la
+fin du cours, « Parti avec » la personne venue le chercher, choisie parmi les seules personnes
+autorisées. Les parents suivent l'état de leur enfant en direct dans « Garderie du mercredi »
+(récupéré à quelle heure, parti avec qui), sans rien avoir à demander ; le bureau le voit dans la
+liste du mercredi.
+
+---
+
+## v0.14.0 — 24 septembre 2026
+
+Le mercredi, l'encadrant qui va chercher les enfants à la garderie ouvre « Mercredi du jour » sur
+son téléphone : les enfants à récupérer, par lieu, avec leur photo pour les reconnaître, et qui
+peut venir les chercher au dojo, avec leur téléphone pour appeler en un geste. Cette liste n'est
+visible que le mercredi même, et chaque consultation est enregistrée. Les parents déposent
+eux-mêmes la photo de leur enfant depuis leur espace (réduite sur le téléphone avant l'envoi),
+avec leur accord, retirable à tout moment ; le bureau peut aussi la prendre au dojo si l'accord
+figure au dossier. La photo est effacée au bout d'un an. Les parents gèrent aussi la liste des
+personnes autorisées à venir chercher leur enfant (grands-parents, nounou…) : l'encadrant ne
+confie un enfant qu'aux personnes de cette liste.
+
+---
+
 ## v0.13.0 — 24 septembre 2026
 
 Les parents demandent eux-mêmes, depuis leur téléphone, que le club récupère leur enfant à la
