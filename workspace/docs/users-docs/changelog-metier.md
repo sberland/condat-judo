@@ -4,6 +4,19 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.9.0 — 24 septembre 2026
+
+Le bureau publie chaque compétition sur le site (date, lieu, catégories, date limite, informations
+pratiques) et en poste le lien dans le groupe WhatsApp du club, message prêt. Depuis ce lien, un
+parent connecté inscrit son enfant d'un geste, et peut annuler jusqu'à la date limite ; seuls les
+enfants des catégories concernées peuvent l'être, par un responsable qui en a le droit. La page
+d'une compétition est publique mais n'affiche aucune information sur les enfants. Le bureau suit
+les inscrits, avec une alerte quand une licence, un dossier ou une formalité médicale manque,
+récupère la liste prête à ressaisir sur le site de la fédération (copie ou fichier Excel), coche
+les inscriptions ressaisies, et peut inscrire un enfant à la place de ses parents.
+
+---
+
 ## v0.8.0 — 24 septembre 2026
 
 Une page « Données personnelles », accessible en bas de chaque page, explique aux familles ce que

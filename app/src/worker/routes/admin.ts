@@ -4,6 +4,8 @@ import { Hono, type Context } from 'hono';
 import { aUnRole, connexionRequise, roleRequis, type AppEnv } from '../droits';
 import { ROLES, type Role } from '../identite';
 import { couperAcces, creerLien } from '../session';
+import { categorieDe, eligible } from '../../../web/src/content/categories';
+import { COLONNES_COMPETITION, inscriptionsOuvertes, lireCompetition, versCompetition } from './competitions';
 import {
   calculerMontant,
   estMineur,
@@ -15,6 +17,8 @@ import {
 } from '../../../web/src/content/adhesion';
 import {
   validerAdhesion,
+  validerCompetition,
+  type CompetitionSaisie,
   validerAdherent,
   validerCompte,
   validerLien,
@@ -119,7 +123,7 @@ admin.get('/adherents/:id', async (c) => {
     .first();
   if (!adherent) return c.json({ error: 'Adhérent introuvable' }, 404);
 
-  const [responsables, personnes] = await c.env.DB.batch([
+  const [responsables, personnes, competitions] = await c.env.DB.batch([
     c.env.DB.prepare(
       `SELECT u.id, u.prenom, u.nom, u.email, u.telephone, l.qualite, l.peut_inscrire, l.peut_recuperer, l.est_contact,
               EXISTS (SELECT 1 FROM identites i WHERE i.user_id = u.id) AS compte_active
@@ -130,8 +134,17 @@ admin.get('/adherents/:id', async (c) => {
     c.env.DB.prepare(
       `SELECT id, prenom, nom, lien, telephone FROM personnes_autorisees WHERE adherent_id = ? ORDER BY nom, prenom`,
     ).bind(adherentId),
+    c.env.DB.prepare(
+      `SELECT co.id, co.nom, co.date, co.statut FROM inscriptions_competition i JOIN competitions co ON co.id = i.competition_id
+       WHERE i.adherent_id = ? ORDER BY co.date DESC`,
+    ).bind(adherentId),
   ]);
-  return c.json({ adherent, responsables: responsables?.results ?? [], personnesAutorisees: personnes?.results ?? [] });
+  return c.json({
+    adherent,
+    responsables: responsables?.results ?? [],
+    personnesAutorisees: personnes?.results ?? [],
+    competitions: competitions?.results ?? [],
+  });
 });
 
 admin.put('/adherents/:id', async (c) => {
@@ -527,4 +540,149 @@ admin.get('/adhesions', async (c) => {
       : null,
   }));
   return c.json({ saison: SAISON, lignes });
+});
+
+// --- Compétitions (spec 009) ---
+
+admin.get('/competitions', async (c) => {
+  const { results } = await c.env.DB.prepare(
+    `SELECT ${COLONNES_COMPETITION},
+            (SELECT count(*) FROM inscriptions_competition i WHERE i.competition_id = co.id) AS inscrits,
+            (SELECT count(*) FROM inscriptions_competition i WHERE i.competition_id = co.id AND i.ressaisi_le IS NOT NULL) AS ressaisis
+     FROM competitions co ORDER BY date DESC, id DESC`,
+  ).all<Parameters<typeof versCompetition>[0] & { inscrits: number; ressaisis: number }>();
+  return c.json(results.map((l) => ({ ...versCompetition(l), inscrits: l.inscrits, ressaisis: l.ressaisis })));
+});
+
+const lierCompetition = (s: CompetitionSaisie) =>
+  [s.nom, s.date, s.lieu, s.adresse, s.lien_officiel, s.infos, JSON.stringify(s.categories), s.sexe, s.date_limite, s.statut] as const;
+
+admin.post('/competitions', async (c) => {
+  const r = validerCompetition((await corps(c)) ?? {});
+  if (!r.ok) return invalide(c, r);
+  const cree = await c.env.DB.prepare(
+    `INSERT INTO competitions (nom, date, lieu, adresse, lien_officiel, infos, categories, sexe, date_limite, statut, cree_par)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id`,
+  )
+    .bind(...lierCompetition(r.valeur), c.get('utilisateur').id)
+    .first<{ id: number }>();
+  return c.json({ id: cree?.id }, 201);
+});
+
+admin.put('/competitions/:id', async (c) => {
+  const r = validerCompetition((await corps(c)) ?? {});
+  if (!r.ok) return invalide(c, r);
+  const res = await c.env.DB.prepare(
+    `UPDATE competitions SET nom = ?, date = ?, lieu = ?, adresse = ?, lien_officiel = ?, infos = ?, categories = ?, sexe = ?,
+       date_limite = ?, statut = ?, updated_at = datetime('now') WHERE id = ?`,
+  )
+    .bind(...lierCompetition(r.valeur), id(c, 'id'))
+    .run();
+  if (!res.meta.changes) return c.json({ error: 'Compétition introuvable' }, 404);
+  return c.json({ ok: true });
+});
+
+// Suppression réservée à une compétition sans inscrit (sinon : l'annuler, pour garder la trace).
+admin.delete('/competitions/:id', async (c) => {
+  const compId = id(c, 'id');
+  const n = await c.env.DB.prepare('SELECT count(*) AS n FROM inscriptions_competition WHERE competition_id = ?').bind(compId).first<{ n: number }>();
+  if (n?.n) return c.json({ error: 'Des enfants sont inscrits : annulez la compétition plutôt que de la supprimer' }, 409);
+  const res = await c.env.DB.prepare('DELETE FROM competitions WHERE id = ?').bind(compId).run();
+  if (!res.meta.changes) return c.json({ error: 'Compétition introuvable' }, 404);
+  return c.json({ ok: true });
+});
+
+type LigneInscrit = {
+  id: number;
+  prenom: string;
+  nom: string;
+  date_naissance: string;
+  sexe: 'F' | 'M';
+  grade: string | null;
+  numero_licence: string | null;
+  inscrit: number;
+  inscrit_le: string | null;
+  inscrit_par: string | null;
+  ressaisi_le: string | null;
+  dossier: number;
+  formalite_recue_le: string | null;
+};
+
+// Inscrits (avec alertes licence / dossier / formalité) et adhérents éligibles non inscrits.
+admin.get('/competitions/:id/inscriptions', async (c) => {
+  const comp = await lireCompetition(c, id(c, 'id') ?? 0);
+  if (!comp) return c.json({ error: 'Compétition introuvable' }, 404);
+  const { results } = await c.env.DB.prepare(
+    `SELECT a.id, a.prenom, a.nom, a.date_naissance, a.sexe, a.grade, a.numero_licence,
+            i.adherent_id IS NOT NULL AS inscrit, i.inscrit_le, i.ressaisi_le,
+            (SELECT u.prenom || ' ' || u.nom FROM users u WHERE u.id = i.inscrit_par) AS inscrit_par,
+            d.id IS NOT NULL AS dossier, d.formalite_recue_le
+     FROM adherents a
+     LEFT JOIN inscriptions_competition i ON i.adherent_id = a.id AND i.competition_id = ?1
+     LEFT JOIN adhesions d ON d.adherent_id = a.id AND d.saison = ?2
+     WHERE a.supprime_le IS NULL
+     ORDER BY a.nom, a.prenom`,
+  )
+    .bind(comp.id, SAISON.id)
+    .all<LigneInscrit>();
+  const vers = (l: LigneInscrit) => ({
+    id: l.id,
+    prenom: l.prenom,
+    nom: l.nom,
+    date_naissance: l.date_naissance,
+    sexe: l.sexe,
+    categorie: categorieDe(l.date_naissance)?.nom ?? null,
+    grade: l.grade,
+    numero_licence: l.numero_licence,
+    inscrit_le: l.inscrit_le,
+    inscrit_par: l.inscrit_par,
+    ressaisi_le: l.ressaisi_le,
+    // Alertes pour le bureau, sans bloquer l'inscription (décision de la revue 009).
+    alertes: [
+      ...(l.numero_licence ? [] : ['n° de licence manquant']),
+      ...(!l.dossier ? ['pas de dossier d’adhésion'] : l.formalite_recue_le ? [] : ['formalité médicale non reçue']),
+    ],
+  });
+  return c.json({
+    competition: { ...comp, inscriptionsOuvertes: inscriptionsOuvertes(comp) },
+    inscrits: results.filter((l) => l.inscrit).map(vers),
+    candidats: results.filter((l) => !l.inscrit && eligible(l, comp)).map(vers),
+  });
+});
+
+// Le bureau inscrit un enfant à la place de ses parents (y compris après la date limite).
+admin.put('/competitions/:id/inscriptions/:adherentId', async (c) => {
+  const comp = await lireCompetition(c, id(c, 'id') ?? 0);
+  if (!comp) return c.json({ error: 'Compétition introuvable' }, 404);
+  if (comp.statut === 'annulee') return c.json({ error: 'Compétition annulée' }, 409);
+  const a = await c.env.DB.prepare('SELECT date_naissance, sexe FROM adherents WHERE id = ? AND supprime_le IS NULL')
+    .bind(id(c, 'adherentId'))
+    .first<{ date_naissance: string; sexe: 'F' | 'M' }>();
+  if (!a) return c.json({ error: 'Adhérent introuvable' }, 404);
+  if (!eligible(a, comp)) return c.json({ error: 'Cet adhérent n’est pas dans les catégories de la compétition' }, 409);
+  await c.env.DB.prepare('INSERT OR IGNORE INTO inscriptions_competition (competition_id, adherent_id, inscrit_par) VALUES (?, ?, ?)')
+    .bind(comp.id, id(c, 'adherentId'), c.get('utilisateur').id)
+    .run();
+  return c.json({ ok: true });
+});
+
+admin.delete('/competitions/:id/inscriptions/:adherentId', async (c) => {
+  const res = await c.env.DB.prepare('DELETE FROM inscriptions_competition WHERE competition_id = ? AND adherent_id = ?')
+    .bind(id(c, 'id'), id(c, 'adherentId'))
+    .run();
+  if (!res.meta.changes) return c.json({ error: 'Inscription introuvable' }, 404);
+  return c.json({ ok: true });
+});
+
+// Case « ressaisi sur le site fédéral ».
+admin.put('/competitions/:id/inscriptions/:adherentId/ressaisi', async (c) => {
+  const b = await corps(c);
+  const res = await c.env.DB.prepare(
+    `UPDATE inscriptions_competition SET ressaisi_le = CASE WHEN ?1 THEN datetime('now') ELSE NULL END
+     WHERE competition_id = ?2 AND adherent_id = ?3`,
+  )
+    .bind(b?.ressaisi === true ? 1 : 0, id(c, 'id'), id(c, 'adherentId'))
+    .run();
+  if (!res.meta.changes) return c.json({ error: 'Inscription introuvable' }, 404);
+  return c.json({ ok: true });
 });

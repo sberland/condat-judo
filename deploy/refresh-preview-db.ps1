@@ -41,7 +41,7 @@ $ProdDb    = "condat-judo"
 $PreviewDb = "condat-judo-preview"
 # Tables à purger avant import (ordre = FK : enfants avant parents). À tenir à jour à chaque
 # nouvelle table, comme db:reset:local (app/package.json) et .github/workflows/preview.yml.
-$DropSql   = "DROP TABLE IF EXISTS adhesions; DROP TABLE IF EXISTS sessions; DROP TABLE IF EXISTS liens_connexion; DROP TABLE IF EXISTS liens; DROP TABLE IF EXISTS personnes_autorisees; DROP TABLE IF EXISTS identites; DROP TABLE IF EXISTS user_roles; DROP TABLE IF EXISTS adherents; DROP TABLE IF EXISTS saisons; DROP TABLE IF EXISTS users; DROP TABLE IF EXISTS d1_migrations;"
+$DropSql   = "DROP TABLE IF EXISTS inscriptions_competition; DROP TABLE IF EXISTS competitions; DROP TABLE IF EXISTS adhesions; DROP TABLE IF EXISTS sessions; DROP TABLE IF EXISTS liens_connexion; DROP TABLE IF EXISTS liens; DROP TABLE IF EXISTS personnes_autorisees; DROP TABLE IF EXISTS identites; DROP TABLE IF EXISTS user_roles; DROP TABLE IF EXISTS adherents; DROP TABLE IF EXISTS saisons; DROP TABLE IF EXISTS users; DROP TABLE IF EXISTS d1_migrations;"
 # Anonymisation de la copie (spec 008), après import + migrations — comme preview.yml.
 $Anonymisation = "src/db/anonymisation-qualif.sql"
 

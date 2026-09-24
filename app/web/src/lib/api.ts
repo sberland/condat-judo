@@ -1,5 +1,6 @@
 import { useQuery, type QueryClient } from '@tanstack/react-query'
 import type { EtatDossier, Formalite, ModePaiement, Recueil } from '../content/adhesion'
+import type { CompetitionEnfant } from './competitions'
 
 export type Environnement = 'production' | 'preview' | 'local'
 
@@ -134,7 +135,12 @@ export type Responsable = {
 
 export type PersonneAutorisee = { id: number; prenom: string; nom: string; lien: string; telephone: string | null }
 
-export type FicheAdherent = { adherent: Adherent; responsables: Responsable[]; personnesAutorisees: PersonneAutorisee[] }
+export type FicheAdherent = {
+  adherent: Adherent
+  responsables: Responsable[]
+  personnesAutorisees: PersonneAutorisee[]
+  competitions: CompetitionEnfant[]
+}
 
 export type Compte = {
   id: number
@@ -164,6 +170,7 @@ export type Enfant = {
   est_contact: number
   coResponsables: { prenom: string; nom: string; qualite: Qualite }[]
   personnesAutorisees: { prenom: string; nom: string; lien: string }[]
+  competitions: CompetitionEnfant[]
 }
 
 // --- Dossiers d'adhésion (spec 010a) ---

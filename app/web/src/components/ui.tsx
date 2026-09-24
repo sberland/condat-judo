@@ -108,6 +108,17 @@ export function BoutonExterne({
   )
 }
 
+const TONS = {
+  ouvert: 'bg-emerald-50 text-emerald-800',
+  ferme: 'bg-surface text-muted-foreground',
+  annule: 'bg-brand-soft text-brand',
+} as const
+
+/** Petite étiquette d'état (ex. « Inscriptions closes »). */
+export function Pastille({ ton, className = '', children }: { ton: keyof typeof TONS; className?: string; children: ReactNode }) {
+  return <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${TONS[ton]} ${className}`}>{children}</span>
+}
+
 export function FacebookIcon({ className = 'size-5' }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>

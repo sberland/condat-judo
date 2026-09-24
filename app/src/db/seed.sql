@@ -52,3 +52,19 @@ INSERT OR IGNORE INTO adhesions (adherent_id, saison, formule, passeport, hors_c
    'oui', '2026-09-10 18:00:00', 1, 1),
   (3, '2026-2027', 'judo-poussins-juniors', 0, 1, 0, 10100, 4600, 200, 0, 14900, NULL, 0, 8200, 3400, 3300,
    NULL, NULL, 'non_recueilli', NULL, NULL, 'non_recueilli', NULL, NULL, 'non_recueilli', NULL, NULL, 1);
+
+-- Compétitions fictives (spec 009), datées par rapport au jour du seed : une ouverte (Léa inscrite
+-- par son père), une réservée aux filles minimes (Nina : seule sa mère peut l'inscrire), une dont
+-- la date limite est passée.
+INSERT OR IGNORE INTO competitions (id, nom, date, lieu, adresse, lien_officiel, infos, categories, sexe, date_limite, statut, cree_par) VALUES
+  (1, 'Tournoi de l''Exemple', date('now', '+20 days'), 'Limoges — dojo fictif', '1 rue de l''Exemple, 87000 Limoges',
+   'https://example.org/tournoi', 'Pesée de 8 h 30 à 9 h.' || char(10) || 'Apporter le passeport sportif et une gourde.',
+   '["mini-poussins","poussins","benjamins"]', NULL, date('now', '+10 days'), 'ouverte', 5),
+  (2, 'Critérium filles', date('now', '+35 days'), 'Saint-Junien — gymnase fictif', NULL,
+   NULL, NULL, '["minimes","cadets"]', 'F', date('now', '+25 days'), 'ouverte', 5),
+  (3, 'Interclubs d''automne', date('now', '+5 days'), 'Isle — salle fictive', NULL,
+   NULL, 'Inscriptions closes : liste transmise.', '["poussins","benjamins","minimes"]', NULL, date('now', '-1 days'), 'ouverte', 5);
+
+INSERT OR IGNORE INTO inscriptions_competition (competition_id, adherent_id, inscrit_par) VALUES
+  (1, 1, 2),
+  (3, 1, 5);

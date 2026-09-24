@@ -17,7 +17,10 @@ export const RGPD: {
 } = {
   contact: { valeur: 'le bureau du club, par écrit (adresse à préciser)', provisoire: true },
   conservationAdherents: { valeur: '3 saisons après la dernière adhésion', provisoire: true },
-  destinataires: { valeur: ['France Judo, pour la prise de licence'], provisoire: true },
+  destinataires: {
+    valeur: ['France Judo, pour la prise de licence', 'France Judo et l’organisateur, pour l’inscription aux compétitions'],
+    provisoire: true,
+  },
 }
 
 /** Durées fixées par le fonctionnement du site (pas de décision du club requise). */
@@ -41,6 +44,15 @@ export const TRAITEMENTS: Traitement[] = [
     ],
     finalite: 'Gérer les inscriptions, la licence, les paiements et la sécurité des enfants (qui peut les récupérer).',
     base: 'Exécution de l’adhésion à l’association.',
+  },
+  {
+    titre: 'Compétitions',
+    donnees: [
+      'Inscription : compétition, qui a inscrit l’enfant et quand',
+      'Ressaisi sur le site de France Judo pour l’organisateur : nom, prénom, date de naissance, sexe, catégorie, ceinture, n° de licence',
+    ],
+    finalite: 'Inscrire les enfants aux compétitions choisies par leurs parents.',
+    base: 'Exécution de l’adhésion à l’association, à votre demande (vous inscrivez votre enfant).',
   },
   {
     titre: 'Autorisations et consentements',

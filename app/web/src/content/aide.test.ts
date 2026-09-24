@@ -6,11 +6,12 @@ const ids = (roles: Parameters<typeof rubriquesPour>[0]) => rubriquesPour(roles)
 describe('aide intégrée — filtrage par profil', () => {
   it('un parent (sans rôle) ne voit que l’aide famille', () => {
     expect(rubriquesPour([]).every((r) => r.profil === 'famille')).toBe(true)
-    expect(ids([])).toEqual(['connexion', 'mes-enfants', 'donnees'])
+    expect(ids([])).toEqual(['connexion', 'mes-enfants', 'competitions', 'donnees'])
   })
 
   it('le bureau voit l’aide famille et bureau, pas l’administration', () => {
     expect(ids(['bureau'])).toContain('liens-connexion')
+    expect(ids(['bureau'])).toContain('competitions-bureau')
     expect(ids(['bureau'])).toContain('connexion')
     expect(ids(['bureau'])).not.toContain('roles')
   })

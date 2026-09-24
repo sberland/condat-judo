@@ -100,6 +100,18 @@ export const TABLES: Record<string, Table> = {
       ].map((c) => [c, 'conservee' as const]),
     ),
   },
+  // Compétitions (009) : informations publiques ; `infos` = texte pratique du bureau (pesée…).
+  competitions: {
+    colonnes: Object.fromEntries(
+      ['id', 'nom', 'date', 'lieu', 'adresse', 'lien_officiel', 'infos', 'categories', 'sexe', 'date_limite', 'statut', 'cree_par', 'created_at', 'updated_at'].map(
+        (c) => [c, 'conservee' as const],
+      ),
+    ),
+  },
+  // Inscriptions (009) : identifiants et dates seulement (l'adhérent est pseudonymisé).
+  inscriptions_competition: {
+    colonnes: { competition_id: 'conservee', adherent_id: 'conservee', inscrit_par: 'conservee', inscrit_le: 'conservee', ressaisi_le: 'conservee' },
+  },
   liens_connexion: {
     colonnes: {
       empreinte: 'purgee',

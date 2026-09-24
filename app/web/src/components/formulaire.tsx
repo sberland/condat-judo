@@ -23,12 +23,12 @@ export function Champ({
   libelle: string
   erreur?: string
   aide?: string
-  type?: 'text' | 'email' | 'tel' | 'date'
+  type?: 'text' | 'email' | 'tel' | 'date' | 'url'
   valeur: string
   onChange: (v: string) => void
   requis?: boolean
   autoComplete?: string
-  inputMode?: 'text' | 'numeric' | 'tel' | 'email'
+  inputMode?: 'text' | 'numeric' | 'tel' | 'email' | 'url'
 }) {
   return (
     <div>
@@ -48,6 +48,49 @@ export function Champ({
         aria-invalid={!!erreur}
         aria-describedby={erreur ? `${id}-erreur` : aide ? `${id}-aide` : undefined}
         className={CHAMP}
+      />
+      {aide && !erreur && (
+        <p id={`${id}-aide`} className="mt-1 text-sm text-muted-foreground">
+          {aide}
+        </p>
+      )}
+      <MessageChamp id={id} erreur={erreur} />
+    </div>
+  )
+}
+
+/** Texte sur plusieurs lignes (informations pratiques…). */
+export function ZoneTexte({
+  id,
+  libelle,
+  erreur,
+  aide,
+  valeur,
+  onChange,
+  lignes = 4,
+}: {
+  id: string
+  libelle: string
+  erreur?: string
+  aide?: string
+  valeur: string
+  onChange: (v: string) => void
+  lignes?: number
+}) {
+  return (
+    <div>
+      <label htmlFor={id} className="mb-1.5 block text-sm font-semibold">
+        {libelle}
+      </label>
+      <textarea
+        id={id}
+        name={id}
+        rows={lignes}
+        value={valeur}
+        onChange={(e) => onChange(e.target.value)}
+        aria-invalid={!!erreur}
+        aria-describedby={erreur ? `${id}-erreur` : aide ? `${id}-aide` : undefined}
+        className={`${CHAMP} py-3`}
       />
       {aide && !erreur && (
         <p id={`${id}-aide`} className="mt-1 text-sm text-muted-foreground">

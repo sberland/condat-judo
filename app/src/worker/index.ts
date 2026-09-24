@@ -3,6 +3,7 @@ import pkg from '../../package.json';
 import { connexionRequise, protectionCsrf, type AppEnv } from './droits';
 import { admin } from './routes/admin';
 import { auth } from './routes/auth';
+import { competitions } from './routes/competitions';
 import { famille } from './routes/famille';
 import { cookieSession, jetonSession, prolongerSession } from './session';
 
@@ -34,6 +35,10 @@ api.get('/me', connexionRequise, async (c) => {
 // --- Connexion (spec 005a) — publique ---
 
 api.route('/auth', auth);
+
+// --- Compétitions (spec 009) — informations publiques ---
+
+api.route('/competitions', competitions);
 
 // --- Espaces connectés (spec 004) ---
 

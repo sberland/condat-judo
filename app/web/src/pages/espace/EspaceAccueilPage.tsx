@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
-import { ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, Users, UsersRound } from 'lucide-react'
+import { ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, Trophy, Users, UsersRound } from 'lucide-react'
 import { SAISON } from '../../content/adhesion'
 import { Espace } from '../../components/espace/Garde'
 import { Bouton } from '../../components/formulaire'
@@ -24,6 +24,15 @@ export function EspaceAccueilPage() {
             <Tuile to="/espace/famille" icone={<UsersRound className="size-6" />} titre="Mes enfants">
               Leurs fiches, leurs responsables et les personnes autorisées à les récupérer.
             </Tuile>
+            {aUnRole(me, 'bureau', 'admin') ? (
+              <Tuile to="/espace/competitions" icone={<Trophy className="size-6" />} titre="Compétitions">
+                Créer une compétition, partager son lien, suivre les inscrits et les ressaisir sur le site fédéral.
+              </Tuile>
+            ) : (
+              <Tuile to="/competitions" icone={<Trophy className="size-6" />} titre="Compétitions">
+                Les prochaines compétitions, et l’inscription de vos enfants.
+              </Tuile>
+            )}
             {aUnRole(me, 'bureau', 'admin') && (
               <>
                 <Tuile to="/espace/adhesions" icone={<ClipboardList className="size-6" />} titre={`Dossiers ${SAISON.libelle}`}>
@@ -67,7 +76,7 @@ function Tuile({
   titre,
   children,
 }: {
-  to: '/espace/famille' | '/espace/adherents' | '/espace/adhesions' | '/espace/comptes' | '/espace/aide'
+  to: '/espace/famille' | '/espace/adherents' | '/espace/adhesions' | '/espace/comptes' | '/espace/aide' | '/espace/competitions' | '/competitions'
   icone: ReactNode
   titre: string
   children: ReactNode

@@ -58,7 +58,7 @@ export function Header() {
                   key={item.to}
                   to={item.to}
                   activeOptions={{ exact: item.to === '/' }}
-                  className="rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground"
+                  className="rounded-full px-3 py-2 text-sm font-medium whitespace-nowrap 2xl:px-4 text-muted-foreground transition-colors hover:text-foreground"
                   activeProps={{ className: '!text-brand' }}
                 >
                   {item.libelle}
@@ -90,7 +90,7 @@ export function Header() {
               href={CLUB.facebook}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden size-10 items-center justify-center rounded-full bg-ink text-white transition-colors hover:bg-brand xl:inline-flex"
+              className="hidden size-10 shrink-0 items-center justify-center rounded-full bg-ink text-white transition-colors hover:bg-brand xl:inline-flex"
               aria-label="Page Facebook du club"
             >
               <FacebookIcon className="size-4" />
