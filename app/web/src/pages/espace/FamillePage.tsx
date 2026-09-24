@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Check, X } from 'lucide-react'
 import { Bloc, Espace } from '../../components/espace/Garde'
+import { HistoriqueCompetitions } from '../../components/espace/HistoriqueCompetitions'
 import { Alerte, Bouton, Champ } from '../../components/formulaire'
 import { age, appel, dateFr, ErreurApi, QUALITES, type Enfant, type Me } from '../../lib/api'
 import { CLUB } from '../../content/club'
@@ -112,6 +113,11 @@ function FicheEnfant({ enfant: e }: { enfant: Enfant }) {
             <p className="text-muted-foreground">Personne d’autre que les responsables</p>
           )}
         </div>
+      </div>
+
+      <div className="mt-5 border-t pt-4">
+        <h3 className="mb-1.5 text-sm font-semibold">Compétitions</h3>
+        <HistoriqueCompetitions competitions={e.competitions} vers="public" />
       </div>
     </Bloc>
   )

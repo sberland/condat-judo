@@ -3,6 +3,7 @@ import {
   casseNom,
   normaliserTelephone,
   validerAdhesion,
+  validerCompetition,
   validerAdherent,
   validerCompte,
   validerLien,
@@ -135,5 +136,25 @@ describe('validerAdhesion', () => {
     expect(!validerAdhesion({ formule: 'taiso', formalite_recue_le: '2026-09-10' }, AUJOURDHUI).ok).toBe(true);
     const r = validerAdhesion({ formule: 'taiso', formalite_type: 'certificat', formalite_recue_le: '2027-01-01' }, AUJOURDHUI);
     expect(!r.ok && r.erreurs.formalite_recue_le).toBeTruthy();
+  });
+});
+
+describe('validerCompetition', () => {
+  const base = { nom: 'Tournoi de Limoges', date: '2026-11-15', lieu: 'Limoges', categories: ['poussins', 'benjamins'], date_limite: '2026-11-08' };
+  it('accepte une compétition minimale (mixte, ouverte)', () => {
+    const r = validerCompetition(base);
+    expect(r.ok && r.valeur).toMatchObject({ sexe: null, statut: 'ouverte', adresse: null, categories: ['poussins', 'benjamins'] });
+  });
+  it('refuse une date limite après la compétition, une catégorie inconnue, un lien non web', () => {
+    const r = validerCompetition({ ...base, date_limite: '2026-11-20', categories: ['poussins', 'dragons'], lien_officiel: 'ftp://x' });
+    expect(!r.ok && Object.keys(r.erreurs).sort()).toEqual(['categories', 'date_limite', 'lien_officiel']);
+  });
+  it('exige au moins une catégorie', () => {
+    const r = validerCompetition({ ...base, categories: [] });
+    expect(!r.ok && r.erreurs.categories).toBeTruthy();
+  });
+  it('garde les sauts de ligne des infos pratiques', () => {
+    const r = validerCompetition({ ...base, infos: 'Pesée 9 h\nCombats 10 h' });
+    expect(r.ok && r.valeur.infos).toBe('Pesée 9 h\nCombats 10 h');
   });
 });

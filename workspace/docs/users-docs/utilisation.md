@@ -10,6 +10,7 @@ Le site est accessible à tous, sans compte : <https://condat-judo.sebastien-ber
 | **Disciplines** | Judo (et éveil judo pour les 4-5 ans), jujitsu, taïso, yoga — accès direct à chaque discipline par les boutons en haut de page |
 | **Le club** | Le professeur et le bureau, le dojo et l'itinéraire, le code moral complet, les partenaires, les liens utiles |
 | **Règlement** | Le règlement intérieur, article par article : touchez un titre pour l'ouvrir |
+| **Compétitions** | Les prochaines compétitions : date, lieu (avec itinéraire), catégories, informations pratiques, date limite d'inscription. L'inscription des enfants demande d'être connecté |
 | **Contact** | Écrire au club via Facebook, venir au dojo, prendre sa licence |
 
 Sur téléphone, le menu s'ouvre avec le bouton en haut à droite (trois traits).
@@ -41,12 +42,20 @@ détaillée, mise à jour à chaque évolution de l'espace ; ce qui suit en donn
 **Pour les parents — Mes enfants** : la fiche de chaque enfant (âge, ceinture, n° de licence), ce
 que vous pouvez faire pour lui (l'inscrire, venir le chercher, être prévenu), les autres
 responsables et les personnes autorisées à le récupérer. Vous pouvez y mettre à jour votre
-téléphone ; pour toute autre correction, adressez-vous au bureau.
+téléphone ; pour toute autre correction, adressez-vous au bureau. En bas de chaque fiche : les
+compétitions auxquelles l'enfant a été inscrit.
+
+**Pour les parents — Compétitions** : touchez le lien posté dans le groupe WhatsApp du club (ou
+menu « Compétitions »), puis **« Inscrire »** à côté du prénom de votre enfant. Jusqu'à la date
+limite, « Annuler l'inscription » revient en arrière ; ensuite, prévenez le bureau. Seuls les
+enfants des catégories concernées peuvent être inscrits, et seulement par un responsable qui en a
+le droit.
 
 **Pour le bureau** :
 
 | Écran | Usage |
 | --- | --- |
+| **Compétitions** | Créer une compétition (date, lieu, catégories, date limite, infos pratiques), « Envoyer sur WhatsApp » (message prêt avec le lien), suivre les inscrits avec leurs alertes (licence, dossier, formalité médicale), « Copier » ou « CSV » pour la ressaisie sur le site fédéral, case « Ressaisi », inscrire un enfant à la place de ses parents (même après la date limite), clôturer ou annuler |
 | **Dossiers 2026/2027** | Dossiers d'adhésion de la saison : filtres (sans dossier, à compléter, complets, validés), ce qui manque pour chacun, total des montants ; « Saisir un nouvel adhérent » pour ressaisir un formulaire papier |
 | **Adhérents** | Liste des pratiquants avec recherche ; « aucun responsable » signale une fiche à compléter |
 | **Fiche d'un adhérent** | Identité (modifier, supprimer — une fiche supprimée reste restaurable ; ceinture dans la liste officielle), responsables légaux, **dossier d'adhésion de la saison** (formule, montant calculé, paiement, formalité médicale, autorisations et consentements, validation), personnes autorisées à récupérer l'enfant |

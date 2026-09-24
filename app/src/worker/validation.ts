@@ -10,6 +10,7 @@ import {
   type ModePaiement,
   type Recueil,
 } from '../../web/src/content/adhesion';
+import { categorieParId } from '../../web/src/content/categories';
 
 export type Resultat<T> = { ok: true; valeur: T } | { ok: false; erreurs: Record<string, string> };
 
@@ -209,5 +210,55 @@ export function validerAdhesion(corps: Corps, aujourdhui = new Date()): Resultat
     soins_urgence: recueil('soins_urgence', 'Soins d’urgence'),
     droit_image: recueil('droit_image', 'Droit à l’image'),
     whatsapp: recueil('whatsapp', 'Groupe WhatsApp'),
+  });
+}
+
+// --- Compétitions (spec 009) ---
+
+export const STATUTS_COMPETITION = ['ouverte', 'cloturee', 'annulee'] as const;
+
+export type CompetitionSaisie = {
+  nom: string;
+  date: string;
+  lieu: string;
+  adresse: string | null;
+  lien_officiel: string | null;
+  infos: string | null;
+  categories: string[];
+  sexe: 'F' | 'M' | null;
+  date_limite: string;
+  statut: (typeof STATUTS_COMPETITION)[number];
+};
+
+export function validerCompetition(corps: Corps): Resultat<CompetitionSaisie> {
+  const c = new Collecteur();
+  const nom = c.requis(corps, 'nom', 'Nom', 120);
+  const lieu = c.requis(corps, 'lieu', 'Lieu', 120);
+  const date = texte(corps.date);
+  if (!dateIsoValide(date)) c.erreurs.date = 'Date invalide';
+  const limite = texte(corps.date_limite);
+  if (!dateIsoValide(limite)) c.erreurs.date_limite = 'Date limite invalide';
+  else if (dateIsoValide(date) && limite > date) c.erreurs.date_limite = 'La date limite doit précéder la compétition';
+  const lien = c.optionnel(corps, 'lien_officiel', 'Lien', 300);
+  if (lien && !/^https?:\/\/\S+$/.test(lien)) c.erreurs.lien_officiel = 'Adresse web invalide (https://…)';
+  const categories = Array.isArray(corps.categories) ? [...new Set(corps.categories.filter((x): x is string => typeof x === 'string'))] : [];
+  if (!categories.length) c.erreurs.categories = 'Choisir au moins une catégorie';
+  else if (!categories.every((id) => categorieParId(id))) c.erreurs.categories = 'Catégorie inconnue';
+  const sexe = corps.sexe || null;
+  if (sexe !== null && sexe !== 'F' && sexe !== 'M') c.erreurs.sexe = 'Valeur inconnue';
+  const statut = corps.statut ?? 'ouverte';
+  if (!STATUTS_COMPETITION.includes(statut as CompetitionSaisie['statut'])) c.erreurs.statut = 'Statut inconnu';
+  return c.resultat({
+    nom,
+    date,
+    lieu,
+    adresse: c.optionnel(corps, 'adresse', 'Adresse', 160),
+    lien_officiel: lien,
+    // Texte long (pesée, horaires, pièces à apporter) : sauts de ligne conservés.
+    infos: typeof corps.infos === 'string' && corps.infos.trim() ? corps.infos.trim().slice(0, 1000) : null,
+    categories,
+    sexe: sexe as 'F' | 'M' | null,
+    date_limite: limite,
+    statut: statut as CompetitionSaisie['statut'],
   });
 }

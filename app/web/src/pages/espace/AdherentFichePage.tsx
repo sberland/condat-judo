@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Mail, Pencil, Phone, Plus, Trash2, UserCheck, UserPlus } from 'lucide-react'
 import { Bloc, Espace } from '../../components/espace/Garde'
 import { BlocAdhesion } from '../../components/espace/BlocAdhesion'
+import { HistoriqueCompetitions } from '../../components/espace/HistoriqueCompetitions'
 import { FormulaireAdherent } from '../../components/espace/FormulaireAdherent'
 import { estMineur } from '../../content/adhesion'
 import { LienConnexion } from '../../components/espace/LienConnexion'
@@ -48,6 +49,9 @@ export function AdherentFichePage() {
             <Responsables fiche={data} rafraichir={rafraichir} />
             {!data.adherent.supprime_le && <BlocAdhesion adherentId={data.adherent.id} />}
             <PersonnesAutorisees fiche={data} rafraichir={rafraichir} />
+            <Bloc titre="Compétitions">
+              <HistoriqueCompetitions competitions={data.competitions} vers="bureau" />
+            </Bloc>
           </div>
         )
       }}

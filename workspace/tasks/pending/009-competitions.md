@@ -36,12 +36,40 @@ téléphone ; la personne du club a une liste propre à ressaisir sur le site f�
 - Inscription automatique sur le site fédéral (pas d'API connue : la ressaisie reste manuelle)
 - Résultats et palmarès (proposition au backlog)
 
+## Revue (2026-09-24) — décisions
+
+1. **Catégories** : table 2026/2027 **en dur** (`app/web/src/content/categories.ts`, partagée
+   écran / Worker), termes du formulaire du club : micro-poussins 2021-2022, mini-poussins
+   2019-2020, poussins 2017-2018, benjamins 2015-2016, minimes 2013-2014, cadets 2010-2012,
+   juniors 2007-2009, seniors 2006 et avant ; en base avec la 003.
+2. **Licence / formalité manquante** : **alerte** dans la liste du bureau, sans bloquer le parent.
+3. **Page de la compétition** (lien WhatsApp) : informations **publiques** (date, lieu, infos
+   pratiques) ; inscription **connectée**. Aucune donnée d'enfant publique.
+4. **Le bureau peut inscrire** un enfant à la place de ses parents ; chaque inscription garde qui
+   l'a faite.
+
+## Réalisation
+
+- Migration `0005_competitions.sql` (compétitions, inscriptions) ; tables classées pour
+  l'anonymisation et ajoutées aux listes de purge.
+- Catégories 2026/2027 partagées écran / Worker (`content/categories.ts`) ; `validerCompetition`.
+- API publique (`/api/competitions`), famille (inscrire / désinscrire ses enfants : droit
+  *inscrire*, date limite à Paris incluse, éligibilité) et bureau (CRUD, inscrits avec alertes,
+  candidats, inscription à la place des parents, ressaisie).
+- Pages publiques `/competitions` et `/competitions/$id` (menu « Compétitions ») ; espace bureau
+  `/espace/competitions` (partage WhatsApp, copie / CSV, case « ressaisi ») ; historique sur les
+  fiches enfant et adhérent ; tuiles de l'espace.
+- Aide intégrée (rubriques famille et bureau), traitement « Compétitions » (page Données
+  personnelles, registre), doc technique `competitions.md`, guide d'utilisation.
+- Seed : trois compétitions fictives (ouverte, filles, date limite passée).
+
 ## Notes
 
-- **Dépend de** : 003 (catégories), 004 (enfants, responsables), 005 (connexion des parents).
+- **Dépend de** : 004 (enfants, responsables), 005a (connexion des parents), 010a (dossier :
+  licence, formalité), 006 (registre — branche construite sur la 006).
 - Droits requis : `bureau` (créer, voir toutes les inscriptions) ; responsable avec la capacité
   *inscrire* sur l'enfant (inscrire / désinscrire).
 - Données personnelles : identité des mineurs transmise à la fédération (finalité : inscription
   à la compétition) → registre (006).
-- À arbitrer : bloquer l'inscription si licence ou formalités médicales manquantes, ou simple
-  alerte pour le bureau ?
+- Bloquer l'inscription si licence ou formalités médicales manquantes, ou simple alerte pour le
+  bureau ? → tranché en revue : **alerte** (décision 2).

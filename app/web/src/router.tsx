@@ -1,6 +1,8 @@
 import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router'
 import { Layout } from './components/Layout'
 import { ClubPage } from './pages/ClubPage'
+import { CompetitionPage } from './pages/CompetitionPage'
+import { CompetitionsPage } from './pages/CompetitionsPage'
 import { ConnexionPage } from './pages/ConnexionPage'
 import { ContactPage } from './pages/ContactPage'
 import { DisciplinesPage } from './pages/DisciplinesPage'
@@ -15,6 +17,8 @@ import { AdherentNouveauPage } from './pages/espace/AdherentNouveauPage'
 import { AdherentsPage } from './pages/espace/AdherentsPage'
 import { AdhesionsPage } from './pages/espace/AdhesionsPage'
 import { AidePage } from './pages/espace/AidePage'
+import { CompetitionGestionPage } from './pages/espace/CompetitionGestionPage'
+import { CompetitionsGestionPage } from './pages/espace/CompetitionsGestionPage'
 import { ComptesPage } from './pages/espace/ComptesPage'
 import { EspaceAccueilPage } from './pages/espace/EspaceAccueilPage'
 import { FamillePage } from './pages/espace/FamillePage'
@@ -33,6 +37,9 @@ const routeTree = rootRoute.addChildren([
   createRoute({ getParentRoute, path: '/contact', component: ContactPage }),
   createRoute({ getParentRoute, path: '/mentions-legales', component: MentionsLegalesPage }),
   createRoute({ getParentRoute, path: '/donnees-personnelles', component: DonneesPersonnellesPage }),
+  // Compétitions (spec 009) : informations publiques, inscription réservée aux responsables connectés.
+  createRoute({ getParentRoute, path: '/competitions', component: CompetitionsPage }),
+  createRoute({ getParentRoute, path: '/competitions/$id', component: CompetitionPage }),
   // Connexion par lien personnel (spec 005a) : /connexion#<jeton>.
   createRoute({ getParentRoute, path: '/connexion', component: ConnexionPage }),
   // Espace connecté (spec 004) — les droits sont vérifiés par l'API, les pages ne font que masquer.
@@ -43,6 +50,8 @@ const routeTree = rootRoute.addChildren([
   createRoute({ getParentRoute, path: '/espace/adherents/$id', component: AdherentFichePage }),
   createRoute({ getParentRoute, path: '/espace/comptes', component: ComptesPage }),
   createRoute({ getParentRoute, path: '/espace/adhesions', component: AdhesionsPage }),
+  createRoute({ getParentRoute, path: '/espace/competitions', component: CompetitionsGestionPage }),
+  createRoute({ getParentRoute, path: '/espace/competitions/$id', component: CompetitionGestionPage }),
   createRoute({ getParentRoute, path: '/espace/aide', component: AidePage }),
 ])
 

@@ -9,7 +9,9 @@ export type ProfilAide = 'famille' | 'bureau' | 'admin'
 export type IdRubrique =
   | 'connexion'
   | 'mes-enfants'
+  | 'competitions'
   | 'donnees'
+  | 'competitions-bureau'
   | 'adherents'
   | 'adhesions'
   | 'responsables'
@@ -97,6 +99,39 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
           'Votre téléphone : modifiez-le vous-même dans « Mes coordonnées ».',
           'Tout le reste (fiche d’un enfant, personnes autorisées…) : signalez-le au bureau, qui met la fiche à jour.',
         ],
+      },
+    ],
+  },
+  {
+    id: 'competitions',
+    titre: 'Inscrire mon enfant à une compétition',
+    profil: 'famille',
+    questions: [
+      {
+        q: 'Comment l’inscrire ?',
+        r: [
+          'Touchez le lien de la compétition posté dans le groupe WhatsApp du club (ou menu « Compétitions » du site), puis « Inscrire » à côté du prénom de votre enfant. C’est tout : le bureau s’occupe de l’inscription auprès de la fédération.',
+          'Il faut être connecté : si le site vous le demande, utilisez le lien personnel envoyé par le bureau.',
+        ],
+      },
+      {
+        q: 'Je me suis trompé, ou mon enfant ne peut plus venir',
+        r: [
+          'Jusqu’à la date limite, « Annuler l’inscription » sur la page de la compétition.',
+          'Après la date limite, les inscriptions sont transmises : prévenez directement le bureau.',
+        ],
+      },
+      {
+        q: 'Le bouton « Inscrire » n’apparaît pas',
+        r: [
+          '« Pas dans les catégories » : la compétition ne concerne pas l’âge (ou le sexe) de votre enfant ; la catégorie est calculée d’après son année de naissance.',
+          '« Inscription par un autre responsable » : le bureau ne vous a pas donné le droit d’inscrire cet enfant (voir « Mes enfants »).',
+          '« Inscriptions closes » : la date limite est passée.',
+        ],
+      },
+      {
+        q: 'Où voir les compétitions de mon enfant ?',
+        r: ['Dans « Mes enfants », en bas de sa fiche : les compétitions à venir et passées auxquelles il a été inscrit.'],
       },
     ],
   },
@@ -199,6 +234,55 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
       {
         q: 'Suivre l’avancement',
         r: ['Écran « Dossiers » : tous les adhérents, filtrables (sans dossier, à compléter, complets, validés), avec ce qui manque pour chacun et le total des montants.'],
+      },
+    ],
+  },
+  {
+    id: 'competitions-bureau',
+    titre: 'Compétitions : publier, suivre, ressaisir',
+    profil: 'bureau',
+    questions: [
+      {
+        q: 'Publier une compétition',
+        r: [
+          'Compétitions → « Nouvelle compétition » : nom, date, lieu (et adresse, pour l’itinéraire), catégories concernées, date limite d’inscription. Informations pratiques (pesée, horaires, pièces à apporter) et lien vers la page officielle si vous les avez.',
+          'Puis « Envoyer sur WhatsApp » : le message est prêt, avec le lien de la page. Postez-le dans le groupe du club.',
+        ],
+      },
+      {
+        q: 'Que voient les parents ?',
+        r: [
+          'La page de la compétition est publique : date, lieu, catégories, informations pratiques. Aucune information sur les enfants.',
+          'Une fois connecté, un parent voit ses enfants et peut inscrire ceux qui sont dans les catégories, jusqu’à la date limite incluse, s’il a le droit « inscrire » sur l’enfant.',
+        ],
+      },
+      {
+        q: 'Ressaisir les inscriptions sur le site fédéral',
+        r: [
+          'Sur la compétition, bloc « Inscrits » : « Copier » (à coller dans un tableur) ou « CSV » (fichier Excel) : nom, prénom, date de naissance, sexe, catégorie, ceinture, n° de licence.',
+          'Cochez « Ressaisi sur le site fédéral » au fur et à mesure : la liste des compétitions indique combien il en reste.',
+          'Le fichier contient des données d’enfants : supprimez-le une fois la ressaisie faite.',
+        ],
+      },
+      {
+        q: 'Les alertes en orange',
+        r: [
+          'N° de licence manquant, pas de dossier d’adhésion pour la saison, formalité médicale non reçue : l’inscription n’est pas bloquée, mais c’est à régler avant la ressaisie.',
+        ],
+      },
+      {
+        q: 'Inscrire un enfant à la place de ses parents',
+        r: [
+          'Bloc « Inscrire un enfant » : les adhérents des catégories concernées, pas encore inscrits. Possible même après la date limite. Chaque inscription garde le nom de qui l’a faite.',
+          '« Retirer » annule une inscription.',
+        ],
+      },
+      {
+        q: 'Clôturer, annuler, supprimer',
+        r: [
+          '« Modifier » → statut : « Clôturée » ferme les inscriptions avant la date limite ; « Annulée » l’affiche barrée pour tout le monde (les inscriptions restent visibles).',
+          'La suppression n’est possible que si personne n’est inscrit.',
+        ],
       },
     ],
   },
@@ -313,7 +397,7 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
       {
         q: 'Qui peut quoi ?',
         r: [
-          'Bureau : adhérents, responsables, comptes, liens de connexion des familles.',
+          'Bureau : adhérents, dossiers, compétitions, responsables, comptes, liens de connexion des familles.',
           'Administrateur : tout, y compris les rôles et les liens de connexion des membres du bureau.',
           'Trésorier, encadrant, gestion du site : leurs écrans arriveront avec les prochaines fonctionnalités (licences et paiements, garderie, contenu du site).',
         ],
