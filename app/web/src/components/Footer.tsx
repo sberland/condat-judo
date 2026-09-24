@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { MapPin } from 'lucide-react'
-import { CLUB, ITINERAIRE, SAISON } from '../content/club'
+import { CLUB, DISCIPLINES_PUBLIQUES, ITINERAIRE, SAISON } from '../content/club'
 import { useMe } from '../lib/api'
 import { useNavigation } from './navigation'
 import { Container, FacebookIcon } from './ui'
@@ -16,7 +16,7 @@ export function Footer() {
             <img src="/logo-judo-condat.png" alt="" className="size-12 rounded-full" width={48} height={48} />
             <div>
               <p className="text-lg font-bold text-white">{CLUB.nomComplet}</p>
-              <p className="text-sm">Judo · Jujitsu · Taïso</p>
+              <p className="text-sm">{DISCIPLINES_PUBLIQUES.map((d) => d.nom).join(' · ')}</p>
             </div>
           </div>
           <a

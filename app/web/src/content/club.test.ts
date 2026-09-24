@@ -1,6 +1,40 @@
 import { describe, expect, it } from 'vitest'
-import { TARIFS } from './club'
+import indexHtml from '../../index.html?raw'
+import { DISCIPLINES_PUBLIQUES, enLettres, enumerer, LISTE_DISCIPLINES, TARIFS } from './club'
 import { euros, totalFormule } from '../lib/tarifs'
+
+describe('disciplines : énumérations déduites de la liste', () => {
+  it('énumère à la française', () => {
+    expect(enumerer([])).toBe('')
+    expect(enumerer(['judo'])).toBe('judo')
+    expect(enumerer(['judo', 'yoga'])).toBe('judo et yoga')
+    expect(enumerer(['judo', 'jujitsu', 'taïso', 'yoga'])).toBe('judo, jujitsu, taïso et yoga')
+  })
+
+  it('écrit le nombre en lettres', () => {
+    expect(enLettres(3)).toBe('Trois')
+    expect(enLettres(4)).toBe('Quatre')
+    expect(enLettres(42)).toBe('42')
+  })
+
+  it('cite toutes les disciplines publiques, yoga compris', () => {
+    expect(LISTE_DISCIPLINES).toBe('judo, jujitsu, taïso et yoga')
+  })
+
+  // index.html est lu avant le JavaScript (moteurs de recherche, aperçus de liens WhatsApp) :
+  // son titre et ses descriptions doivent suivre la liste des disciplines.
+  it('index.html cite chaque discipline dans le titre et les descriptions', () => {
+    const balises = {
+      title: indexHtml.match(/<title>([^<]*)<\/title>/)?.[1],
+      description: indexHtml.match(/name="description"\s+content="([^"]*)"/)?.[1],
+      'og:description': indexHtml.match(/property="og:description" content="([^"]*)"/)?.[1],
+    }
+    for (const [balise, texte] of Object.entries(balises)) {
+      expect(texte, balise).toBeTruthy()
+      for (const d of DISCIPLINES_PUBLIQUES) expect(texte?.toLowerCase(), `${balise} : ${d.nom}`).toContain(d.nom.toLowerCase())
+    }
+  })
+})
 
 const formules = TARIFS.groupes.flatMap((g) => g.formules)
 

@@ -6,6 +6,28 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.5.1] — 2026-09-24
+
+### Le yoga sur tout le site, qualification repérable
+
+#### Notes client
+
+Le yoga figure désormais partout sur le site, au même titre que le judo, le jujitsu et le taïso :
+accroche de l'accueil, présentation dans la page Disciplines (séances le lundi et le jeudi), pied
+de page et référencement dans les moteurs de recherche. Sur le site de qualification, l'onglet du
+navigateur commence par « Qualif » pour ne jamais le confondre avec le site public.
+
+#### Ajouts
+
+- Présentation du yoga (postures, respiration, détente ; lundi et jeudi), visible sur le site
+  public — texte à affiner avec le club
+- Mention « Qualif · » devant le titre de l'onglet, sur le site de qualification uniquement
+
+#### Modifications
+
+- Accueil, page Disciplines, pied de page, titre et description du site : quatre disciplines au
+  lieu de trois ; ces textes suivent désormais automatiquement la liste des disciplines
+
 ## [0.5.0] — 2026-09-24
 
 ### Connexion à l'espace membres par lien personnel

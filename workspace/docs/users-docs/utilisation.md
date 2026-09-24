@@ -6,8 +6,8 @@ Le site est accessible à tous, sans compte : <https://condat-judo.sebastien-ber
 
 | Page | Contenu |
 | --- | --- |
-| **Accueil** | Présentation du club, les trois disciplines, les valeurs du code moral, les infos pratiques |
-| **Disciplines** | Judo (et éveil judo pour les 4-5 ans), jujitsu, taïso — accès direct à chaque discipline par les boutons en haut de page |
+| **Accueil** | Présentation du club, les quatre disciplines, les valeurs du code moral, les infos pratiques |
+| **Disciplines** | Judo (et éveil judo pour les 4-5 ans), jujitsu, taïso, yoga — accès direct à chaque discipline par les boutons en haut de page |
 | **Le club** | Le professeur et le bureau, le dojo et l'itinéraire, le code moral complet, les partenaires, les liens utiles |
 | **Règlement** | Le règlement intérieur, article par article : touchez un titre pour l'ouvrir |
 | **Contact** | Écrire au club via Facebook, venir au dojo, prendre sa licence |
@@ -51,8 +51,16 @@ téléphone ; pour toute autre correction, adressez-vous au bureau.
 Deux parents séparés ont chacun leur propre compte et leurs propres droits sur l'enfant : aucun
 n'a besoin de connaître l'e-mail ou le téléphone de l'autre.
 
+## Site de qualification
+
+La qualification (site de test, accès réservé) se distingue de la production par la mention
+**« Qualif · »** devant le titre de l'onglet et par le badge « Preview / Qualif — pas la
+production » en bas à droite de chaque page.
+
 ## Mettre à jour le contenu
 
 Les textes du site (disciplines, équipe, règlement, partenaires, liens) sont regroupés dans un seul
-fichier : `app/web/src/content/club.ts`. Toute modification passe par le circuit habituel
+fichier : `app/web/src/content/club.ts`. Ajouter ou retirer une discipline dans cette liste met à
+jour tout le site (accroches, nombre de disciplines, pied de page) ; seul `app/web/index.html`
+(référencement) est à reprendre à la main — un test le signale. Toute modification passe par le circuit habituel
 (branche, revue en local, qualification, mise en production).

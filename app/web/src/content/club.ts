@@ -54,6 +54,8 @@ export type Discipline = {
   id: 'judo' | 'jujitsu' | 'taiso' | 'yoga'
   nom: string
   accroche: string
+  /** Fragment de l'accroche de l'accueil : « le judo pour tous les âges », … */
+  enBref: string
   public: string
   paragraphes: string[]
   liste?: { intro: string; items: string[] }
@@ -68,6 +70,7 @@ export const DISCIPLINES: Discipline[] = [
     id: 'judo',
     nom: 'Judo',
     accroche: 'Sport d’équilibre, sport éducatif, sport de défense.',
+    enBref: 'le judo pour tous les âges, dès 4 ans avec l’éveil judo',
     public: 'Dès 4 ans avec l’éveil judo',
     paragraphes: [
       'Sport d’équilibre, sport éducatif, sport de défense, le judo est adapté à toutes les tranches d’âge.',
@@ -85,6 +88,7 @@ export const DISCIPLINES: Discipline[] = [
     id: 'jujitsu',
     nom: 'Jujitsu',
     accroche: 'Science, art de la souplesse.',
+    enBref: 'le jujitsu pour la self-défense',
     public: 'Art martial et self-défense',
     paragraphes: [
       'Le jujitsu vise essentiellement à vaincre un adversaire par tous les moyens, en utilisant le minimum de force. De ce fait, les adeptes du jujitsu doivent se conformer à diverses disciplines.',
@@ -108,6 +112,7 @@ export const DISCIPLINES: Discipline[] = [
     id: 'taiso',
     nom: 'Taïso',
     accroche: 'Un sport en douceur qui accueille tout public.',
+    enBref: 'le taïso pour garder la forme',
     public: 'Tout public',
     paragraphes: [
       'Le taïso se pratique de façon décontractée, dans des tenues amples permettant des mouvements aisés. C’est une excellente solution pour éliminer le stress accumulé pendant la journée, et cela dans une ambiance conviviale.',
@@ -117,15 +122,41 @@ export const DISCIPLINES: Discipline[] = [
     ],
     conclusion:
       'Exercices d’échauffement précédant une activité physique, mais aussi exercices spécifiques de renforcement musculaire, d’étirement ou de relaxation : le taïso est une méthode accessible à tous, et non réservée aux seuls pratiquants d’arts martiaux.',
-  },  {
+  },
+  // Présentation volontairement sobre et générale (spec 015, 2026-09-24), à affiner avec le club.
+  {
     id: 'yoga',
     nom: 'Yoga',
-    accroche: 'Texte de présentation à fournir par le club.',
+    accroche: 'Postures, respiration et détente, chacun à son rythme.',
+    enBref: 'le yoga pour la souplesse et la détente',
     public: 'Lundi et jeudi',
-    paragraphes: ['Présentation du cours de yoga à compléter avec le club (public, déroulé d’une séance, matériel).'],
-    provisoire: true,
+    paragraphes: [
+      'Le yoga associe des postures, un travail sur la respiration et des temps de relaxation. Chacun pratique à son rythme, sans esprit de compétition.',
+      'Il entretient la souplesse, le tonus musculaire et l’équilibre, et aide à relâcher les tensions du quotidien.',
+    ],
+    conclusion:
+      'Les séances ont lieu au dojo le lundi et le jeudi : un cours par semaine ou les deux, au choix (voir les tarifs).',
   },
 ]
+
+// --- Énumérations déduites de DISCIPLINES (source unique : un ajout se répercute partout) ---
+
+/** « a, b, c et d » */
+export function enumerer(mots: string[]): string {
+  return mots.length < 2 ? mots.join('') : `${mots.slice(0, -1).join(', ')} et ${mots[mots.length - 1]}`
+}
+
+export const majuscule = (s: string) => s.charAt(0).toLocaleUpperCase('fr-FR') + s.slice(1)
+
+const NOMBRES = ['Aucune', 'Une', 'Deux', 'Trois', 'Quatre', 'Cinq', 'Six', 'Sept', 'Huit', 'Neuf', 'Dix']
+/** 4 → « Quatre » (disciplines, façons de pratiquer…). */
+export const enLettres = (n: number) => NOMBRES[n] ?? String(n)
+
+/** Disciplines présentées au public (hors textes provisoires). */
+export const DISCIPLINES_PUBLIQUES = DISCIPLINES.filter((d) => !d.provisoire)
+
+/** « judo, jujitsu, taïso et yoga » */
+export const LISTE_DISCIPLINES = enumerer(DISCIPLINES_PUBLIQUES.map((d) => d.nom.toLocaleLowerCase('fr-FR')))
 
 export type Valeur = { nom: string; definition: string; lignes: string[] }
 
@@ -290,7 +321,9 @@ export const HORAIRES: { provisoire: boolean; creneaux: Creneau[] } = {
     { jour: 'Mercredi', horaire: '16 h 00 – 16 h 45', cours: 'Éveil judo', public: '4-5 ans' },
     { jour: 'Mercredi', horaire: '17 h 00 – 18 h 00', cours: 'Judo enfants', public: '6-9 ans' },
     { jour: 'Vendredi', horaire: '18 h 00 – 19 h 30', cours: 'Judo jeunes', public: '10-15 ans' },
+    { jour: 'Lundi', horaire: '18 h 30 – 19 h 45', cours: 'Yoga', public: 'Adultes' },
     { jour: 'Mardi', horaire: '19 h 00 – 20 h 00', cours: 'Taïso', public: 'Adultes' },
+    { jour: 'Jeudi', horaire: '18 h 00 – 19 h 15', cours: 'Yoga', public: 'Adultes' },
     { jour: 'Jeudi', horaire: '19 h 30 – 21 h 00', cours: 'Jujitsu', public: 'Ados et adultes' },
   ],
 }
