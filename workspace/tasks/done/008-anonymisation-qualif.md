@@ -19,9 +19,9 @@ les testeurs n'ont besoin que de données réalistes, pas réelles.
 
 ## Critères d'acceptation
 
-- [ ] Après un déploiement de la qualif, aucune donnée nominative réelle n'est lisible dans sa base
-- [ ] Les catégories d'âge et les liens parent ↔ enfant restent cohérents
-- [ ] Ajouter une colonne personnelle sans l'anonymiser fait échouer le déploiement de la qualif
+- [x] Après un déploiement de la qualif, aucune donnée nominative réelle n'est lisible dans sa base
+- [x] Les catégories d'âge et les liens parent ↔ enfant restent cohérents
+- [x] Ajouter une colonne personnelle sans l'anonymiser fait échouer le déploiement de la qualif
 
 ## Hors périmètre
 

@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.6.1] — 2026-09-24
+
 ### Site de qualification sans données réelles des familles
 
 #### Notes client
