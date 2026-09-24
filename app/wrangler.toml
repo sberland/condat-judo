@@ -38,7 +38,7 @@ migrations_dir = "src/db/migrations"
 # • D1 dédiée `condat-judo-preview` : (re)peuplée depuis un snapshot prod (lecture seule sur la
 #   prod) par le workflow GitHub `preview.yml` ou `deploy/refresh-preview-db.ps1`.
 # • ⚠️ Contient une COPIE des données réelles : l'accès au site est VERROUILLÉ par une application
-#   Cloudflare Access (« Condat Judo — preview », dashboard Zero Trust). Verrou d'accès uniquement :
+#   Cloudflare Access (« Protéger ce Worker », tout le trafic — dashboard). Verrou d'accès uniquement :
 #   aucune identité n'est transmise à l'app, qui a sa propre authentification (cf. cloudflare-access.md).
 # ─────────────────────────────────────────────────────────────────────────────
 [env.preview]

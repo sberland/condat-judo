@@ -158,7 +158,7 @@ branche `preview` ──Actions(preview.yml)──▶ deploy --env preview
 Un déploiement prod ne concerne que **l'app (code + assets)** ; la D1 de prod conserve ses données.
 
 ⚠️ **Données personnelles en preview** : la preview contient une *copie* des données réelles →
-l'accès au site est **verrouillé par Cloudflare Access** (application « Condat Judo — preview »,
+l'accès au site est **verrouillé par Cloudflare Access** (« Protéger ce Worker » sur `condat-judo-preview`,
 politique « Condat Judo — bureau ») et réservé aux personnes habilitées. Ce verrou n'a **aucun lien
 avec l'authentification de l'app** (cf. [`cloudflare-access.md`](docs/technical-docs/cloudflare-access.md)).
 La prod, elle, n'a pas de verrou Access : le site est public.
@@ -188,7 +188,7 @@ Suivi dans [`installation.md`](docs/install/installation.md) § « Mise en place
 
 - [x] D1 `condat-judo` et `condat-judo-preview` créées (juridiction UE), `database_id` reportés dans `app/wrangler.toml`
 - [x] Jeton d'API de compte `condat-judo-github-actions` (Workers Scripts:Edit + D1:Edit) ; secrets `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` dans GitHub
-- [x] Verrou Access sur la **preview** (application `Condat Judo — preview`, tout le host, politique `Condat Judo — bureau`, code PIN à usage unique) — vérifié : anonyme → 302
+- [x] Verrou Access sur la **preview** (« Protéger ce Worker », portée « Tout le trafic », politique `Condat Judo — bureau`, code PIN à usage unique) — vérifié : anonyme → 302
 - [x] Ruleset GitHub sur `main` et `preview` (PR obligatoire, check CI « Typecheck, tests, build »)
 - [ ] Premier tag (vitrine v1) → déploiement prod vérifié (site public accessible)
 - [ ] Premier administrateur créé en prod — après le chantier auth applicative
