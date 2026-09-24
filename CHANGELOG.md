@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.12.0] — 2026-09-24
+
 ### Saisons et tarifs gérés par le bureau
 
 #### Notes client
@@ -28,6 +30,8 @@ alors dessus. Rien ne change pour la saison 2026/2027 : ses valeurs sont reprise
 
 - Page publique « Horaires & tarifs », dossiers d’adhésion, trésorerie et compétitions lisent la
   saison courante (compétitions : la saison de leur date, si elle est préparée)
+
+## [0.11.0] — 2026-09-24
 
 ### Données personnelles : droits des familles et effacement automatique
 
@@ -55,6 +59,8 @@ et consultable par l'administrateur pendant un an.
 
 - Page « Données personnelles » : droits exerçables depuis l'espace, effacement automatique,
   journal des accès
+
+## [0.10.0] — 2026-09-24
 
 ### Cotisations : suivi des paiements par le trésorier
 

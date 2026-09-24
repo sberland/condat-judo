@@ -20,10 +20,10 @@ automatiquement. Cette spec outille le tout, pour que le bureau n'ait rien à fa
 
 ## Critères d'acceptation
 
-- [ ] Un responsable télécharge ses données et celles de ses enfants en un geste
-- [ ] Un adhérent inactif depuis la durée décidée est anonymisé sans intervention
-- [ ] L'administrateur voit qui a consulté ou modifié les coordonnées d'une famille
-- [ ] Une famille retire son accord au droit à l'image depuis son espace
+- [x] Un responsable télécharge ses données et celles de ses enfants en un geste
+- [x] Un adhérent inactif depuis la durée décidée est anonymisé sans intervention
+- [x] L'administrateur voit qui a consulté ou modifié les coordonnées d'une famille
+- [x] Une famille retire son accord au droit à l'image depuis son espace
 
 ## Revue (2026-09-24) — décisions
 
