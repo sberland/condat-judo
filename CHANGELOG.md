@@ -6,6 +6,34 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.16.0] — 2026-09-24
+
+### Contenu du site modifiable par le club
+
+#### Notes client
+
+Le club tient désormais son site à jour lui-même : la personne qui gère le site (ou
+l'administrateur) modifie depuis son espace, y compris sur téléphone, les coordonnées du club,
+l'adresse du dojo et la période des cours, l'équipe, la présentation des disciplines, les
+partenaires, le règlement intérieur, les liens utiles et l'identité de l'association. La
+modification est en ligne aussitôt, sans attendre une mise à jour du site. Un contenu peut être
+préparé « à compléter » : il reste masqué sur le site public et se relit sur le site de test.
+Chaque modification est conservée avec sa date et son auteur, et l'on peut revenir à une version
+précédente en un geste. Le site reste rapide : le contenu est gardé dans le navigateur entre deux
+visites.
+
+#### Ajouts
+
+- Espace « Contenu du site » (rôle « Gestion du site » et administrateur) : liste des contenus,
+  formulaire de chaque contenu, statut « À compléter », « Voir sur le site », historique et retour
+  à une version
+- Aide intégrée : rubrique « Contenu du site » ; registre des traitements : site public
+
+#### Modifications
+
+- Toutes les pages du site lisent leur contenu administré (accueil, disciplines, le club,
+  règlement, contact, mentions légales, données personnelles, horaires, en-tête et pied de page)
+
 ## [0.15.0] — 2026-09-24
 
 ### Garderie du mercredi : pointage et suivi par les parents

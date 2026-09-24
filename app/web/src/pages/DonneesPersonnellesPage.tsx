@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { ASSOCIATION } from '../content/club'
+import { useContenu } from '../lib/contenu'
 import { DUREES_TECHNIQUES, RGPD, texteConservation, TRAITEMENTS, type Valeur } from '../content/rgpd'
 import { Container, PageHeader } from '../components/ui'
 import { usePageMeta } from '../lib/usePageMeta'
@@ -8,6 +8,7 @@ import { usePageMeta } from '../lib/usePageMeta'
 
 export function DonneesPersonnellesPage() {
   usePageMeta('Données personnelles', 'Comment le club Judo Condat-sur-Vienne traite les données des adhérents et de leurs familles, et comment exercer vos droits.')
+  const ASSOCIATION = useContenu().association
 
   return (
     <div className="animate-apparition">

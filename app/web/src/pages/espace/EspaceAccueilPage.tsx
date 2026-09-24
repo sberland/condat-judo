@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
-import { Baby, CalendarCheck, CalendarRange, ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, ShieldCheck, Trophy, Users, UsersRound, Wallet } from 'lucide-react'
+import { Baby, CalendarCheck, CalendarRange, FilePenLine, ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, ShieldCheck, Trophy, Users, UsersRound, Wallet } from 'lucide-react'
 import { useSaisonCourante } from '../../lib/saison'
 import { Espace } from '../../components/espace/Garde'
 import { Bouton } from '../../components/formulaire'
@@ -68,6 +68,11 @@ export function EspaceAccueilPage() {
                 </Tuile>
               </>
             )}
+            {aUnRole(me, 'contenu', 'admin') && (
+              <Tuile to="/espace/contenu" icone={<FilePenLine className="size-6" />} titre="Contenu du site">
+                Coordonnées, équipe, disciplines, partenaires, règlement, liens : les modifier sans attendre une mise à jour du site.
+              </Tuile>
+            )}
             {aUnRole(me, 'admin') && (
               <Tuile to="/espace/rgpd" icone={<ShieldCheck className="size-6" />} titre="Données personnelles">
                 Durée de conservation, purge automatique, journal des accès aux coordonnées des familles.
@@ -103,7 +108,7 @@ function Tuile({
   titre,
   children,
 }: {
-  to: '/espace/famille' | '/espace/adherents' | '/espace/adhesions' | '/espace/comptes' | '/espace/aide' | '/espace/competitions' | '/competitions' | '/espace/tresorerie' | '/espace/rgpd' | '/espace/saisons' | '/espace/mercredis' | '/espace/garderie' | '/espace/garderie-du-jour'
+  to: '/espace/famille' | '/espace/adherents' | '/espace/adhesions' | '/espace/comptes' | '/espace/aide' | '/espace/competitions' | '/competitions' | '/espace/tresorerie' | '/espace/rgpd' | '/espace/saisons' | '/espace/mercredis' | '/espace/garderie' | '/espace/garderie-du-jour' | '/espace/contenu'
   icone: ReactNode
   titre: string
   children: ReactNode

@@ -4,6 +4,7 @@ import { connexionRequise, protectionCsrf, type AppEnv } from './droits';
 import { admin } from './routes/admin';
 import { auth } from './routes/auth';
 import { competitions } from './routes/competitions';
+import { contenu } from './routes/contenu';
 import { encadrant } from './routes/encadrant';
 import { famille } from './routes/famille';
 import { tresorerie } from './routes/tresorerie';
@@ -44,6 +45,10 @@ api.route('/auth', auth);
 // --- Compétitions (spec 009) — informations publiques ---
 
 api.route('/competitions', competitions);
+
+// --- Contenu du site (spec 014) — lecture publique, gestion par les rôles contenu / admin ---
+
+api.route('/contenu', contenu);
 
 // --- Saison courante (spec 003) — publique : tarifs, horaires, catégories de la vitrine ---
 

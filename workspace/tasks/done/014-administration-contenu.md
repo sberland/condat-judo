@@ -27,18 +27,41 @@ site à jour lui-même**, avec un compte admin ou celui de la personne qui gère
 
 ## Critères d'acceptation
 
-- [ ] Une personne avec le rôle `contenu` modifie le téléphone du club depuis son téléphone, et le
+- [x] Une personne avec le rôle `contenu` modifie le téléphone du club depuis son téléphone, et le
   changement est visible sur le site public sans mise en production
-- [ ] Une personne sans ce rôle ne peut rien modifier (contrôlé côté API)
-- [ ] Chaque modification est tracée et réversible
-- [ ] Un contenu passé « à compléter » disparaît de la production et réapparaît avec son badge en qualif
-- [ ] Les pages publiques restent rapides (contenu mis en cache) et lisibles si l'API est lente
+- [x] Une personne sans ce rôle ne peut rien modifier (contrôlé côté API)
+- [x] Chaque modification est tracée et réversible
+- [x] Un contenu passé « à compléter » disparaît de la production et réapparaît avec son badge en qualif
+- [x] Les pages publiques restent rapides (contenu mis en cache) et lisibles si l'API est lente
 
 ## Hors périmètre
 
 - Horaires, tarifs, catégories : référentiels de saison, administrés dans la spec **003**
 - Actualités et calendrier : spec **013**
 - Éditeur de mise en page libre (on édite des champs, pas la structure des pages)
+
+## Revue (2026-09-24) — décisions
+
+1. **Stockage** : un document JSON par type de contenu (comme les saisons, spec 003), décrit champ
+   par champ dans `content/contenu.ts` ; la même description sert à la validation (Worker) et à
+   un éditeur générique. Historique : les 30 dernières versions par contenu, retour à une version.
+2. **Cache et repli** : lecture publique revalidée par ETag ; dernier contenu gardé dans le
+   navigateur ; première visite : attente de 1,5 s au plus, puis contenu initial du code.
+3. **Statut** : « à compléter » par contenu (coordonnées, équipe, partenaires, règlement, liens),
+   et par élément pour les disciplines et les partenaires ; toujours affichés : dojo, association.
+4. **Aperçu** : « Voir sur le site » après enregistrement (minimum de la spec) ; le statut « à
+   compléter » permet de relire un contenu sur le site de test avant de le publier.
+5. Restent dans le code : nom et logo du club, code moral (texte officiel de France Judo).
+
+## Réalisation
+
+- Migration `0012_contenus.sql` (générée depuis `content/contenu-initial.ts`, identité vérifiée
+  par test) ; tables dans les listes de purge et classées (008).
+- API `/api/contenu` (public, ETag) et `/api/contenu/gestion` (rôles contenu, admin).
+- Pages publiques branchées sur `useContenu()` : accueil, disciplines, le club, règlement,
+  contact, mentions légales, données personnelles, horaires, en-tête, pied de page.
+- Écrans « Contenu du site » (liste, formulaire, statut, historique) ; aide (profil contenu) ;
+  registre ; doc technique `contenu-site.md`.
 
 ## Notes
 

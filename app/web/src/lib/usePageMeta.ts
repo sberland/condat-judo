@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
-import { LISTE_DISCIPLINES } from '../content/club'
+import { listeDisciplines } from '../content/contenu'
 import { useHealth } from './api'
+import { useContenu } from './contenu'
 
 const SITE = 'Judo Condat-sur-Vienne'
 
@@ -12,8 +13,9 @@ const PREFIXES = { preview: 'Qualif · ', local: '', production: '' } as const
 export function usePageMeta(titre: string | null, description: string) {
   const { data } = useHealth()
   const prefixe = data ? PREFIXES[data.environment] : ''
+  const disciplines = listeDisciplines(useContenu().disciplines.disciplines)
   useEffect(() => {
-    document.title = prefixe + (titre ? `${titre} · ${SITE}` : `${SITE} — ${LISTE_DISCIPLINES}`)
+    document.title = prefixe + (titre ? `${titre} · ${SITE}` : `${SITE} — ${disciplines}`)
     document.querySelector('meta[name="description"]')?.setAttribute('content', description)
-  }, [prefixe, titre, description])
+  }, [prefixe, titre, description, disciplines])
 }

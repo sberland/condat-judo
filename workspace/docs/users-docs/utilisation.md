@@ -83,6 +83,13 @@ concernés à la prochaine purge et à la rentrée suivante, historique, et jour
 et modifications des coordonnées des familles. Comptes → Modifier → « Exporter ses données » pour
 répondre à une demande écrite.
 
+**Pour la personne qui gère le site — Contenu du site** (rôle « gestion du site » ou
+administrateur) : Mon espace → « Contenu du site » : coordonnées du club, dojo et période des
+cours, identité de l'association, équipe, disciplines, partenaires, règlement intérieur, liens
+utiles. « Enregistrer et publier » met en ligne aussitôt ; « À compléter » masque un contenu du
+site public (visible avec un badge sur le site de test) ; « Historique » permet de revenir à une
+version précédente.
+
 **Pour le trésorier — Trésorerie** : les totaux de la saison (dû, payé, reste, retards), les
 chèques et espèces à remettre en banque ce mois-ci, et les familles, filtrables (en retard, à
 payer, partiellement payées, soldées). Sur la fiche d'une famille : « Enregistrer un paiement »

@@ -32,8 +32,9 @@ describe('aide intégrée — filtrage par profil', () => {
     expect(ids(['bureau'])).toContain('garderie-jour')
   })
 
-  it('un rôle sans écran (contenu) voit l’aide famille', () => {
-    expect(ids(['contenu'])).toEqual(ids([]))
+  it('la personne qui gère le contenu voit l’aide famille et celle du contenu du site', () => {
+    expect(ids(['contenu'])).toEqual([...ids([]), 'contenu'])
+    expect(ids(['bureau'])).not.toContain('contenu')
   })
 
   it('rubriques et questions : identifiants uniques, contenu non vide', () => {

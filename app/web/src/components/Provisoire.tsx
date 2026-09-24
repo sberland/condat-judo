@@ -23,3 +23,9 @@ export function Provisoire({ children, className = '' }: { children: ReactNode; 
     </div>
   )
 }
+
+/** Contenu administré (spec 014) : tel quel s'il est publié, sinon comme un contenu provisoire. */
+export function SelonStatut({ statut, children, className = '' }: { statut: 'publie' | 'a_completer'; children: ReactNode; className?: string }) {
+  if (statut === 'publie') return <>{children}</>
+  return <Provisoire className={className}>{children}</Provisoire>
+}

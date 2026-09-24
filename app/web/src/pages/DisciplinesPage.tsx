@@ -1,17 +1,20 @@
 import { Link } from '@tanstack/react-router'
 import { Sparkles } from 'lucide-react'
-import { DISCIPLINES, enLettres, enumerer, LISTE_DISCIPLINES, majuscule, type Discipline } from '../content/club'
+import { enLettres, enumerer, majuscule } from '../content/club'
+import { listeDisciplines, type Discipline } from '../content/contenu'
+import { useContenu } from '../lib/contenu'
 import { Provisoire, useProvisoireVisible } from '../components/Provisoire'
 import { Container, PageHeader } from '../components/ui'
 import { usePageMeta } from '../lib/usePageMeta'
 
 export function DisciplinesPage() {
+  const toutes = useContenu().disciplines.disciplines
   usePageMeta(
     'Disciplines',
-    `${majuscule(LISTE_DISCIPLINES)} au dojo de Condat-sur-Vienne (éveil judo dès 4 ans) : présentation de chaque discipline par le club.`,
+    `${majuscule(listeDisciplines(toutes))} au dojo de Condat-sur-Vienne (éveil judo dès 4 ans) : présentation de chaque discipline par le club.`,
   )
   const provisoireVisible = useProvisoireVisible()
-  const disciplines = DISCIPLINES.filter((d) => !d.provisoire || provisoireVisible)
+  const disciplines = toutes.filter((d) => !d.provisoire || provisoireVisible)
 
   return (
     <div className="animate-apparition">

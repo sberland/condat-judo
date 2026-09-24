@@ -4,6 +4,20 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.16.0 — 24 septembre 2026
+
+Le club tient désormais son site à jour lui-même : la personne qui gère le site (ou
+l'administrateur) modifie depuis son espace, y compris sur téléphone, les coordonnées du club,
+l'adresse du dojo et la période des cours, l'équipe, la présentation des disciplines, les
+partenaires, le règlement intérieur, les liens utiles et l'identité de l'association. La
+modification est en ligne aussitôt, sans attendre une mise à jour du site. Un contenu peut être
+préparé « à compléter » : il reste masqué sur le site public et se relit sur le site de test.
+Chaque modification est conservée avec sa date et son auteur, et l'on peut revenir à une version
+précédente en un geste. Le site reste rapide : le contenu est gardé dans le navigateur entre deux
+visites.
+
+---
+
 ## v0.15.0 — 24 septembre 2026
 
 La garderie du mercredi est désormais complète sur le site. Le mercredi, l'encadrant pointe

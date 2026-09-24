@@ -1,12 +1,16 @@
 import { Link } from '@tanstack/react-router'
 import { MapPin } from 'lucide-react'
-import { CLUB, DISCIPLINES_PUBLIQUES, ITINERAIRE, SAISON } from '../content/club'
+import { CLUB } from '../content/club'
+import { disciplinesPubliques, itineraire } from '../content/contenu'
+import { useContenu } from '../lib/contenu'
 import { useAccesEspace, useNavigation } from './navigation'
 import { Container, FacebookIcon } from './ui'
 
 export function Footer() {
   const navigation = useNavigation()
   const acces = useAccesEspace()
+  const c = useContenu()
+  const iti = itineraire(c.club)
   return (
     <footer className="bg-ink text-white/75">
       <Container className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
@@ -15,23 +19,23 @@ export function Footer() {
             <img src="/logo-judo-condat.png" alt="" className="size-12 rounded-full" width={48} height={48} />
             <div>
               <p className="text-lg font-bold text-white">{CLUB.nomComplet}</p>
-              <p className="text-sm">{DISCIPLINES_PUBLIQUES.map((d) => d.nom).join(' · ')}</p>
+              <p className="text-sm">{disciplinesPubliques(c.disciplines.disciplines).map((d) => d.nom).join(' · ')}</p>
             </div>
           </div>
           <a
-            href={ITINERAIRE.openStreetMap}
+            href={iti.openStreetMap}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-6 flex items-start gap-2 text-sm hover:text-white"
           >
             <MapPin className="mt-0.5 size-4 shrink-0 text-brand" aria-hidden />
             <span>
-              {CLUB.dojo.nom}
+              {c.club.nomDojo}
               <br />
-              {ITINERAIRE.adresse}
+              {iti.adresse}
             </span>
           </a>
-          <p className="mt-3 text-sm">{SAISON.resume}, hors vacances scolaires et jours fériés.</p>
+          <p className="mt-3 text-sm">{c.club.saisonResume}, hors vacances scolaires et jours fériés.</p>
         </div>
 
         <nav aria-label="Pied de page">
@@ -65,7 +69,7 @@ export function Footer() {
         <div>
           <p className="mb-3 text-sm font-semibold text-white">Suivre le club</p>
           <a
-            href={CLUB.facebook}
+            href={c.club.facebook}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-sm hover:text-white"
