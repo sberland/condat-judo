@@ -41,6 +41,10 @@ Restauration (poste du responsable, clé privée) : deploy/restaurer-sauvegarde.
 ## Points de vigilance
 
 - **Perte de la clé privée = sauvegardes illisibles** : deux exemplaires hors ligne.
+- **Dépôt de sauvegarde jamais vide** : une Release s'accroche à un commit ; un dépôt créé sans
+  README fait échouer `gh release create` (« Repository is empty », vécu le 2026-09-24).
+- **Chemins courts Windows** (`S9E2F~1`) : `Remove-Item -Recurse` y échoue ; la restauration
+  supprime ses fichiers déchiffrés par `[IO.Directory]::Delete` et alerte en cas d'échec.
 - **Journaux publics** (dépôt public) : les scripts n'affichent que des tailles et des noms,
   jamais le contenu ; les fichiers en clair ne vivent que dans un dossier temporaire du runner.
 - **Avant migration** : `deploy.yml` sauvegarde si `wrangler d1 migrations list --remote` liste
