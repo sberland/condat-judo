@@ -60,10 +60,12 @@ du projet est public). Détail : [`sauvegarde.md`](../technical-docs/sauvegarde.
    terminal, puis :
 
    ```powershell
-   age-keygen -o "$HOME\condat-judo-sauvegarde.key"
+   age-keygen -o "$HOME\condat-judo-cles\condat-judo-sauvegarde.key"
    ```
 
-   La commande affiche la **clé publique** (`age1…`). Le fichier contient la **clé privée** :
+   `condat-judo-cles` : dossier personnel **hors de tout dépôt Git et non synchronisé**, accès
+   réservé au compte Windows du responsable. La commande affiche la **clé publique** (`age1…`).
+   Le fichier contient la **clé privée** :
    la ranger hors ligne, en deux exemplaires (gestionnaire de mots de passe + support hors
    ligne). ⚠️ Sans elle, les sauvegardes sont illisibles ; elle ne va jamais dans GitHub.
 
@@ -86,7 +88,7 @@ du projet est public). Détail : [`sauvegarde.md`](../technical-docs/sauvegarde.
 6. **Tester la restauration** (vers la qualif, anonymisée) :
 
    ```powershell
-   .\deploy\restaurer-sauvegarde.ps1 -Nom quotidienne-AAAA-MM-JJ -Cle "$HOME\condat-judo-sauvegarde.key"
+   .\deploy\restaurer-sauvegarde.ps1 -Nom quotidienne-AAAA-MM-JJ -Cle "$HOME\condat-judo-cles\condat-judo-sauvegarde.key"
    ```
 
 ## Configuration initiale
