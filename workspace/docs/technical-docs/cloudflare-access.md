@@ -35,8 +35,11 @@ Navigateur ──▶ Cloudflare Access (edge, preview uniquement) : code PIN par
   compte — son quota gratuit de 50 utilisateurs aussi ; la page de connexion est commune à toute
   l'équipe et ne se personnalise pas par application).
 - **Méthode de connexion** : code PIN à usage unique (fournisseur d'identité déjà présent).
-- **Application** `Condat Judo — preview` : auto-hébergée, destination
-  `condat-judo-preview.sebastien-berland.workers.dev`, sans chemin (tout le host).
+- **Verrou** : Workers & Pages → `condat-judo-preview` → Access → **« Protéger ce Worker derrière
+  Access »**, portée **« Tout le trafic »** (couvre l'URL principale et les URL de version).
+  ⚠️ Jamais sur le Worker de prod `condat-judo`, qui doit rester public.
+  *(Historique : une application auto-hébergée par nom d'hôte, créée le 2026-09-23, a disparu le
+  soir même sans modification connue ; remplacée le 2026-09-24 par ce mécanisme natif.)*
 - **Politique** `Condat Judo — bureau` : *Autoriser*, *Inclure → E-mails* = personnes habilitées
   à la qualification. Ajouter / retirer une personne = modifier cette liste.
 
@@ -44,8 +47,12 @@ Navigateur ──▶ Cloudflare Access (edge, preview uniquement) : code PIN par
 
 - **Verrou ≠ compte** : passer Access ne donne aucun droit dans l'app ; l'app demandera sa propre
   connexion quand l'auth applicative existera.
-- **URL de version** (`<version>-condat-judo-preview….workers.dev`) : elles échapperaient au verrou
-  posé sur le nom d'hôte → désactivées par `preview_urls = false` (`app/wrangler.toml`).
+- **URL de version** (`<version>-condat-judo-preview….workers.dev`) : désactivées par
+  `preview_urls = false` (`app/wrangler.toml`) ; la portée « Tout le trafic » les couvrirait de
+  toute façon.
+- **Contrôle après chaque changement de config Access** : `curl -sI https://condat-judo-preview.sebastien-berland.workers.dev/`
+  doit renvoyer **302** vers `thera-soft.cloudflareaccess.com` (le verrou a déjà disparu une fois
+  sans alerte).
 - **Constat technique (2026-09-23)** : avec une application Access créée par nom d'hôte sur
   `*.workers.dev`, le Worker ne reçoit ni l'en-tête `Cf-Access-Jwt-Assertion`, ni le cookie
   `CF_Authorization`, ni `ctx.access`. Seul le mécanisme « Protéger ce Worker derrière Access »
@@ -56,7 +63,8 @@ Navigateur ──▶ Cloudflare Access (edge, preview uniquement) : code PIN par
 
 ## Vérification
 
-- [x] Accès anonyme à la preview → redirection 302 vers `thera-soft.cloudflareaccess.com` (2026-09-23)
+- [x] Accès anonyme à la preview → redirection 302 vers `thera-soft.cloudflareaccess.com`
+  (2026-09-23, puis 2026-09-24 après passage à « Protéger ce Worker »)
 - [x] Après code PIN : le site s'affiche ; `/api/me` → « Non connecté » (normal : l'app n'a pas encore d'auth)
 
 ## Références

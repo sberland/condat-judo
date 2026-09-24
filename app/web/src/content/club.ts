@@ -51,7 +51,7 @@ export const EQUIPE = {
 }
 
 export type Discipline = {
-  id: 'judo' | 'jujitsu' | 'taiso'
+  id: 'judo' | 'jujitsu' | 'taiso' | 'yoga'
   nom: string
   accroche: string
   public: string
@@ -59,6 +59,8 @@ export type Discipline = {
   liste?: { intro: string; items: string[] }
   encart?: { titre: string; texte: string }
   conclusion?: string
+  /** Texte à fournir par le club : visible en local / qualif, jamais en production. */
+  provisoire?: boolean
 }
 
 export const DISCIPLINES: Discipline[] = [
@@ -115,6 +117,13 @@ export const DISCIPLINES: Discipline[] = [
     ],
     conclusion:
       'Exercices d’échauffement précédant une activité physique, mais aussi exercices spécifiques de renforcement musculaire, d’étirement ou de relaxation : le taïso est une méthode accessible à tous, et non réservée aux seuls pratiquants d’arts martiaux.',
+  },  {
+    id: 'yoga',
+    nom: 'Yoga',
+    accroche: 'Texte de présentation à fournir par le club.',
+    public: 'Lundi et jeudi',
+    paragraphes: ['Présentation du cours de yoga à compléter avec le club (public, déroulé d’une séance, matériel).'],
+    provisoire: true,
   },
 ]
 
@@ -286,20 +295,100 @@ export const HORAIRES: { provisoire: boolean; creneaux: Creneau[] } = {
   ],
 }
 
-export type Tarif = { formule: string; prix: string }
+// Grille tarifaire de la saison — formulaire d'inscription du club (saison 2026/2027).
+// Montants en CENTIMES (calculs exacts) ; affichage via lib/tarifs.ts. Cohérence vérifiée par
+// les tests (content/club.test.ts) : total = participation + licence, échéancier = total.
+// ⚠️ Licence 46 € (judo) / 43,80 € (taïso, yoga) : tels que sur le formulaire, à confirmer.
 
-export const TARIFS: { provisoire: boolean; lignes: Tarif[]; notes: string[] } = {
-  provisoire: true,
-  lignes: [
-    { formule: 'Éveil judo (4-5 ans)', prix: '120 €' },
-    { formule: 'Judo enfants et jeunes (6-15 ans)', prix: '150 €' },
-    { formule: 'Judo, jujitsu ou taïso adultes', prix: '180 €' },
+export type Formule = {
+  id: string
+  nom: string
+  public: string
+  participation: number
+  licence: number
+  /** Paiement en 3 fois : 1er versement (licence + part de l'activité), 2e, 3e. */
+  echeancier: [number, number, number]
+}
+
+export type GroupeTarifs = { titre: string; formules: Formule[] }
+
+export type Ajustement = { libelle: string; montant: number; precision: string }
+
+export const TARIFS: {
+  provisoire: boolean
+  saison: string
+  groupes: GroupeTarifs[]
+  supplements: Ajustement[]
+  reductions: Ajustement[]
+  modesPaiement: string[]
+} = {
+  provisoire: false,
+  saison: '2026/2027',
+  groupes: [
+    {
+      titre: 'Judo',
+      formules: [
+        {
+          id: 'judo-micro-mini',
+          nom: 'Micro-poussins et mini-poussins',
+          public: 'Nés en 2019, 2020, 2021 ou 2022',
+          participation: 8200,
+          licence: 4600,
+          echeancier: [7400, 2700, 2700],
+        },
+        {
+          id: 'judo-poussins-juniors',
+          nom: 'Poussins à juniors',
+          public: 'Nés de 2007 à 2018',
+          participation: 10100,
+          licence: 4600,
+          echeancier: [8000, 3400, 3300],
+        },
+        {
+          id: 'judo-adulte',
+          nom: 'Judo adulte',
+          public: 'Adultes',
+          participation: 7500,
+          licence: 4600,
+          echeancier: [7100, 2500, 2500],
+        },
+      ],
+    },
+    {
+      titre: 'Taïso et yoga',
+      formules: [
+        { id: 'taiso', nom: 'Taïso', public: 'Tout public', participation: 7520, licence: 4380, echeancier: [6900, 2500, 2500] },
+        {
+          id: 'yoga-1',
+          nom: 'Yoga — lundi ou jeudi',
+          public: 'Un cours par semaine',
+          participation: 5920,
+          licence: 4380,
+          echeancier: [6300, 2000, 2000],
+        },
+        {
+          id: 'yoga-2',
+          nom: 'Yoga — lundi et jeudi',
+          public: 'Deux cours par semaine',
+          participation: 11920,
+          licence: 4380,
+          echeancier: [8300, 4000, 4000],
+        },
+      ],
+    },
   ],
-  notes: [
-    'Cotisation annuelle, licence France Judo comprise.',
-    'Réduction à partir du deuxième membre d’une même famille.',
-    'Pass’Sport accepté.',
+  supplements: [
+    {
+      libelle: 'Passeport sportif',
+      montant: 800,
+      precision: 'Recommandé pour les compétiteurs, à partir de poussin (judo).',
+    },
+    { libelle: 'Résident hors commune', montant: 200, precision: 'Pour les adhérents qui n’habitent pas Condat-sur-Vienne.' },
   ],
+  reductions: [
+    { libelle: 'Réduction famille', montant: 800, precision: 'Sur la deuxième licence d’une même famille.' },
+  ],
+  modesPaiement: ['Chèque', 'Espèces', 'Carte bancaire', 'Chèques vacances et autres'],
 }
 
 export const PARTENAIRES: { nom: string; activite: string; adresse: string; provisoire: boolean }[] = [

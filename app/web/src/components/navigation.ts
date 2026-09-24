@@ -12,18 +12,23 @@ export type Route =
 
 type Entree = { to: Route; libelle: string; provisoire?: boolean }
 
-const NAVIGATION: Entree[] = [
-  { to: '/', libelle: 'Accueil' },
-  { to: '/disciplines', libelle: 'Disciplines' },
-  // Page entièrement provisoire tant que le club n'a pas fourni horaires et tarifs.
-  { to: '/horaires-tarifs', libelle: 'Horaires & tarifs', provisoire: HORAIRES.provisoire && TARIFS.provisoire },
-  { to: '/club', libelle: 'Le club' },
-  { to: '/reglement', libelle: 'Règlement' },
-  { to: '/contact', libelle: 'Contact' },
-]
-
 /** Entrées du menu, sans les pages provisoires en production. */
 export function useNavigation(): Entree[] {
   const provisoireVisible = useProvisoireVisible()
-  return NAVIGATION.filter((e) => !e.provisoire || provisoireVisible)
+  const horairesVisibles = !HORAIRES.provisoire || provisoireVisible
+
+  const navigation: Entree[] = [
+    { to: '/', libelle: 'Accueil' },
+    { to: '/disciplines', libelle: 'Disciplines' },
+    // Page provisoire tant que ni horaires ni tarifs ne sont fournis ; « Tarifs » seuls sinon.
+    {
+      to: '/horaires-tarifs',
+      libelle: horairesVisibles ? 'Horaires & tarifs' : 'Tarifs',
+      provisoire: HORAIRES.provisoire && TARIFS.provisoire,
+    },
+    { to: '/club', libelle: 'Le club' },
+    { to: '/reglement', libelle: 'Règlement' },
+    { to: '/contact', libelle: 'Contact' },
+  ]
+  return navigation.filter((e) => !e.provisoire || provisoireVisible)
 }
