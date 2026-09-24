@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.15.0] — 2026-09-24
+
 ### Garderie du mercredi : pointage et suivi par les parents
 
 #### Notes client
@@ -24,6 +26,8 @@ liste du mercredi.
 - Espace famille : bloc « Aujourd'hui » avec l'état de chaque enfant, mis à jour automatiquement
 - Liste du mercredi du bureau : état de chaque enfant
 - Aide intégrée (encadrant, familles, bureau) ; page « Données personnelles » et registre
+
+## [0.14.0] — 2026-09-24
 
 ### Garderie du mercredi : liste du jour de l'encadrant, photos
 
