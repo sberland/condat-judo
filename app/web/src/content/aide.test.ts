@@ -6,7 +6,7 @@ const ids = (roles: Parameters<typeof rubriquesPour>[0]) => rubriquesPour(roles)
 describe('aide intégrée — filtrage par profil', () => {
   it('un parent (sans rôle) ne voit que l’aide famille', () => {
     expect(rubriquesPour([]).every((r) => r.profil === 'famille')).toBe(true)
-    expect(ids([])).toEqual(['connexion', 'mes-enfants', 'competitions', 'donnees'])
+    expect(ids([])).toEqual(['connexion', 'mes-enfants', 'competitions', 'cotisations', 'donnees'])
   })
 
   it('le bureau voit l’aide famille et bureau, pas l’administration', () => {
@@ -20,8 +20,12 @@ describe('aide intégrée — filtrage par profil', () => {
     expect(ids(['admin'])).toEqual(RUBRIQUES_AIDE.map((r) => r.id))
   })
 
-  it('un rôle sans écran (trésorier, encadrant, contenu) voit l’aide famille', () => {
-    for (const role of ['tresorier', 'encadrant', 'contenu'] as const) expect(ids([role])).toEqual(ids([]))
+  it('le trésorier voit l’aide famille et la trésorerie, pas celle du bureau', () => {
+    expect(ids(['tresorier'])).toEqual([...ids([]), 'tresorerie'])
+  })
+
+  it('un rôle sans écran (encadrant, contenu) voit l’aide famille', () => {
+    for (const role of ['encadrant', 'contenu'] as const) expect(ids([role])).toEqual(ids([]))
   })
 
   it('rubriques et questions : identifiants uniques, contenu non vide', () => {

@@ -6,6 +6,32 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+### Cotisations : suivi des paiements par le trésorier
+
+#### Notes client
+
+Le trésorier suit les cotisations de la saison sur le site : ce que chaque famille doit, ce
+qu'elle a payé, ce qui reste et les versements en retard. Il enregistre un chèque en quelques
+secondes depuis son téléphone ; un chèque pour deux enfants est réparti automatiquement entre
+eux, et les trois chèques d'un paiement en 3 fois s'enregistrent d'un coup avec leurs dates
+d'encaissement. Le site liste les chèques à remettre en banque chaque mois et fournit les exports
+pour la comptabilité. Chaque famille voit, dans son espace, ce qu'elle a payé et ce qui reste ;
+seuls le trésorier et l'administrateur voient l'ensemble des paiements.
+
+#### Ajouts
+
+- Écran « Trésorerie » : totaux de la saison, chèques et espèces à remettre en banque, familles
+  filtrables (en retard, à payer, partiellement payées, soldées), exports CSV
+- Fiche famille : dossiers et échéancier, enregistrement d'un paiement réparti entre les enfants,
+  « 3 chèques » d'un paiement en 3 fois, remise en banque, suppression d'une erreur
+- Espace famille : bloc « Cotisations » (dû, payé, reste, versements reçus)
+- Aide intégrée pour le trésorier et les familles ; traitement « Cotisations et paiements » dans
+  la page Données personnelles et le registre
+
+#### Modifications
+
+- Un dossier d'adhésion sur lequel des paiements sont enregistrés ne peut plus être supprimé
+
 ## [0.9.0] — 2026-09-24
 
 ### Compétitions : publication et inscription des enfants

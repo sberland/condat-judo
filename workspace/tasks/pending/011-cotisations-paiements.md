@@ -31,6 +31,33 @@ qui a payé quoi et ce qui reste dû.
 - Paiement en ligne (proposition HelloAsso : gratuit pour les associations, API + webhooks)
 - Comptabilité complète de l'association
 
+## Revue (2026-09-24) — décisions
+
+1. **Un chèque pour plusieurs enfants** : saisi une fois depuis la fiche famille, **réparti** sur
+   les dossiers des enfants au prorata de leur restant dû (répartition modifiable). Tables
+   `paiements` (ce que la famille remet) et `paiement_parts` (répartition par dossier).
+2. **Accès** : trésorier et administrateur ; chaque responsable voit dû, payé et reste de ses
+   enfants, **sans la référence du chèque** ; le rôle « bureau » seul ne voit pas les paiements.
+3. Tranché sans question (évident) : **famille** = dossiers d'adhérents partageant un responsable
+   (calculée, pas de table foyer) ; montant dû = dossier 010a (pas de saisie libre) ; dates des 2e
+   et 3e versements en 3 fois **provisoires** (5 janvier, 5 avril — question posée à la
+   trésorière) ; carte bancaire et virement encaissés dès réception ; l'avance payée pour un
+   enfant ne couvre pas le retard d'un autre.
+
+## Réalisation
+
+- Migration `0006_paiements.sql` ; référence des chèques pseudonymisée en qualif ; tables dans
+  les listes de purge.
+- Règles partagées écran / Worker (`content/paiements.ts`) : modes, échéancier, exigible,
+  situation, cumul, répartition au centime ; regroupement en familles (`worker/familles.ts`).
+- API `/api/tresorerie` (tableau de bord, fiche famille, paiements, remise en banque,
+  suppression, export) et `/api/famille/paiements` ; un dossier payé ne se supprime plus.
+- Écrans : Trésorerie (totaux, à remettre en banque, familles filtrables, exports CSV), fiche
+  famille (dossiers, échéancier, enregistrer un paiement, « 3 chèques », paiements reçus),
+  bloc « Cotisations » dans « Mes enfants », lien depuis la fiche d'un adhérent.
+- Aide (profil trésorier, rubrique famille), traitement RGPD et registre, doc technique
+  `tresorerie.md`.
+
 ## Notes
 
 - **Dépend de** : 003 (grille), 004 (foyers), 005 (connexion) ; s'appuie sur 010 quand il sera livré

@@ -39,6 +39,13 @@ function baseRemplie(): DatabaseSync {
     INSERT INTO personnes_autorisees (adherent_id, prenom, nom, lien, telephone) VALUES (1, 'Mamie', 'Réelle', 'grand-mère', '06 55 55 55 55');
     INSERT INTO sessions (empreinte, user_id, expire_le) VALUES ('e1', 2, datetime('now', '+1 day'));
     INSERT INTO liens_connexion (empreinte, user_id, expire_le) VALUES ('l1', 2, datetime('now', '+1 day'));
+    INSERT INTO adhesions (id, adherent_id, saison, formule, montant_participation, montant_licence, montant_supplements,
+      montant_reduction, montant_total, echeance_1, echeance_2, echeance_3) VALUES
+      (1, 1, '2026-2027', 'judo-poussins-juniors', 10100, 4600, 0, 0, 14700, 8000, 3400, 3300);
+    INSERT INTO paiements (id, saison, montant, mode, reference, recu_le) VALUES
+      (1, '2026-2027', 14700, 'cheque', 'Chèque 1234567 — Banque Réelle — P. Parent', '2026-09-10'),
+      (2, '2026-2027', 500, 'especes', NULL, '2026-09-11');
+    INSERT INTO paiement_parts (paiement_id, adhesion_id, montant) VALUES (1, 1, 14700), (2, 1, 500);
   `)
   return db
 }

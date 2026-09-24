@@ -11,6 +11,7 @@ import {
   type Recueil,
 } from '../../web/src/content/adhesion';
 import { categorieParId } from '../../web/src/content/categories';
+import { MODES_ENCAISSEMENT, type ModeEncaissement } from '../../web/src/content/paiements';
 
 export type Resultat<T> = { ok: true; valeur: T } | { ok: false; erreurs: Record<string, string> };
 
@@ -260,5 +261,48 @@ export function validerCompetition(corps: Corps): Resultat<CompetitionSaisie> {
     sexe: sexe as 'F' | 'M' | null,
     date_limite: limite,
     statut: statut as CompetitionSaisie['statut'],
+  });
+}
+
+// --- Paiements (spec 011) ---
+
+export type PaiementSaisi = {
+  montant: number;
+  mode: ModeEncaissement;
+  reference: string | null;
+  recu_le: string;
+  encaisser_le: string | null;
+  parts: { adhesion_id: number; montant: number }[];
+};
+
+const centimes = (v: unknown): number | null => (typeof v === 'number' && Number.isInteger(v) && v > 0 && v <= 10_000_000 ? v : null);
+
+export function validerPaiement(corps: Corps): Resultat<PaiementSaisi> {
+  const c = new Collecteur();
+  const montant = centimes(corps.montant);
+  if (montant === null) c.erreurs.montant = 'Montant invalide';
+  const mode = corps.mode;
+  if (typeof mode !== 'string' || !(mode in MODES_ENCAISSEMENT)) c.erreurs.mode = 'Mode de paiement obligatoire';
+  const recu = texte(corps.recu_le);
+  if (!dateIsoValide(recu)) c.erreurs.recu_le = 'Date de réception invalide';
+  const encaisser = texte(corps.encaisser_le) || null;
+  if (encaisser !== null && !dateIsoValide(encaisser)) c.erreurs.encaisser_le = 'Date d’encaissement invalide';
+  const parts = Array.isArray(corps.parts)
+    ? corps.parts.map((p) => {
+        const o = (p ?? {}) as Corps;
+        return { adhesion_id: Number(o.adhesion_id), montant: centimes(o.montant) };
+      })
+    : [];
+  if (!parts.length) c.erreurs.parts = 'Choisir au moins un dossier';
+  else if (parts.some((p) => !Number.isInteger(p.adhesion_id) || p.adhesion_id <= 0 || p.montant === null)) c.erreurs.parts = 'Répartition invalide';
+  else if (new Set(parts.map((p) => p.adhesion_id)).size !== parts.length) c.erreurs.parts = 'Un dossier apparaît deux fois';
+  else if (montant !== null && parts.reduce((s, p) => s + (p.montant ?? 0), 0) !== montant) c.erreurs.parts = 'La répartition doit totaliser le montant';
+  return c.resultat({
+    montant: montant ?? 0,
+    mode: mode as ModeEncaissement,
+    reference: c.optionnel(corps, 'reference', 'Référence', 80),
+    recu_le: recu,
+    encaisser_le: encaisser,
+    parts: parts.map((p) => ({ adhesion_id: p.adhesion_id, montant: p.montant ?? 0 })),
   });
 }

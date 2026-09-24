@@ -59,3 +59,6 @@ UPDATE personnes_autorisees SET
     WHEN 0 THEN 'Garcia' WHEN 1 THEN 'David' WHEN 2 THEN 'Bertrand'
     WHEN 3 THEN 'Roux' WHEN 4 THEN 'Vincent' ELSE 'Fournier' END,
   telephone = CASE WHEN telephone IS NULL THEN NULL ELSE printf('07 00 00 %02d %02d', (id / 100) % 100, id % 100) END;
+
+-- Paiements (spec 011) : la référence (n° de chèque, banque, titulaire) devient fictive.
+UPDATE paiements SET reference = CASE WHEN reference IS NULL THEN NULL ELSE printf('Réf. fictive %06d', id) END;

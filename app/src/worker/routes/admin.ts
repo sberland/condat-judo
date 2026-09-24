@@ -489,6 +489,13 @@ admin.post('/adherents/:id/adhesion/valider', async (c) => {
 });
 
 admin.delete('/adherents/:id/adhesion', async (c) => {
+  // Un dossier sur lequel des paiements sont enregistrés (spec 011) ne se supprime pas.
+  const paye = await c.env.DB.prepare(
+    'SELECT 1 FROM paiement_parts p JOIN adhesions d ON d.id = p.adhesion_id WHERE d.adherent_id = ? AND d.saison = ? LIMIT 1',
+  )
+    .bind(id(c, 'id'), SAISON.id)
+    .first();
+  if (paye) return c.json({ error: 'Des paiements sont enregistrés sur ce dossier : voir avec le trésorier' }, 409);
   const res = await c.env.DB.prepare('DELETE FROM adhesions WHERE adherent_id = ? AND saison = ?').bind(id(c, 'id'), SAISON.id).run();
   if (!res.meta.changes) return c.json({ error: 'Dossier introuvable' }, 404);
   return c.json({ ok: true });

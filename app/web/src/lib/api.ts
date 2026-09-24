@@ -176,6 +176,7 @@ export type Enfant = {
 // --- Dossiers d'adhésion (spec 010a) ---
 
 export type Adhesion = {
+  id: number
   formule: string
   passeport: 0 | 1
   hors_commune: 0 | 1

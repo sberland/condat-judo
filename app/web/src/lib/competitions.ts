@@ -2,6 +2,7 @@
 // publiques et l'espace bureau.
 import { CATEGORIES } from '../content/categories'
 import { dateFr } from './api'
+import * as csv from './csv'
 
 export type StatutCompetition = 'ouverte' | 'cloturee' | 'annulee'
 
@@ -128,38 +129,15 @@ const COLONNES: [string, (l: LigneInscrit) => string][] = [
   ['N° de licence', (l) => l.numero_licence ?? ''],
 ]
 
-/** Texte à coller dans un tableur (colonnes séparées par des tabulations). */
-export function versTexte(lignes: LigneInscrit[]): string {
-  return [COLONNES.map(([t]) => t), ...lignes.map((l) => COLONNES.map(([, v]) => v(l).replace(/\s+/g, ' ')))]
-    .map((cols) => cols.join('\t'))
-    .join('\n')
-}
+const tableau = (lignes: LigneInscrit[]) => [COLONNES.map(([t]) => t), ...lignes.map((l) => COLONNES.map(([, v]) => v(l)))]
 
-/** CSV « à la française » (séparateur ;) — ouvert tel quel par Excel ou LibreOffice. */
-export function versCsv(lignes: LigneInscrit[]): string {
-  const cellule = (v: string) => (/[;"\n\r]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v)
-  return [COLONNES.map(([t]) => t), ...lignes.map((l) => COLONNES.map(([, v]) => v(l)))]
-    .map((cols) => cols.map(cellule).join(';'))
-    .join('\r\n')
-}
+/** Texte à coller dans un tableur (colonnes séparées par des tabulations). */
+export const versTexte = (lignes: LigneInscrit[]) => csv.versTexte(tableau(lignes))
+
+/** CSV « à la française » (séparateur ;). */
+export const versCsv = (lignes: LigneInscrit[]) => csv.versCsv(tableau(lignes))
 
 /** « inscrits-2026-10-14-tournoi-de-l-exemple.csv ». */
-export function nomFichierCsv(c: Pick<Competition, 'date' | 'nom'>): string {
-  const slug = c.nom
-    .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-  return `inscrits-${c.date}-${slug}.csv`
-}
+export const nomFichierCsv = (c: Pick<Competition, 'date' | 'nom'>) => `inscrits-${c.date}-${csv.slug(c.nom)}.csv`
 
-/** Téléchargement du CSV (BOM pour que les accents s'affichent sous Excel). */
-export function telechargerCsv(c: Pick<Competition, 'date' | 'nom'>, lignes: LigneInscrit[]): void {
-  const url = URL.createObjectURL(new Blob([String.fromCharCode(0xfeff), versCsv(lignes)], { type: 'text/csv;charset=utf-8' }))
-  const a = document.createElement('a')
-  a.href = url
-  a.download = nomFichierCsv(c)
-  a.click()
-  URL.revokeObjectURL(url)
-}
+export const telechargerCsv = (c: Pick<Competition, 'date' | 'nom'>, lignes: LigneInscrit[]) => csv.telechargerCsv(nomFichierCsv(c), tableau(lignes))

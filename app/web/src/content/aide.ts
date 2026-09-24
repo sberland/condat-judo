@@ -4,14 +4,16 @@
 import type { Role } from '../lib/api'
 
 /** Profil minimal pour voir une rubrique : famille = tout compte connecté. */
-export type ProfilAide = 'famille' | 'bureau' | 'admin'
+export type ProfilAide = 'famille' | 'bureau' | 'tresorier' | 'admin'
 
 export type IdRubrique =
   | 'connexion'
   | 'mes-enfants'
   | 'competitions'
+  | 'cotisations'
   | 'donnees'
   | 'competitions-bureau'
+  | 'tresorerie'
   | 'adherents'
   | 'adhesions'
   | 'responsables'
@@ -29,10 +31,11 @@ export type RubriqueAide = {
 // Rôles qui donnent accès à chaque profil (un administrateur voit tout).
 const ROLES_DU_PROFIL: Record<Exclude<ProfilAide, 'famille'>, Role[]> = {
   bureau: ['bureau', 'admin'],
+  tresorier: ['tresorier', 'admin'],
   admin: ['admin'],
 }
 
-export const LIBELLES_PROFIL: Record<ProfilAide, string> = { famille: 'Tous', bureau: 'Bureau', admin: 'Administrateur' }
+export const LIBELLES_PROFIL: Record<ProfilAide, string> = { famille: 'Tous', bureau: 'Bureau', tresorier: 'Trésorier', admin: 'Administrateur' }
 
 export const RUBRIQUES_AIDE: RubriqueAide[] = [
   // --- Famille : tout compte connecté ---
@@ -132,6 +135,24 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
       {
         q: 'Où voir les compétitions de mon enfant ?',
         r: ['Dans « Mes enfants », en bas de sa fiche : les compétitions à venir et passées auxquelles il a été inscrit.'],
+      },
+    ],
+  },
+  {
+    id: 'cotisations',
+    titre: 'Cotisations et paiements',
+    profil: 'famille',
+    questions: [
+      {
+        q: 'Où voir ce que j’ai payé ?',
+        r: [
+          'Dans « Mes enfants », bloc « Cotisations » : pour chaque enfant, le montant de l’adhésion, ce qui a été payé, ce qui reste, et les versements reçus par le club.',
+          'En 3 fois : les dates des versements sont indiquées ; un chèque remis d’avance apparaît avec la date à partir de laquelle il sera encaissé.',
+        ],
+      },
+      {
+        q: 'Un paiement n’apparaît pas, ou un montant est faux',
+        r: ['Adressez-vous au trésorier du club : c’est lui qui enregistre les paiements.'],
       },
     ],
   },
@@ -381,6 +402,54 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
     ],
   },
 
+  // --- Trésorier ---
+  {
+    id: 'tresorerie',
+    titre: 'Trésorerie : suivre les cotisations',
+    profil: 'tresorier',
+    questions: [
+      {
+        q: 'Enregistrer un chèque',
+        r: [
+          'Trésorerie → la famille → « Enregistrer un paiement ». Le montant proposé est ce qu’il reste à payer ; le mode est « Chèque », la date celle du jour. Ajoutez le n° du chèque et la banque, puis « Enregistrer le paiement ».',
+          'Un chèque pour deux enfants : saisissez-le une seule fois, le site le répartit entre eux au prorata de ce que chacun doit. La répartition reste modifiable.',
+        ],
+      },
+      {
+        q: 'Paiement en 3 fois',
+        r: [
+          'Sur la fiche de la famille, « Enregistrer les 3 chèques de … » : les trois montants sont repris du dossier, avec leurs dates d’encaissement (le 1er tout de suite, les suivants aux échéances).',
+          'Un chèque à encaisser plus tard garde sa date : il apparaît dans « À remettre en banque » le mois venu.',
+        ],
+      },
+      {
+        q: 'Remise en banque',
+        r: [
+          'L’écran Trésorerie liste les chèques et espèces à remettre en banque (échéance dépassée ou dans le mois). « Remis en banque » les retire de la liste ; « Annuler la remise » sur la fiche de la famille en cas d’erreur.',
+          'Carte bancaire et virement sont considérés encaissés dès leur réception.',
+        ],
+      },
+      {
+        q: 'Retards, reste à payer',
+        r: [
+          'Une famille est « en retard » quand un versement échu n’a pas été reçu (tout, à l’inscription, pour un paiement comptant). L’avance payée pour un enfant ne couvre pas le retard d’un autre.',
+          'Filtres de l’écran Trésorerie : en retard, à payer, partiellement payées, soldées.',
+        ],
+      },
+      {
+        q: 'Exports pour la comptabilité',
+        r: [
+          '« Paiements (CSV) » : une ligne par paiement (date, enfants, mode, référence, montant, dates d’encaissement). « Familles (CSV) » : dû, payé, reste et retard par famille.',
+          'Ces fichiers contiennent des données personnelles : gardez-les sur un appareil du club, pas dans une messagerie.',
+        ],
+      },
+      {
+        q: 'Une erreur de saisie',
+        r: ['Sur la fiche de la famille, « Supprimer » le paiement, puis enregistrez-le à nouveau. Un dossier d’adhésion qui porte des paiements ne peut plus être supprimé.'],
+      },
+    ],
+  },
+
   // --- Administrateur ---
   {
     id: 'roles',
@@ -399,7 +468,8 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
         r: [
           'Bureau : adhérents, dossiers, compétitions, responsables, comptes, liens de connexion des familles.',
           'Administrateur : tout, y compris les rôles et les liens de connexion des membres du bureau.',
-          'Trésorier, encadrant, gestion du site : leurs écrans arriveront avec les prochaines fonctionnalités (licences et paiements, garderie, contenu du site).',
+          'Trésorier : la trésorerie (cotisations, paiements, remises en banque) — le rôle « bureau » seul ne voit pas les paiements.',
+          'Encadrant, gestion du site : leurs écrans arriveront avec les prochaines fonctionnalités (garderie, contenu du site).',
         ],
       },
       {

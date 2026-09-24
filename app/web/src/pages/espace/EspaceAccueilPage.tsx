@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
-import { ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, Trophy, Users, UsersRound } from 'lucide-react'
+import { ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, Trophy, Users, UsersRound, Wallet } from 'lucide-react'
 import { SAISON } from '../../content/adhesion'
 import { Espace } from '../../components/espace/Garde'
 import { Bouton } from '../../components/formulaire'
@@ -31,6 +31,11 @@ export function EspaceAccueilPage() {
             ) : (
               <Tuile to="/competitions" icone={<Trophy className="size-6" />} titre="Compétitions">
                 Les prochaines compétitions, et l’inscription de vos enfants.
+              </Tuile>
+            )}
+            {aUnRole(me, 'tresorier', 'admin') && (
+              <Tuile to="/espace/tresorerie" icone={<Wallet className="size-6" />} titre="Trésorerie">
+                Cotisations de la saison : qui a payé quoi, ce qui reste dû, chèques à remettre en banque.
               </Tuile>
             )}
             {aUnRole(me, 'bureau', 'admin') && (
@@ -76,7 +81,7 @@ function Tuile({
   titre,
   children,
 }: {
-  to: '/espace/famille' | '/espace/adherents' | '/espace/adhesions' | '/espace/comptes' | '/espace/aide' | '/espace/competitions' | '/competitions'
+  to: '/espace/famille' | '/espace/adherents' | '/espace/adhesions' | '/espace/comptes' | '/espace/aide' | '/espace/competitions' | '/competitions' | '/espace/tresorerie'
   icone: ReactNode
   titre: string
   children: ReactNode
