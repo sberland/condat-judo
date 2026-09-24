@@ -4,6 +4,19 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.18.0 — 24 septembre 2026
+
+« Compétitions » devient « Événements » : le bureau y annonce toute la vie du club — compétitions,
+stages, rencontres, repas, fêtes… —, avec l'heure si besoin, et choisit pour chacun l'inscription
+qui convient : aucune (simple information), inscription des enfants (toutes catégories ou
+certaines), ou inscription de la famille avec le nombre d'adultes et d'enfants, pratique pour un
+repas. Les familles s'inscrivent depuis le lien posté dans le groupe WhatsApp, et peuvent modifier
+ou annuler jusqu'à la date limite. Pour les compétitions, rien ne change : catégories, liste à
+ressaisir sur le site fédéral et alertes. Les anciens liens de compétitions continuent de
+fonctionner.
+
+---
+
 ## v0.17.0 — 24 septembre 2026
 
 Chaque discipline a désormais sa petite illustration, reprise sur l'accueil, la page Disciplines,

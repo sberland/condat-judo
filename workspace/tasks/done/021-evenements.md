@@ -22,11 +22,11 @@ prévu par la spec 013, qui garde les actualités et l'abonnement agenda).
 
 ## Critères d'acceptation
 
-- [ ] Le bureau publie un repas avec inscription de la famille ; un parent inscrit 2 adultes et 3 enfants, puis modifie ou annule
-- [ ] Le bureau publie un stage ouvert à tous les enfants, et un événement sans inscription
-- [ ] Les compétitions fonctionnent comme avant (catégories, date limite, liste fédérale, alertes)
-- [ ] Le public voit les événements à venir, filtrables par type ; les anciens liens `/competitions/…` fonctionnent
-- [ ] Utilisable à 360 px
+- [x] Le bureau publie un repas avec inscription de la famille ; un parent inscrit 2 adultes et 3 enfants, puis modifie ou annule
+- [x] Le bureau publie un stage ouvert à tous les enfants, et un événement sans inscription
+- [x] Les compétitions fonctionnent comme avant (catégories, date limite, liste fédérale, alertes)
+- [x] Le public voit les événements à venir, filtrables par type ; les anciens liens `/competitions/…` fonctionnent
+- [x] Utilisable à 360 px
 
 ## Revue (2026-09-24) — décisions
 
