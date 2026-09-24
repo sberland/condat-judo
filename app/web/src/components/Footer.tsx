@@ -54,6 +54,11 @@ export function Footer() {
                 Mentions légales
               </Link>
             </li>
+            <li>
+              <Link to="/donnees-personnelles" className="hover:text-white">
+                Données personnelles
+              </Link>
+            </li>
           </ul>
         </nav>
 

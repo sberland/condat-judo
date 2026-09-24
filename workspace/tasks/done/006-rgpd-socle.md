@@ -27,13 +27,27 @@ les durées. À livrer **avant** l'ouverture des espaces privés aux familles.
   reçu le … » (jamais le questionnaire ni le certificat eux-mêmes).
 - **Cookies** : uniquement le cookie de session (strictement nécessaire) → pas de bandeau.
 
-## Critères d'acceptation
+## Critères d'acceptation (ce lot — la suite est dans la spec 019)
 
-- [ ] Chaque formulaire de collecte affiche sa mention d'information
-- [ ] Chaque consentement est tracé (qui, quand, pour quel enfant) et retirable
-- [ ] Un responsable peut télécharger les données le concernant, lui et ses enfants
-- [ ] Le registre des traitements est rédigé et validé par le bureau
-- [ ] La purge des données expirées est automatisée (ou procédure documentée)
+- [x] La page « Données personnelles » informe : responsable, données, finalités, bases légales,
+  destinataires, durées, droits, contact, cookies, sécurité
+- [x] L'espace membres, la page de connexion et le message du lien de connexion y renvoient
+- [x] Chaque consentement est tracé (qui, quand, pour quel enfant) et retirable (porté par 010a)
+- [x] Le registre des traitements est rédigé (validation par le bureau : réponses du club à reporter, cf. Réalisation)
+- [x] La prod ne peut pas partir tant qu'une information attend la réponse du club
+
+## Réalisation (2026-09-24)
+
+- Contenu : `app/web/src/content/rgpd.ts` (valeurs du club marquées `provisoire`), page
+  `/donnees-personnelles`, lien en pied de page et depuis les mentions légales ; mentions dans
+  « Mes enfants », la page de connexion et le message WhatsApp du lien de connexion.
+- Registre : [`registre-traitements.md`](../../docs/rgpd/registre-traitements.md).
+- Garde-fou : `deploy.yml` échoue tant qu'une valeur de `RGPD` est `provisoire`.
+- **En attente du club** (questionnaire) : contact pour les droits, durée de conservation des
+  adhérents, destinataires externes. Livrée en qualif (v0.8.0) avec ces valeurs `provisoire` ; leur
+  report (`rgpd.ts` + registre) est un préalable à la mise en production.
+- **Suite** : export des données par le responsable, purge automatisée, journal des accès
+  sensibles → [`019-rgpd-droits-purge.md`](../pending/019-rgpd-droits-purge.md).
 
 ## Hors périmètre
 

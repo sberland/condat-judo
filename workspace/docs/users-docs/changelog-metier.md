@@ -4,6 +4,17 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.8.0 — 24 septembre 2026
+
+Une page « Données personnelles », accessible en bas de chaque page, explique aux familles ce que
+le club enregistre sur les adhérents et leurs responsables, pourquoi, qui y a accès, combien de
+temps, et comment consulter, corriger ou supprimer ces informations ou retirer un accord. Elle est
+signalée dans l'espace membres, sur la page de connexion et dans le message qui accompagne chaque
+lien de connexion. Le club tient aussi son registre des traitements. Le site public ne sera mis à
+jour qu'une fois les dernières informations confirmées par le club.
+
+---
+
 ## v0.7.2 — 24 septembre 2026
 
 Un bouton en haut de chaque page mène directement à l'espace membres, y compris sur téléphone

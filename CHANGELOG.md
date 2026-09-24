@@ -6,6 +6,28 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.8.0] — 2026-09-24
+
+### Données personnelles : information des familles
+
+#### Notes client
+
+Une page « Données personnelles », accessible en bas de chaque page, explique aux familles ce que
+le club enregistre sur les adhérents et leurs responsables, pourquoi, qui y a accès, combien de
+temps, et comment consulter, corriger ou supprimer ces informations ou retirer un accord. Elle est
+signalée dans l'espace membres, sur la page de connexion et dans le message qui accompagne chaque
+lien de connexion. Le club tient aussi son registre des traitements. Le site public ne sera mis à
+jour qu'une fois les dernières informations confirmées par le club.
+
+#### Ajouts
+
+- Page « Données personnelles » (responsable, données, finalités, destinataires, durées, droits,
+  cookies, sécurité) et lien dans le pied de page
+- Renvois vers cette page : espace « Mes enfants », page de connexion, message WhatsApp du lien de
+  connexion, aide intégrée, mentions légales
+- Registre des traitements du club
+- Contrôle automatique : pas de mise en ligne tant qu'une information attend la confirmation du club
+
 ## [0.7.2] — 2026-09-24
 
 ### Accès direct à l'espace membres, badge de qualification lisible

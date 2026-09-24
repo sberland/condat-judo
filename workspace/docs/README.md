@@ -26,6 +26,14 @@ Utiliser `_template.md` pour créer un nouveau fichier technique.
 
 ---
 
+## rgpd/
+
+| Fichier | Contenu |
+| --- | --- |
+| [`registre-traitements.md`](rgpd/registre-traitements.md) | Registre des traitements (art. 30 RGPD) : adhésions, consentements, espace membres, sauvegardes — finalités, bases légales, données, destinataires, durées, sécurité. À valider par le bureau ; même contenu que la page « Données personnelles » du site |
+
+---
+
 ## external-docs/
 
 | Source | Contenu | État |

@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { Link } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Check, X } from 'lucide-react'
 import { Bloc, Espace } from '../../components/espace/Garde'
@@ -30,6 +31,14 @@ export function FamillePage() {
             </p>
           )}
           <MesCoordonnees me={me} />
+          <p className="text-sm text-muted-foreground">
+            Ce que le club enregistre sur vous et vos enfants, pour combien de temps, et comment consulter, corriger ou supprimer ces
+            informations :{' '}
+            <Link to="/donnees-personnelles" className="font-semibold text-brand">
+              données personnelles
+            </Link>
+            .
+          </p>
         </div>
       )}
     </Espace>

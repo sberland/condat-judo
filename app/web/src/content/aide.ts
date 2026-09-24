@@ -115,7 +115,13 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
       },
       {
         q: 'Consulter, corriger ou supprimer mes données',
-        r: ['Adressez-vous au bureau du club.'],
+        r: ['Adressez-vous au bureau du club. Vous pouvez aussi retirer à tout moment un accord donné (droit à l’image, groupe WhatsApp).'],
+      },
+      {
+        q: 'Combien de temps le club garde-t-il ces informations ?',
+        r: [
+          'Tout est détaillé sur la page « Données personnelles » (lien en bas de chaque page) : ce qui est enregistré, pourquoi, pour combien de temps, qui y a accès et vos droits.',
+        ],
       },
     ],
   },
