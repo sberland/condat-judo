@@ -71,6 +71,7 @@
 | [011-cotisations-paiements.md](pending/011-cotisations-paiements.md) | Paiements | feature | Moyen — travail du trésorier | M | P2 | — | Dû / encaissé / restant, paiement en 3 fois, modes, export ; pas de paiement en ligne |
 | [012-CHT-garderie-mercredi.md](pending/012-CHT-garderie-mercredi.md) | Garderie | feature | Élevé — remplace un fil WhatsApp confus | M | P2 | — | Chantier (a=demande, b=liste du jour + photo, c=pointage) |
 | [013-communication.md](pending/013-communication.md) | Communication | feature | Moyen — actualités et calendrier | M | P3 | — | WhatsApp / Facebook relaient des liens ; abonnement agenda |
+| [014-administration-contenu.md](pending/014-administration-contenu.md) | Contenu | feature | Élevé — le club tient son site à jour sans développeur | M | P2 | — | Rôle `contenu` ; coordonnées, équipe, disciplines, partenaires, règlement, mentions ; historique ; horaires / tarifs dans 003 |
 | — | Import des adhérents | proposition | Moyen — gain de saisie | S | P3 | — | Import depuis un tableur existant (si le club en a un), sinon saisie bureau (004) |
 | — | Nom de domaine du club | proposition | Moyen — image, e-mails d'envoi | S | P3 | — | Ex. judo-condat.fr (~10 €/an) ; utile pour l'envoi des e-mails de connexion (005, arbitrage A3) |
 | — | Résultats et palmarès | proposition | Faible | S | P4 | — | Résultats des compétitions par enfant (suite de 009) |
@@ -84,7 +85,7 @@
 | Phase | Specs | Pourquoi dans cet ordre |
 | --- | --- | --- |
 | 0 — Tout de suite | ~~002~~ (livrée en v0.3.0) | Gain rapide, sans dépendance |
-| 1 — Fondations (bureau d'abord) | **004** → **005-CHT** → **003** | On ne peut inviter que des personnes connues (004) ; les écrans bureau exigent la connexion (005) |
+| 1 — Fondations (bureau d'abord) | **004** → **005-CHT** → **003** → **014** | On ne peut inviter que des personnes connues (004) ; les écrans bureau exigent la connexion (005) ; puis le club administre référentiels et contenu lui-même |
 | 2 — Avant toute donnée réelle | **006**, **007**, **008** | Obligations RGPD et sécurité avant d'héberger des données de mineurs |
 | 3 — Valeur pour les familles | **009** puis **012-CHT** | Besoin d'origine d'abord ; la garderie ensuite (hebdomadaire) — pour la saison en cours, le bureau saisit les adhérents depuis les dossiers papier |
 | 4 — Gestion du club | **011** puis **010** | Le trésorier dès que les adhérents existent ; l'adhésion en ligne pour les inscriptions 2027/2028 |
@@ -111,6 +112,7 @@
 - **#010** — [Adhésion en ligne (dossier d'inscription)](pending/010-adhesion-en-ligne.md)
 - **#011** — [Cotisations : suivi des paiements](pending/011-cotisations-paiements.md)
 - **#012-CHT** — [Garderie du mercredi](pending/012-CHT-garderie-mercredi.md)
+- **#014** — [Administration du contenu du site](pending/014-administration-contenu.md)
 
 ---
 
