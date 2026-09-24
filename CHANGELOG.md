@@ -6,6 +6,11 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+### Corrections
+
+- Menu du téléphone : les rubriques s'affichent de nouveau sur un fond blanc lisible (elles
+  apparaissaient en transparence par-dessus la page)
+
 ## [0.2.0] — 2026-09-23
 
 ### Site vitrine du club
