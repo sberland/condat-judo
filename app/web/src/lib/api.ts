@@ -1,4 +1,5 @@
 import { useQuery, type QueryClient } from '@tanstack/react-query'
+import type { EtatDossier, Formalite, ModePaiement, Recueil } from '../content/adhesion'
 
 export type Environnement = 'production' | 'preview' | 'local'
 
@@ -163,6 +164,59 @@ export type Enfant = {
   est_contact: number
   coResponsables: { prenom: string; nom: string; qualite: Qualite }[]
   personnesAutorisees: { prenom: string; nom: string; lien: string }[]
+}
+
+// --- Dossiers d'adhésion (spec 010a) ---
+
+export type Adhesion = {
+  formule: string
+  passeport: 0 | 1
+  hors_commune: 0 | 1
+  reduction_famille: 0 | 1
+  montant_participation: number
+  montant_licence: number
+  montant_supplements: number
+  montant_reduction: number
+  montant_total: number
+  paiement_mode: ModePaiement | null
+  paiement_3_fois: 0 | 1
+  echeance_1: number
+  echeance_2: number
+  echeance_3: number
+  formalite_type: Formalite | null
+  formalite_recue_le: string | null
+  soins_urgence: Recueil
+  soins_urgence_le: string | null
+  droit_image: Recueil
+  droit_image_le: string | null
+  whatsapp: Recueil
+  whatsapp_le: string | null
+  valide_le: string | null
+}
+
+export type ContexteDossier = {
+  mineur: boolean
+  responsables: number
+  /** Autres enfants d'un même responsable qui ont déjà un dossier cette saison. */
+  autresDossiersFamille: number
+  horsCommune: boolean
+  formuleJudo: string
+}
+
+export type DossierAdhesion = {
+  saison: { id: string; libelle: string }
+  contexte: ContexteDossier
+  adhesion: Adhesion | null
+  etat: EtatDossier | null
+}
+
+export type ListeDossiers = {
+  saison: { id: string; libelle: string }
+  lignes: {
+    adherent: { id: number; prenom: string; nom: string; date_naissance: string }
+    dossier: { formule: string; montant_total: number } | null
+    etat: EtatDossier | null
+  }[]
 }
 
 // --- Connexion (spec 005a) ---

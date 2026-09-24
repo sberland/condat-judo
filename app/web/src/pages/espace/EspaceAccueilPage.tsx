@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
-import { ChevronRight, CircleHelp, Contact, LogOut, Users, UsersRound } from 'lucide-react'
+import { ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, Users, UsersRound } from 'lucide-react'
+import { SAISON } from '../../content/adhesion'
 import { Espace } from '../../components/espace/Garde'
 import { Bouton } from '../../components/formulaire'
 import { aUnRole, ROLES, seDeconnecter } from '../../lib/api'
@@ -25,6 +26,9 @@ export function EspaceAccueilPage() {
             </Tuile>
             {aUnRole(me, 'bureau', 'admin') && (
               <>
+                <Tuile to="/espace/adhesions" icone={<ClipboardList className="size-6" />} titre={`Dossiers ${SAISON.libelle}`}>
+                  Dossiers d’adhésion de la saison : ce qui manque, montants, validation.
+                </Tuile>
                 <Tuile to="/espace/adherents" icone={<Users className="size-6" />} titre="Adhérents">
                   Fiches des pratiquants, responsables légaux, personnes autorisées.
                 </Tuile>
@@ -63,7 +67,7 @@ function Tuile({
   titre,
   children,
 }: {
-  to: '/espace/famille' | '/espace/adherents' | '/espace/comptes' | '/espace/aide'
+  to: '/espace/famille' | '/espace/adherents' | '/espace/adhesions' | '/espace/comptes' | '/espace/aide'
   icone: ReactNode
   titre: string
   children: ReactNode

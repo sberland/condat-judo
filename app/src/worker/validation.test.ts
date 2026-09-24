@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   casseNom,
   normaliserTelephone,
+  validerAdhesion,
   validerAdherent,
   validerCompte,
   validerLien,
@@ -82,5 +83,57 @@ describe('validerPersonneAutorisee', () => {
   it('exige prénom, nom et lien', () => {
     expect(validerPersonneAutorisee({ prenom: 'Jeanne', nom: 'Dev' }).ok).toBe(false);
     expect(validerPersonneAutorisee({ prenom: 'Jeanne', nom: 'Dev', lien: 'grand-mère' }).ok).toBe(true);
+  });
+});
+
+describe('ceinture (liste officielle)', () => {
+  const base = { prenom: 'Léa', nom: 'Dupont', date_naissance: '2017-03-12', sexe: 'F' };
+  it('accepte une ceinture de la liste', () => {
+    const r = validerAdherent({ ...base, grade: 'Orange-verte' }, AUJOURDHUI);
+    expect(r.ok && r.valeur.grade).toBe('Orange-verte');
+  });
+  it('refuse une ceinture hors liste', () => {
+    const r = validerAdherent({ ...base, grade: 'Arc-en-ciel' }, AUJOURDHUI);
+    expect(!r.ok && r.erreurs.grade).toBeTruthy();
+  });
+});
+
+describe('validerAdhesion', () => {
+  it('accepte un dossier minimal : formule seule, consentements non recueillis', () => {
+    const r = validerAdhesion({ formule: 'judo-micro-mini' }, AUJOURDHUI);
+    expect(r.ok && r.valeur).toMatchObject({
+      formule: 'judo-micro-mini',
+      paiement_mode: null,
+      formalite_type: null,
+      soins_urgence: 'non_recueilli',
+      droit_image: 'non_recueilli',
+      whatsapp: 'non_recueilli',
+    });
+  });
+  it('accepte un dossier complet', () => {
+    const r = validerAdhesion(
+      {
+        formule: 'taiso',
+        passeport: true,
+        paiement_mode: 'cheque',
+        paiement_3_fois: true,
+        formalite_type: 'attestation_qs_sport',
+        formalite_recue_le: '2026-09-10',
+        soins_urgence: 'oui',
+        droit_image: 'non',
+        whatsapp: 'oui',
+      },
+      AUJOURDHUI,
+    );
+    expect(r.ok && r.valeur).toMatchObject({ passeport: 1, paiement_3_fois: 1, paiement_mode: 'cheque', droit_image: 'non' });
+  });
+  it('refuse formule, mode, pièce et consentement inconnus', () => {
+    const r = validerAdhesion({ formule: 'karate', paiement_mode: 'bitcoin', formalite_type: 'radio', droit_image: 'peut-etre' }, AUJOURDHUI);
+    expect(!r.ok && Object.keys(r.erreurs).sort()).toEqual(['droit_image', 'formalite_type', 'formule', 'paiement_mode']);
+  });
+  it('exige la pièce quand une date de réception est saisie, et refuse une date future', () => {
+    expect(!validerAdhesion({ formule: 'taiso', formalite_recue_le: '2026-09-10' }, AUJOURDHUI).ok).toBe(true);
+    const r = validerAdhesion({ formule: 'taiso', formalite_type: 'certificat', formalite_recue_le: '2027-01-01' }, AUJOURDHUI);
+    expect(!r.ok && r.erreurs.formalite_recue_le).toBeTruthy();
   });
 });

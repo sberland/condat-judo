@@ -1,5 +1,15 @@
 // Validation des saisies de l'API (fonctions pures, testées). Chaque champ produit une valeur
 // normalisée ou un message d'erreur lisible, affiché tel quel sous le champ côté front.
+import {
+  CEINTURES,
+  FORMALITES,
+  formuleParId,
+  MODES_PAIEMENT,
+  RECUEILS,
+  type Formalite,
+  type ModePaiement,
+  type Recueil,
+} from '../../web/src/content/adhesion';
 
 export type Resultat<T> = { ok: true; valeur: T } | { ok: false; erreurs: Record<string, string> };
 
@@ -80,12 +90,14 @@ export function validerAdherent(corps: Corps, aujourdhui = new Date()): Resultat
   const codePostal = c.optionnel(corps, 'code_postal', 'Code postal', 5);
   if (codePostal && !/^\d{5}$/.test(codePostal)) c.erreurs.code_postal = 'Code postal à 5 chiffres';
   const ville = c.optionnel(corps, 'ville', 'Ville', 80);
+  const grade = c.optionnel(corps, 'grade', 'Ceinture', 40);
+  if (grade && !(CEINTURES as readonly string[]).includes(grade)) c.erreurs.grade = 'Ceinture inconnue : choisir dans la liste';
   return c.resultat({
     prenom,
     nom,
     date_naissance: date,
     sexe: sexe as 'F' | 'M',
-    grade: c.optionnel(corps, 'grade', 'Grade', 40),
+    grade,
     numero_licence: c.optionnel(corps, 'numero_licence', 'N° de licence', 30),
     adresse: c.optionnel(corps, 'adresse', 'Adresse', 160),
     code_postal: codePostal,
@@ -143,4 +155,59 @@ export function validerPersonneAutorisee(corps: Corps): Resultat<PersonneAutoris
 export function validerTelephoneSeul(corps: Corps): Resultat<{ telephone: string | null }> {
   const c = new Collecteur();
   return c.resultat({ telephone: c.telephone(corps, 'telephone') });
+}
+
+// --- Dossier d'adhésion (spec 010a) ---
+
+export type AdhesionSaisie = {
+  formule: string;
+  passeport: 0 | 1;
+  hors_commune: 0 | 1;
+  reduction_famille: 0 | 1;
+  paiement_mode: ModePaiement | null;
+  paiement_3_fois: 0 | 1;
+  formalite_type: Formalite | null;
+  formalite_recue_le: string | null;
+  soins_urgence: Recueil;
+  droit_image: Recueil;
+  whatsapp: Recueil;
+};
+
+const dansListe = <T extends string>(liste: Record<T, string>, v: unknown): v is T => typeof v === 'string' && Object.hasOwn(liste, v);
+
+export function validerAdhesion(corps: Corps, aujourdhui = new Date()): Resultat<AdhesionSaisie> {
+  const c = new Collecteur();
+  const bool = (v: unknown): 0 | 1 => (v === true || v === 1 ? 1 : 0);
+  const formule = texte(corps.formule);
+  if (!formuleParId(formule)) c.erreurs.formule = 'Formule obligatoire';
+  const mode = corps.paiement_mode || null;
+  if (mode !== null && !dansListe(MODES_PAIEMENT, mode)) c.erreurs.paiement_mode = 'Mode de paiement inconnu';
+  const type = corps.formalite_type || null;
+  if (type !== null && !dansListe(FORMALITES, type)) c.erreurs.formalite_type = 'Pièce inconnue';
+  const recue = texte(corps.formalite_recue_le) || null;
+  if (recue !== null) {
+    if (!dateIsoValide(recue) || recue > aujourdhui.toISOString().slice(0, 10)) c.erreurs.formalite_recue_le = 'Date de réception invalide';
+    if (type === null) c.erreurs.formalite_type = 'Préciser la pièce reçue';
+  }
+  const recueil = (champ: string, libelle: string): Recueil => {
+    const v = corps[champ] ?? 'non_recueilli';
+    if (!dansListe(RECUEILS, v)) {
+      c.erreurs[champ] = `${libelle} : valeur inconnue`;
+      return 'non_recueilli';
+    }
+    return v;
+  };
+  return c.resultat({
+    formule,
+    passeport: bool(corps.passeport),
+    hors_commune: bool(corps.hors_commune),
+    reduction_famille: bool(corps.reduction_famille),
+    paiement_mode: mode as ModePaiement | null,
+    paiement_3_fois: bool(corps.paiement_3_fois),
+    formalite_type: type as Formalite | null,
+    formalite_recue_le: recue,
+    soins_urgence: recueil('soins_urgence', 'Soins d’urgence'),
+    droit_image: recueil('droit_image', 'Droit à l’image'),
+    whatsapp: recueil('whatsapp', 'Groupe WhatsApp'),
+  });
 }

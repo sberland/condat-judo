@@ -39,3 +39,16 @@ INSERT OR IGNORE INTO personnes_autorisees (id, adherent_id, prenom, nom, lien, 
 INSERT OR IGNORE INTO saisons (id, libelle, debut, fin) VALUES
   (1, '2025-2026', '2025-09-01', '2026-08-31'),
   (2, '2026-2027', '2026-09-01', '2027-08-31');
+
+-- Dossiers d'adhésion 2026/2027 (spec 010a) : Léa complet (3 fois), Nina à compléter (hors
+-- commune), Hugo sans dossier (réduction famille proposée : sa sœur Léa a déjà un dossier).
+INSERT OR IGNORE INTO adhesions (adherent_id, saison, formule, passeport, hors_commune, reduction_famille,
+  montant_participation, montant_licence, montant_supplements, montant_reduction, montant_total,
+  paiement_mode, paiement_3_fois, echeance_1, echeance_2, echeance_3, formalite_type, formalite_recue_le,
+  soins_urgence, soins_urgence_le, soins_urgence_par, droit_image, droit_image_le, droit_image_par,
+  whatsapp, whatsapp_le, whatsapp_par, cree_par) VALUES
+  (1, '2026-2027', 'judo-poussins-juniors', 0, 0, 0, 10100, 4600, 0, 0, 14700, 'cheque', 1, 8000, 3400, 3300,
+   'attestation_qs_mineur', '2026-09-10', 'oui', '2026-09-10 18:00:00', 1, 'non', '2026-09-10 18:00:00', 1,
+   'oui', '2026-09-10 18:00:00', 1, 1),
+  (3, '2026-2027', 'judo-poussins-juniors', 0, 1, 0, 10100, 4600, 200, 0, 14900, NULL, 0, 8200, 3400, 3300,
+   NULL, NULL, 'non_recueilli', NULL, NULL, 'non_recueilli', NULL, NULL, 'non_recueilli', NULL, NULL, 1);

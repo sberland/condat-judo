@@ -12,6 +12,7 @@ import { ReglementPage } from './pages/ReglementPage'
 import { AdherentFichePage } from './pages/espace/AdherentFichePage'
 import { AdherentNouveauPage } from './pages/espace/AdherentNouveauPage'
 import { AdherentsPage } from './pages/espace/AdherentsPage'
+import { AdhesionsPage } from './pages/espace/AdhesionsPage'
 import { AidePage } from './pages/espace/AidePage'
 import { ComptesPage } from './pages/espace/ComptesPage'
 import { EspaceAccueilPage } from './pages/espace/EspaceAccueilPage'
@@ -39,6 +40,7 @@ const routeTree = rootRoute.addChildren([
   createRoute({ getParentRoute, path: '/espace/adherents/nouveau', component: AdherentNouveauPage }),
   createRoute({ getParentRoute, path: '/espace/adherents/$id', component: AdherentFichePage }),
   createRoute({ getParentRoute, path: '/espace/comptes', component: ComptesPage }),
+  createRoute({ getParentRoute, path: '/espace/adhesions', component: AdhesionsPage }),
   createRoute({ getParentRoute, path: '/espace/aide', component: AidePage }),
 ])
 

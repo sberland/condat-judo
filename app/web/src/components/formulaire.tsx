@@ -67,6 +67,7 @@ export function Selection<T extends string>({
   options,
   onChange,
   requis = false,
+  vide = 'Choisir…',
 }: {
   id: string
   libelle: string
@@ -75,6 +76,8 @@ export function Selection<T extends string>({
   options: { valeur: T; libelle: string }[]
   onChange: (v: T | '') => void
   requis?: boolean
+  /** Libellé de l'option vide (ex. « Aucune »). */
+  vide?: string
 }) {
   return (
     <div>
@@ -90,7 +93,7 @@ export function Selection<T extends string>({
         aria-invalid={!!erreur}
         className={CHAMP}
       >
-        <option value="">Choisir…</option>
+        <option value="">{vide}</option>
         {options.map((o) => (
           <option key={o.valeur} value={o.valeur}>
             {o.libelle}

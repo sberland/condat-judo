@@ -11,6 +11,7 @@ export type IdRubrique =
   | 'mes-enfants'
   | 'donnees'
   | 'adherents'
+  | 'adhesions'
   | 'responsables'
   | 'liens-connexion'
   | 'comptes'
@@ -127,7 +128,7 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
       {
         q: 'Ajouter un adhérent',
         r: [
-          'Adhérents → « Ajouter un adhérent » : prénom, nom, date de naissance et sexe suffisent ; ceinture, n° de licence et adresse peuvent attendre.',
+          'Adhérents → « Ajouter un adhérent » : prénom, nom, date de naissance et sexe suffisent ; ceinture (liste officielle France Judo, « Aucune » pour le taïso ou le yoga), n° de licence et adresse peuvent attendre.',
           'Vous arrivez ensuite sur sa fiche pour lui ajouter ses responsables légaux.',
         ],
       },
@@ -141,6 +142,56 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
           'Sur sa fiche : « Modifier » pour l’identité ; « Supprimer l’adhérent » en bas du bloc.',
           'Une fiche supprimée reste restaurable (« Restaurer la fiche ») : rien n’est perdu en cas d’erreur.',
         ],
+      },
+    ],
+  },
+  {
+    id: 'adhesions',
+    titre: 'Dossiers d’adhésion de la saison',
+    profil: 'bureau',
+    questions: [
+      {
+        q: 'Ressaisir un formulaire papier',
+        r: [
+          '1. « Saisir un nouvel adhérent » (écran Dossiers ou Adhérents) : identité de l’enfant.',
+          '2. Sur sa fiche, le formulaire « Responsables légaux » s’ouvre directement : ajoutez le ou les parents.',
+          '3. Plus bas, « Adhésion » → « Saisir le dossier » : formule, paiement, formalité médicale, autorisations.',
+          '4. Une fois enregistré, « Saisir l’adhérent suivant » enchaîne sur le formulaire suivant.',
+        ],
+      },
+      {
+        q: 'Comment le montant est-il calculé ?',
+        r: [
+          'D’après la grille de la saison : participation + licence, + passeport (judo) et hors commune, − réduction famille.',
+          'La formule judo est proposée d’après l’année de naissance, « hors commune » d’après l’adresse, la réduction famille si un frère ou une sœur a déjà un dossier : vérifiez et corrigez si besoin.',
+          'Le montant est figé à l’enregistrement ; en 3 fois, suppléments et réduction portent sur le 1er versement.',
+        ],
+      },
+      {
+        q: 'Formalité médicale : que noter ?',
+        r: [
+          'Seulement la pièce reçue (attestation du questionnaire de santé pour un mineur, certificat ou attestation QS-SPORT pour un majeur) et sa date. Jamais le contenu : le site ne conserve aucune information de santé.',
+        ],
+      },
+      {
+        q: 'Droit à l’image, WhatsApp, soins d’urgence : « Non recueilli » ?',
+        r: [
+          'Le formulaire papier disait le droit à l’image « accepté par l’inscription » : ce n’est pas un accord valable. Laissez « Non recueilli » tant que la famille n’a pas dit oui ou non explicitement.',
+          'WhatsApp : reprenez la case cochée sur le papier. Soins d’urgence : « Non recueilli » s’ils ne figurent pas sur le papier.',
+          'Ces réponses sont datées, avec le nom de qui les a saisies. Elles ne bloquent pas le dossier mais restent signalées « à recueillir ».',
+        ],
+      },
+      {
+        q: 'À compléter, complet, validé',
+        r: [
+          'À compléter : il manque un responsable (mineur), le mode de paiement ou la formalité médicale — l’écran dit quoi.',
+          'Complet : tout y est ; « Valider le dossier » confirme qu’il a été vérifié.',
+          'Modifier un dossier validé le repasse en « complet » : il faut le revalider.',
+        ],
+      },
+      {
+        q: 'Suivre l’avancement',
+        r: ['Écran « Dossiers » : tous les adhérents, filtrables (sans dossier, à compléter, complets, validés), avec ce qui manque pour chacun et le total des montants.'],
       },
     ],
   },
