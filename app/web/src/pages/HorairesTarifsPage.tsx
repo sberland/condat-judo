@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { ArrowRight, BadgeEuro, BadgeMinus, BadgePlus, Clock, CreditCard } from 'lucide-react'
 import { coursTries, heure } from '../content/referentiel'
 import type { Formule } from '../content/tarifs'
+import { disciplineDe, IllustrationDiscipline } from '../components/IllustrationDiscipline'
 import { Provisoire, useProvisoireVisible } from '../components/Provisoire'
 import { BoutonLien, Card, Container, PageHeader } from '../components/ui'
 import { useContenu } from '../lib/contenu'
@@ -49,12 +50,13 @@ export function HorairesTarifsPage() {
               </TitreBloc>
               <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {coursTries(r.horaires.cours).map((c) => (
-                  <li key={`${c.jour}-${c.debut}-${c.cours}`} className="rounded-2xl border bg-white p-5 shadow-sm">
+                  <li key={`${c.jour}-${c.debut}-${c.cours}`} className="relative rounded-2xl border bg-white p-5 shadow-sm">
+                    <IllustrationDiscipline id={disciplineDe(c.cours) ?? ''} className="absolute top-4 right-4 size-12" />
                     <p className="text-sm font-semibold text-brand capitalize">{c.jour}</p>
                     <p className="mt-1 text-xl font-bold">
                       {heure(c.debut)} – {heure(c.fin)}
                     </p>
-                    <p className="mt-2 font-semibold">{c.cours}</p>
+                    <p className="mt-2 pr-14 font-semibold">{c.cours}</p>
                     <p className="text-sm text-muted-foreground">{c.public}</p>
                   </li>
                 ))}
@@ -129,8 +131,9 @@ export function HorairesTarifsPage() {
 function CarteFormule({ formule: f }: { formule: Formule }) {
   const [premier, deuxieme, troisieme] = f.echeancier
   return (
-    <Card className="flex h-full flex-col">
-      <p className="text-lg font-bold">{f.nom}</p>
+    <Card className="relative flex h-full flex-col">
+      <IllustrationDiscipline id={disciplineDe(`${f.id} ${f.nom}`) ?? ''} className="absolute top-4 right-4 size-12" />
+      <p className="pr-14 text-lg font-bold">{f.nom}</p>
       <p className="text-sm text-muted-foreground">{f.public}</p>
       <p className="mt-4 text-4xl font-extrabold tracking-tight">{euros(totalFormule(f))}</p>
       <p className="text-sm text-muted-foreground">par saison, licence comprise</p>

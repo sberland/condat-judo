@@ -623,7 +623,7 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
       {
         q: 'Modifier une information du site',
         r: [
-          'Mon espace → « Contenu du site » → choisissez le contenu (coordonnées, dojo, équipe, disciplines, partenaires, règlement, liens…), modifiez, puis « Enregistrer et publier » : c’est en ligne aussitôt, sans mise à jour du site.',
+          'Mon espace → « Contenu du site » → choisissez le contenu (coordonnées, dojo, équipe, esprit du club, disciplines, partenaires, règlement, liens…), modifiez, puis « Enregistrer et publier » : c’est en ligne aussitôt, sans mise à jour du site.',
           'Dans une liste (membres du bureau, articles, partenaires…), touchez un élément pour le modifier ; « Monter » / « Descendre » changent l’ordre, « Ajouter » en crée un nouveau.',
           '« Voir sur le site » ouvre la page publique concernée.',
         ],

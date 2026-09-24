@@ -1,10 +1,13 @@
-import { ArrowUpRight, MapPin, Navigation } from 'lucide-react'
-import { CLUB, CODE_MORAL } from '../content/club'
+import { ArrowUpRight, HandHeart, HeartHandshake, MapPin, Navigation, Smile, UsersRound } from 'lucide-react'
+import { CLUB } from '../content/club'
 import { itineraire } from '../content/contenu'
 import { Provisoire, SelonStatut, useProvisoireVisible } from '../components/Provisoire'
 import { useAffichable, useContenu } from '../lib/contenu'
 import { BoutonExterne, Card, Container, PageHeader, Section, SectionTitle } from '../components/ui'
 import { usePageMeta } from '../lib/usePageMeta'
+
+// Icônes des valeurs de l'esprit du club, dans l'ordre (convivial, familial, ouvert à tous, bénévole).
+const ICONES_ESPRIT = [Smile, UsersRound, HeartHandshake, HandHeart]
 
 const initiales = (nom: string) =>
   nom
@@ -15,7 +18,7 @@ const initiales = (nom: string) =>
 export function ClubPage() {
   usePageMeta(
     'Le club',
-    'Le club Judo Condat-sur-Vienne : professeur, bureau, dojo, code moral du judo, partenaires et liens utiles.',
+    'Le club Judo Condat-sur-Vienne : un club convivial, familial et ouvert à tous — équipe, dojo, partenaires et liens utiles.',
   )
 
   const c = useContenu()
@@ -91,39 +94,31 @@ export function ClubPage() {
         </Container>
       </section>
 
-      <Section id="code-moral">
-        <SectionTitle surtitre="Le code moral du judo" titre="Les 8 valeurs du judoka">
-          Le code moral est un élément essentiel de la pratique du judo : il aide chacun à grandir,
-          sur le tatami comme dans la vie.
-        </SectionTitle>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {CODE_MORAL.map((v, i) => (
-            <Card key={v.nom} className="relative">
-              <span className="absolute top-5 right-5 text-3xl font-black text-brand/15" aria-hidden>
-                {i + 1}
-              </span>
-              <h3 className="text-xl font-bold">{v.nom}</h3>
-              <p className="mt-1 font-semibold text-brand">{v.definition}</p>
-              {v.lignes.map((l) => (
-                <p key={l} className="mt-2 text-sm text-muted-foreground">
-                  {l}
-                </p>
-              ))}
-            </Card>
-          ))}
-        </div>
-        <p className="mt-6 text-sm text-muted-foreground">
-          Source :{' '}
-          <a
-            href="https://www.ffjudo.com/le-code-moral-du-judo"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline hover:text-brand"
-          >
-            France Judo — le code moral du judo
-          </a>
-        </p>
-      </Section>
+      {affichable(c.statuts.esprit) && (
+        <Section id="esprit">
+          <SelonStatut statut={c.statuts.esprit}>
+            <SectionTitle surtitre="L’esprit du club" titre={c.esprit.titre}>
+              {c.esprit.intro}
+            </SectionTitle>
+            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {c.esprit.valeurs.map((v, i) => {
+                const Icone = ICONES_ESPRIT[i % ICONES_ESPRIT.length] ?? Smile
+                return (
+                  <li key={i}>
+                    <Card className="h-full">
+                      <span className="flex size-12 items-center justify-center rounded-full bg-brand-soft text-brand">
+                        <Icone className="size-6" aria-hidden />
+                      </span>
+                      <h3 className="mt-4 text-xl font-bold">{v.nom}</h3>
+                      <p className="mt-2 text-muted-foreground">{v.texte}</p>
+                    </Card>
+                  </li>
+                )
+              })}
+            </ul>
+          </SelonStatut>
+        </Section>
+      )}
 
       <section id="partenaires" className="bg-surface py-14 sm:py-20">
         <Container className={`grid gap-10 ${partenaires.length > 0 && affichable(c.statuts.liens) ? 'lg:grid-cols-2' : ''}`}>

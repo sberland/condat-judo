@@ -1,10 +1,11 @@
 import { Link } from '@tanstack/react-router'
 import { Sparkles } from 'lucide-react'
-import { enLettres, enumerer, majuscule } from '../content/club'
+import { CODE_MORAL, enLettres, enumerer, majuscule, PRINCIPES_YOGA, type Valeur } from '../content/club'
 import { listeDisciplines, type Discipline } from '../content/contenu'
 import { useContenu } from '../lib/contenu'
+import { IllustrationDiscipline } from '../components/IllustrationDiscipline'
 import { Provisoire, useProvisoireVisible } from '../components/Provisoire'
-import { Container, PageHeader } from '../components/ui'
+import { Card, Container, PageHeader, SectionTitle } from '../components/ui'
 import { usePageMeta } from '../lib/usePageMeta'
 
 export function DisciplinesPage() {
@@ -30,11 +31,19 @@ export function DisciplinesPage() {
               key={d.id}
               to="/disciplines"
               hash={d.id}
-              className="shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-colors hover:border-brand hover:text-brand"
+              className="flex shrink-0 items-center gap-2 rounded-full border py-1 pr-4 pl-1 text-sm font-semibold transition-colors hover:border-brand hover:text-brand"
             >
+              <IllustrationDiscipline id={d.id} className="size-8 shrink-0" />
               {d.nom}
             </Link>
           ))}
+          <Link
+            to="/disciplines"
+            hash="valeurs"
+            className="flex shrink-0 items-center rounded-full border px-4 py-2 text-sm font-semibold transition-colors hover:border-brand hover:text-brand"
+          >
+            Valeurs
+          </Link>
         </Container>
       </div>
 
@@ -49,6 +58,66 @@ export function DisciplinesPage() {
           ),
         )}
       </Container>
+
+      <Valeurs />
+    </div>
+  )
+}
+
+/** Les valeurs des disciplines (retours du club, spec 020) : code moral et principes du yoga. */
+function Valeurs() {
+  return (
+    <section id="valeurs" className="bg-surface py-14 sm:py-20">
+      <Container className="grid gap-16">
+        <div>
+          <div className="mb-4 flex gap-2" aria-hidden>
+            {['judo', 'jujitsu', 'taiso'].map((id) => (
+              <IllustrationDiscipline key={id} id={id} className="size-12" />
+            ))}
+          </div>
+          <SectionTitle surtitre="Judo, jujitsu et taïso" titre="Le code moral : huit valeurs">
+            Le code moral de France Judo guide la pratique du judo, du jujitsu et du taïso au club : il aide chacun à grandir, sur le
+            tatami comme dans la vie.
+          </SectionTitle>
+          <CartesValeurs valeurs={CODE_MORAL} />
+          <p className="mt-6 text-sm text-muted-foreground">
+            Source :{' '}
+            <a href="https://www.ffjudo.com/le-code-moral-du-judo" target="_blank" rel="noopener noreferrer" className="underline hover:text-brand">
+              France Judo — le code moral du judo
+            </a>
+          </p>
+        </div>
+        <div>
+          <IllustrationDiscipline id="yoga" className="mb-4 size-12" />
+          <SectionTitle surtitre="Yoga" titre="Les principes de vie du yoga">
+            Le yoga s’appuie sur des principes de vie, les yamas, décrits il y a plus de deux mille ans dans les Yoga Sutras de
+            Patanjali. En voici l’esprit, en mots simples.
+          </SectionTitle>
+          <CartesValeurs valeurs={PRINCIPES_YOGA} accent="text-[#12876a]" numero="text-[#12876a]/15" />
+        </div>
+      </Container>
+    </section>
+  )
+}
+
+function CartesValeurs({ valeurs, accent = 'text-brand', numero = 'text-brand/15' }: { valeurs: Valeur[]; accent?: string; numero?: string }) {
+  return (
+    <div className={`grid gap-4 sm:grid-cols-2 ${valeurs.length % 4 === 0 ? 'lg:grid-cols-4' : 'lg:grid-cols-5'}`}>
+      {valeurs.map((v, i) => (
+        <Card key={v.nom} className="relative">
+          <span className={`absolute top-5 right-5 text-3xl font-black ${numero}`} aria-hidden>
+            {i + 1}
+          </span>
+          <h3 className="text-xl font-bold">{v.nom}</h3>
+          {v.origine && <p className="text-sm text-muted-foreground italic">{v.origine}</p>}
+          <p className={`mt-1 font-semibold ${accent}`}>{v.definition}</p>
+          {v.lignes.map((l) => (
+            <p key={l} className="mt-2 text-sm text-muted-foreground">
+              {l}
+            </p>
+          ))}
+        </Card>
+      ))}
     </div>
   )
 }
@@ -57,6 +126,7 @@ function ArticleDiscipline({ d }: { d: Discipline }) {
   return (
     <article id={d.id} className="grid gap-8 py-14 sm:py-20 lg:grid-cols-[1fr_2fr]">
       <header>
+        <IllustrationDiscipline id={d.id} className="mb-5 size-28" />
         <span className="inline-flex rounded-full bg-brand-soft px-3 py-1 text-xs font-semibold text-brand">
           {d.public}
         </span>

@@ -19,6 +19,7 @@ Un **document JSON par type de contenu** (même choix que les saisons, spec 003)
 | `club` | Nom et adresse du dojo, page Facebook, période des cours | non (toujours affiché) |
 | `association` | Dénomination, forme, RNA, SIREN, siège, création | non (mentions légales) |
 | `equipe` | Professeur, bureau (le premier membre = directeur de la publication) | oui |
+| `esprit` | L'esprit du club : titre, introduction, valeurs (page « Le club », spec 020) | oui |
 | `disciplines` | Liste **fixe** (identifiants stables : ancres, horaires) ; « à compléter » par discipline | non |
 | `partenaires` | Liste ; « à compléter » par partenaire | oui |
 | `reglement` | Articles, date de mise à jour, références | oui |
@@ -31,7 +32,9 @@ inconnus ignorés, espaces nettoyés, erreurs indexées par chemin, ex. `bureau.
 l'**éditeur générique** (`components/espace/EditeurContenu.tsx`).
 
 Restent dans le code (`content/club.ts`) : le nom du club, le code moral (texte officiel de
-France Judo) et les utilitaires de mise en forme. Horaires et tarifs : référentiel de saison (003).
+France Judo), les principes de vie du yoga (spec 020) et les utilitaires de mise en forme.
+Illustrations des disciplines : `components/IllustrationDiscipline.tsx` (par identifiant de
+discipline ; `disciplineDe` retrouve la discipline d'un cours ou d'une formule par son nom). Horaires et tarifs : référentiel de saison (003).
 
 ### Base (migration 0012)
 

@@ -6,6 +6,30 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+### Vitrine : disciplines illustrées, valeurs, esprit du club
+
+#### Notes client
+
+Chaque discipline a désormais sa petite illustration, reprise sur l'accueil, la page Disciplines,
+les horaires et les tarifs. Le yoga est présenté plus complètement, comme les autres disciplines.
+Les valeurs trouvent leur place sur la page Disciplines : le code moral pour le judo, le jujitsu
+et le taïso, et les principes de vie du yoga ; l'accueil ne met plus en avant le seul judo. La
+page « Le club » présente l'esprit du club — convivial, familial et ouvert à tous —, un texte que
+le club peut modifier lui-même. Le menu suit un nouvel ordre : Accueil, Le club, Disciplines,
+Horaires & tarifs, puis Règlement et Contact.
+
+#### Ajouts
+
+- Illustrations des quatre disciplines
+- Page Disciplines : section « Valeurs » (code moral, principes de vie du yoga)
+- Page « Le club » : « L'esprit du club », modifiable dans « Contenu du site »
+
+#### Modifications
+
+- Présentation du yoga étoffée
+- Code moral retiré de l'accueil et de la page « Le club »
+- Ordre du menu
+
 ### Contenu du site modifiable par le club
 
 #### Notes client

@@ -22,7 +22,8 @@ const NOMBRES = ['Aucune', 'Une', 'Deux', 'Trois', 'Quatre', 'Cinq', 'Six', 'Sep
 /** 4 → « Quatre » (disciplines, façons de pratiquer…). */
 export const enLettres = (n: number) => NOMBRES[n] ?? String(n)
 
-export type Valeur = { nom: string; definition: string; lignes: string[] }
+/** Une valeur d'une discipline ; `origine` : son nom d'origine (ex. « Ahimsa »). */
+export type Valeur = { nom: string; definition: string; lignes: string[]; origine?: string }
 
 // Les 8 valeurs du code moral du judo — texte officiel France Judo.
 export const CODE_MORAL: Valeur[] = [
@@ -74,5 +75,40 @@ export const CODE_MORAL: Valeur[] = [
       'On progresse, on apprend, on s’améliore en gardant les pieds sur terre.',
       'La modestie, c’est rester curieux, et laisser les autres briller aussi.',
     ],
+  },
+]
+
+// Les principes de vie du yoga (yamas, Yoga Sutras de Patanjali), en mots simples — proposés le
+// 2026-09-24 (spec 020), à relire par le professeur de yoga.
+export const PRINCIPES_YOGA: Valeur[] = [
+  {
+    nom: 'Non-violence',
+    origine: 'Ahimsa',
+    definition: 'C’est prendre soin de soi et des autres.',
+    lignes: ['Ne pas forcer : écouter son corps, respecter ses limites.', 'Être bienveillant, avec soi comme avec les autres.'],
+  },
+  {
+    nom: 'Vérité',
+    origine: 'Satya',
+    definition: 'C’est être sincère.',
+    lignes: ['Dire vrai, avec douceur.', 'Pratiquer tel que l’on est, sans chercher à paraître.'],
+  },
+  {
+    nom: 'Honnêteté',
+    origine: 'Asteya',
+    definition: 'C’est ne pas prendre ce qui n’est pas à soi.',
+    lignes: ['Respecter le temps, l’espace et les efforts des autres.', 'Ne pas se comparer : chacun son chemin.'],
+  },
+  {
+    nom: 'Modération',
+    origine: 'Brahmacharya',
+    definition: 'C’est trouver la juste mesure.',
+    lignes: ['Doser son énergie, ni trop ni trop peu.', 'Savoir s’arrêter pour mieux progresser.'],
+  },
+  {
+    nom: 'Non-attachement',
+    origine: 'Aparigraha',
+    definition: 'C’est lâcher prise.',
+    lignes: ['Accueillir chaque séance comme elle vient.', 'Se libérer du superflu, garder l’essentiel.'],
   },
 ]

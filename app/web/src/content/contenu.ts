@@ -24,6 +24,9 @@ export type Association = { denomination: string; forme: string; rna: string; si
 
 export type Personne = { role: string; nom: string }
 
+/** L'esprit du club (page « Le club ») : ce qui fait son ambiance. */
+export type Esprit = { titre: string; intro: string; valeurs: { nom: string; texte: string }[] }
+
 export type Equipe = { professeur: Personne; bureau: Personne[] }
 
 export type Discipline = {
@@ -55,6 +58,7 @@ export type Contenus = {
   club: Club
   association: Association
   equipe: Equipe
+  esprit: Esprit
   disciplines: { disciplines: Discipline[] }
   partenaires: { partenaires: Partenaire[] }
   reglement: Reglement
@@ -135,6 +139,23 @@ export const DEFINITIONS: Record<CleContenu, Definition> = {
     champs: [
       { type: 'objet', cle: 'professeur', libelle: 'Professeur', champs: [texte('role', 'Rôle'), texte('nom', 'Nom')] },
       { type: 'liste', cle: 'bureau', libelle: 'Bureau', element: 'un membre', titre: 'nom', champs: [texte('role', 'Rôle'), texte('nom', 'Nom')] },
+    ],
+  },
+  esprit: {
+    titre: 'L’esprit du club',
+    description: 'Ce qui fait l’ambiance du club, en quelques mots (page « Le club »).',
+    statut: true,
+    champs: [
+      texte('titre', 'Titre'),
+      long('intro', 'Introduction'),
+      {
+        type: 'liste',
+        cle: 'valeurs',
+        libelle: 'Valeurs',
+        element: 'une valeur',
+        titre: 'nom',
+        champs: [texte('nom', 'Valeur', { max: 40 }), long('texte', 'Texte')],
+      },
     ],
   },
   disciplines: {

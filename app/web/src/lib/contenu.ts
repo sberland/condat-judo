@@ -79,6 +79,7 @@ export const PAGE_DU_CONTENU: Record<CleContenu, '/' | '/contact' | '/mentions-l
   club: '/',
   association: '/mentions-legales',
   equipe: '/club',
+  esprit: '/club',
   disciplines: '/disciplines',
   partenaires: '/club',
   reglement: '/reglement',
