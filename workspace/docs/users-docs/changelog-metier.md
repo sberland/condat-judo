@@ -4,6 +4,16 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.5.0 — 24 septembre 2026
+
+Les familles et le bureau peuvent désormais se connecter au site, sans mot de passe. Le bureau
+envoie à chaque adulte un lien personnel sur WhatsApp : un geste suffit, et l'on reste connecté
+six mois (chaque visite prolonge ce délai). Un lien ne sert qu'une fois et expire au bout de sept
+jours ; en cas de téléphone perdu, le bureau coupe l'accès en un clic. La reconnexion autonome par
+code reçu par e-mail viendra ensuite, une fois le nom de domaine du club choisi.
+
+---
+
 ## v0.4.0 — 24 septembre 2026
 
 Le site sait désormais qui est responsable de quel enfant. Le bureau peut enregistrer les

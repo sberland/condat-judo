@@ -61,7 +61,7 @@
 | Fichier | Scope | Type | Impact utilisateur | Effort estimé | Priorité | Date cible | Notes |
 |---|---|---|---|---|---|---|---|
 | [003-referentiels-saison.md](pending/003-referentiels-saison.md) | Référentiels | feature | Élevé — socle de toutes les fonctionnalités | M | P1 | — | Catégories calculées par date de naissance, cours, grades, grille tarifaire ; copie de saison |
-| [005-CHT-authentification.md](pending/005-CHT-authentification.md) | Auth | technique | Élevé — « connexion simple = clé du succès » | L | P1 | — | Chantier (a=invitation + session, b=code e-mail, c=passkey) ; 5 arbitrages au démarrage |
+| [005-CHT-authentification.md](pending/005-CHT-authentification.md) | Auth | technique | Élevé — « connexion simple = clé du succès » | L | P1 | — | Chantier (a=lien remis par le bureau + session 6 mois, b=code e-mail — attend le domaine, c=passkey) ; arbitrages rendus le 2026-09-24 |
 | [006-rgpd-socle.md](pending/006-rgpd-socle.md) | RGPD | feature | Élevé — obligatoire avant les données des familles | M | P1 | — | Registre, mentions, consentements opt-in, durées, droits, pas de donnée de santé |
 | [007-sauvegarde-d1.md](pending/007-sauvegarde-d1.md) | Données | technique | Moyen — sécurité des données | S | P1 | — | Avant données réelles ; lieu de stockage chiffré à arbitrer (dépôt public exclu) |
 | [008-anonymisation-qualif.md](pending/008-anonymisation-qualif.md) | Données | technique | Moyen — RGPD hors prod | S | P1 | — | Avant données réelles ; échec si colonne personnelle non couverte |
@@ -84,7 +84,7 @@
 | Phase | Specs | Pourquoi dans cet ordre |
 | --- | --- | --- |
 | 0 — Tout de suite | ~~002~~ (livrée en v0.3.0) | Gain rapide, sans dépendance |
-| 1 — Fondations (bureau d'abord) | ~~004~~ (livrée en v0.4.0) → **005-CHT** → **003** → **014** | On ne peut inviter que des personnes connues (004) ; les écrans bureau exigent la connexion (005) ; puis le club administre référentiels et contenu lui-même |
+| 1 — Fondations (bureau d'abord) | ~~004~~ (livrée en v0.4.0) → **005-CHT** (005a livrée en v0.5.0 ; 005b attend le domaine) → **003** → **014** | On ne peut inviter que des personnes connues (004) ; les écrans bureau exigent la connexion (005) ; puis le club administre référentiels et contenu lui-même |
 | 2 — Avant toute donnée réelle | **006**, **007**, **008** | Obligations RGPD et sécurité avant d'héberger des données de mineurs |
 | 3 — Valeur pour les familles | **009** puis **012-CHT** | Besoin d'origine d'abord ; la garderie ensuite (hebdomadaire) — pour la saison en cours, le bureau saisit les adhérents depuis les dossiers papier |
 | 4 — Gestion du club | **011** puis **010** | Le trésorier dès que les adhérents existent ; l'adhésion en ligne pour les inscriptions 2027/2028 |

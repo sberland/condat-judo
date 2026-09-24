@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Mail, Pencil, Phone, Plus, Trash2, UserCheck, UserPlus } from 'lucide-react'
 import { Bloc, Espace } from '../../components/espace/Garde'
 import { FormulaireAdherent } from '../../components/espace/FormulaireAdherent'
+import { LienConnexion } from '../../components/espace/LienConnexion'
 import { Alerte, Bouton, Case, Champ, Selection } from '../../components/formulaire'
 import {
   age,
@@ -232,6 +233,7 @@ function Responsables({ fiche, rafraichir }: PropsBloc) {
 
 function LigneResponsable({ adherentId, r, rafraichir }: { adherentId: number; r: Responsable; rafraichir: () => Promise<void> }) {
   const [edition, setEdition] = useState(false)
+  const [lien, setLien] = useState(false)
   const [cap, setCap] = useState<Capacites>({
     qualite: r.qualite,
     peut_inscrire: !!r.peut_inscrire,
@@ -278,9 +280,19 @@ function LigneResponsable({ adherentId, r, rafraichir }: { adherentId: number; r
               {p}
             </span>
           ))}
-          <button type="button" onClick={() => setEdition(true)} className="ml-auto text-sm font-semibold text-brand">
-            Modifier
-          </button>
+          <span className="ml-auto flex gap-4">
+            <button type="button" aria-expanded={lien} onClick={() => setLien((v) => !v)} className="text-sm font-semibold text-brand">
+              Lien de connexion
+            </button>
+            <button type="button" onClick={() => setEdition(true)} className="text-sm font-semibold text-brand">
+              Modifier
+            </button>
+          </span>
+        </div>
+      )}
+      {lien && !edition && (
+        <div className="mt-4">
+          <LienConnexion compte={r} />
         </div>
       )}
       {edition && (

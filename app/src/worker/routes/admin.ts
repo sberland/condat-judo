@@ -1,8 +1,9 @@
 // API d'administration (spec 004) — réservée aux rôles `bureau` et `admin` ; la gestion des rôles
 // est réservée à `admin`. Adhérents, comptes (responsables légaux), liens, personnes autorisées.
 import { Hono, type Context } from 'hono';
-import { connexionRequise, roleRequis, type AppEnv } from '../droits';
+import { aUnRole, connexionRequise, roleRequis, type AppEnv } from '../droits';
 import { ROLES, type Role } from '../identite';
+import { couperAcces, creerLien } from '../session';
 import {
   validerAdherent,
   validerCompte,
@@ -230,6 +231,7 @@ type CompteLigne = {
   roles: string | null;
   compte_active: number;
   enfants: number;
+  sessions: number;
 };
 
 admin.get('/comptes', async (c) => {
@@ -238,7 +240,8 @@ admin.get('/comptes', async (c) => {
             (SELECT group_concat(role) FROM user_roles r WHERE r.user_id = u.id) AS roles,
             EXISTS (SELECT 1 FROM identites i WHERE i.user_id = u.id) AS compte_active,
             (SELECT count(*) FROM liens l JOIN adherents a ON a.id = l.adherent_id
-              WHERE l.user_id = u.id AND a.supprime_le IS NULL) AS enfants
+              WHERE l.user_id = u.id AND a.supprime_le IS NULL) AS enfants,
+            (SELECT count(*) FROM sessions s WHERE s.user_id = u.id AND s.expire_le > datetime('now')) AS sessions
      FROM users u
      WHERE u.supprime_le IS NULL
        AND lower(u.prenom || ' ' || u.nom || ' ' || u.nom || ' ' || coalesce(u.email, '')) LIKE ?
@@ -316,9 +319,36 @@ admin.delete('/comptes/:id', async (c) => {
   if (estAdmin && (await nombreAdmins(c, compteId)) === 0) {
     return c.json({ error: 'Il faut garder au moins un administrateur' }, 409);
   }
-  const res = await c.env.DB.prepare("UPDATE users SET supprime_le = datetime('now') WHERE id = ? AND supprime_le IS NULL")
-    .bind(compteId)
-    .run();
-  if (!res.meta.changes) return c.json({ error: 'Compte introuvable' }, 404);
+  const [res] = await c.env.DB.batch([
+    c.env.DB.prepare("UPDATE users SET supprime_le = datetime('now') WHERE id = ? AND supprime_le IS NULL").bind(compteId),
+    ...couperAcces(c.env, compteId as number),
+  ]);
+  if (!res?.meta.changes) return c.json({ error: 'Compte introuvable' }, 404);
   return c.json({ ok: true });
+});
+
+// --- Connexion des comptes (spec 005a) ---
+
+// Lien de connexion personnel, à remettre par WhatsApp. Il connecte À LA PLACE de la personne :
+// seul un administrateur en crée pour un compte qui a un rôle (sinon un membre du bureau pourrait
+// se connecter comme administrateur). Le créateur est enregistré.
+admin.post('/comptes/:id/lien', async (c) => {
+  const compteId = id(c, 'id');
+  const compte = await c.env.DB.prepare(
+    'SELECT EXISTS (SELECT 1 FROM user_roles r WHERE r.user_id = u.id) AS a_un_role FROM users u WHERE u.id = ? AND u.supprime_le IS NULL',
+  )
+    .bind(compteId)
+    .first<{ a_un_role: number }>();
+  if (!compte) return c.json({ error: 'Compte introuvable' }, 404);
+  const moi = c.get('utilisateur');
+  if (compte.a_un_role && !aUnRole(moi, ['admin'])) {
+    return c.json({ error: 'Seul un administrateur peut créer un lien pour un compte du bureau' }, 403);
+  }
+  return c.json(await creerLien(c.env, compteId as number, moi.id), 201);
+});
+
+// Téléphone perdu, départ du club… : ferme toutes les sessions du compte.
+admin.delete('/comptes/:id/sessions', async (c) => {
+  const res = await c.env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(id(c, 'id')).run();
+  return c.json({ ok: true, fermees: res.meta.changes });
 });

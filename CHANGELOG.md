@@ -6,6 +6,35 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-09-24
+
+### Connexion à l'espace membres par lien personnel
+
+#### Notes client
+
+Les familles et le bureau peuvent désormais se connecter au site, sans mot de passe. Le bureau
+envoie à chaque adulte un lien personnel sur WhatsApp : un geste suffit, et l'on reste connecté
+six mois (chaque visite prolonge ce délai). Un lien ne sert qu'une fois et expire au bout de sept
+jours ; en cas de téléphone perdu, le bureau coupe l'accès en un clic. La reconnexion autonome par
+code reçu par e-mail viendra ensuite, une fois le nom de domaine du club choisi.
+
+#### Ajouts
+
+- Page de connexion : accueil personnalisé (« Bonjour Claire »), bouton « Me connecter sur cet
+  appareil », messages clairs pour un lien expiré ou déjà utilisé, conseil si le lien s'ouvre dans
+  le navigateur intégré d'une application
+- Bureau : « Créer un lien de connexion » depuis un compte ou un responsable, avec « Envoyer sur
+  WhatsApp » (directement au numéro du parent) et « Copier le lien »
+- « Se déconnecter » dans Mon espace ; « Déconnecter tous ses appareils » pour le bureau
+- Lien « Espace membres » en bas de chaque page
+- Outil d'installation pour connecter le premier administrateur
+
+#### Modifications
+
+- Seul un administrateur peut créer un lien de connexion pour un membre du bureau
+- Supprimer un compte coupe immédiatement tous ses accès
+- Mentions légales : cookie de connexion de l'espace membres
+
 ## [0.4.0] — 2026-09-24
 
 ### Adhérents, responsables légaux et rôles du bureau

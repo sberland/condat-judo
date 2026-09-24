@@ -4,7 +4,7 @@ import { resolveIdentite } from './identite';
 
 const requete = new Request('https://condat-judo.example.test/api/me');
 
-// Seul le fournisseur `dev` existe à ce stade ; il ne touche pas à la base.
+// Sans cookie de session valide, aucun fournisseur ne touche à la base (env sans DB ici).
 const env = (vars: Partial<Env>): Env => ({ ENVIRONMENT: 'production', ...vars }) as Env;
 
 describe('resolveIdentite — fournisseur dev', () => {
@@ -33,5 +33,12 @@ describe('resolveIdentite — fournisseur dev', () => {
       headers: { 'Cf-Access-Jwt-Assertion': 'a.b.c', Cookie: 'CF_Authorization=a.b.c' },
     });
     expect(await resolveIdentite(avecAccess, env({ ENVIRONMENT: 'preview' }))).toBeNull();
+  });
+});
+
+describe('resolveIdentite — fournisseur app (session)', () => {
+  it('ignore un cookie de session mal formé sans interroger la base', async () => {
+    const forge = new Request('https://condat-judo.example.test/api/me', { headers: { Cookie: '__Host-session=1 OR 1=1' } });
+    expect(await resolveIdentite(forge, env({ ENVIRONMENT: 'production' }))).toBeNull();
   });
 });

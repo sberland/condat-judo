@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, type QueryClient } from '@tanstack/react-query'
 
 export type Environnement = 'production' | 'preview' | 'local'
 
@@ -21,7 +21,8 @@ export type Me = {
   email: string | null
   telephone: string | null
   roles: Role[]
-  provider: string
+  /** app : session ouverte par un lien de connexion ; dev : utilisateur simulé (local). */
+  provider: 'app' | 'dev'
 }
 
 /** Résultat d'appel qui distingue « non connecté » / « compte non reconnu » d'une erreur. */
@@ -144,6 +145,8 @@ export type Compte = {
   roles: Role[]
   compte_active: boolean
   enfants: number
+  /** Sessions ouvertes (appareils connectés). */
+  sessions: number
 }
 
 export type Enfant = {
@@ -162,7 +165,40 @@ export type Enfant = {
   personnesAutorisees: { prenom: string; nom: string; lien: string }[]
 }
 
+// --- Connexion (spec 005a) ---
+
+/** Lien de connexion : le jeton voyage dans le fragment (#), jamais envoyé au serveur par un aperçu. */
+export const urlConnexion = (jeton: string) => `${window.location.origin}/connexion#${jeton}`
+
+/** Lien « Envoyer sur WhatsApp » : vers le numéro du compte s'il est connu (06… → 336…). */
+export function urlWhatsApp(message: string, telephone: string | null): string {
+  const chiffres = (telephone ?? '').replace(/\D/g, '')
+  const numero = /^0\d{9}$/.test(chiffres) ? `33${chiffres.slice(1)}` : ''
+  return `https://wa.me/${numero}?text=${encodeURIComponent(message)}`
+}
+
+/**
+ * Changement d'utilisateur (connexion, déconnexion) : oublie les données personnelles chargées
+ * (appareil éventuellement partagé) puis relit /me. `resetQueries` garde les composants affichés
+ * (en-tête, pied de page) branchés sur la même requête : ils se mettent à jour sans rechargement.
+ */
+export async function changerUtilisateur(client: QueryClient): Promise<void> {
+  client.removeQueries({ predicate: (q) => !['me', 'health'].includes(String(q.queryKey[0])) })
+  await client.resetQueries({ queryKey: ['me'] })
+}
+
+export async function seDeconnecter(client: QueryClient): Promise<void> {
+  await appel('POST', '/api/auth/deconnexion')
+  await changerUtilisateur(client)
+}
+
 // --- Formatage ---
+
+/** Date UTC de la base ('AAAA-MM-JJ HH:MM:SS') → « 1 octobre à 10:37 » (heure locale). */
+export function dateHeureFr(utc: string): string {
+  const d = new Date(`${utc.replace(' ', 'T')}Z`)
+  return `${d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} à ${d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`
+}
 
 export function dateFr(iso: string): string {
   const [a, m, j] = iso.split('-')

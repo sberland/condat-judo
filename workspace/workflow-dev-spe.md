@@ -44,8 +44,21 @@ Remise à zéro complète de la base locale : `npm run db:reset:local`.
 
 Utilisateur simulé en local : `app/.dev.vars` (copie de `app/.dev.vars.example`, non commité)
 définit `ENVIRONMENT=local` et `DEV_SUBJECT=dev-admin`, qui correspond à l'utilisateur
-« Admin Dev » du seed. Changer `DEV_SUBJECT` (ex. `dev-parent`) pour se mettre dans la peau d'un
-autre utilisateur du seed.
+« Admin Dev » du seed. Changer `DEV_SUBJECT` (ex. `dev-parent`, `dev-bureau`) pour se mettre dans
+la peau d'un autre utilisateur du seed.
+
+Tester la vraie connexion par lien (spec 005a) : une session ouverte par un lien **prime** sur
+l'utilisateur simulé. Pour partir d'un visiteur anonyme, lancer un second worker sans utilisateur
+simulé, puis créer un lien pour un compte du seed :
+
+```powershell
+cd app; npx wrangler dev --port 8789 --inspector-port 9239 --var "DEV_SUBJECT:"   # http://localhost:8789 (dernier build)
+.\deploy\lien-connexion.ps1 -Email parent.dev@example.test -Cible local           # lien http://localhost:5173/connexion#…
+```
+
+Le lien affiché pointe sur `:5173` (admin simulé via le worker `:8787`) : remplacer le port par
+`8789` pour se connecter en partant d'un visiteur anonyme. Les cookies ne distinguent pas les ports
+de `localhost` : se déconnecter (ou vider les cookies) avant de revenir à l'utilisateur simulé.
 
 ## Arrêter le serveur local
 

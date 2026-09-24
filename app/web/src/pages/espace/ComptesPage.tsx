@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Mail, Phone, Plus, Search, Trash2, UserCheck } from 'lucide-react'
+import { LogOut, Mail, Phone, Plus, Search, Trash2, UserCheck } from 'lucide-react'
 import { Bloc, Espace } from '../../components/espace/Garde'
+import { LienConnexion } from '../../components/espace/LienConnexion'
 import { Alerte, Bouton, Case, Champ } from '../../components/formulaire'
 import { aUnRole, appel, ErreurApi, ROLES, type Compte, type Me, type Role } from '../../lib/api'
 
@@ -24,7 +25,8 @@ export function ComptesPage() {
       {(me) => (
         <div className="grid gap-4">
           <p className="text-muted-foreground">
-            Parents, adhérents majeurs et membres du bureau. Un compte créé ici pourra se connecter au site dès l’ouverture de l’espace membres.
+            Parents, adhérents majeurs et membres du bureau. Pour qu’une personne se connecte, envoyez-lui un lien de connexion
+            (Modifier → Connexion au site).
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <label className="relative flex-1">
@@ -141,6 +143,7 @@ function LigneCompte({ compte: c, me }: { compte: Compte; me: Me }) {
               setOuvert(false)
             }}
           />
+          <Connexion compte={c} me={me} rafraichir={rafraichir} />
           {aUnRole(me, 'admin') && <Roles compte={c} rafraichir={rafraichir} />}
           {c.id !== me.id && <Suppression compte={c} rafraichir={rafraichir} />}
         </div>
@@ -215,6 +218,46 @@ function FormulaireCompte({
         </Bouton>
       </div>
     </form>
+  )
+}
+
+function Connexion({ compte, me, rafraichir }: { compte: Compte; me: Me; rafraichir: () => Promise<void> }) {
+  const [message, setMessage] = useState('')
+  // Même règle que l'API : un lien connecte à la place de la personne → admin seul pour un compte qui a un rôle.
+  const peutCreerLien = aUnRole(me, 'admin') || compte.roles.length === 0
+  const n = compte.sessions
+
+  return (
+    <div className="grid gap-3">
+      <h3 className="font-bold">Connexion au site</h3>
+      {peutCreerLien ? (
+        <LienConnexion compte={compte} />
+      ) : (
+        <p className="text-sm text-muted-foreground">Seul un administrateur peut créer un lien pour un compte du bureau.</p>
+      )}
+      {n > 0 && (
+        <div className="grid gap-2">
+          <p className="text-sm text-muted-foreground">
+            Connecté·e sur {n} appareil{n > 1 ? 's' : ''}. Téléphone perdu ou changé ? Coupez l’accès :
+          </p>
+          <Bouton
+            variante="danger"
+            onClick={async () => {
+              setMessage('')
+              try {
+                await appel('DELETE', `/api/admin/comptes/${compte.id}/sessions`)
+                await rafraichir()
+              } catch (err) {
+                setMessage(err instanceof ErreurApi ? err.message : 'Déconnexion impossible.')
+              }
+            }}
+          >
+            <LogOut className="size-4" aria-hidden /> Déconnecter {compte.id === me.id ? 'tous mes appareils' : 'tous ses appareils'}
+          </Bouton>
+          <Alerte>{message}</Alerte>
+        </div>
+      )}
+    </div>
   )
 }
 

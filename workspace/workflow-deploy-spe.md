@@ -120,7 +120,8 @@ Prérequis : `npx wrangler login` (OAuth) ou `CLOUDFLARE_API_TOKEN` dans l'envir
   démarrage. Une sauvegarde hors-Cloudflare est au backlog — **à livrer avant d'héberger les
   données réelles des familles**.
 - **Premier administrateur** : aucun compte n'est promu automatiquement (pas d'email magique dans
-  le code). Procédure dans [`installation.md`](docs/install/installation.md).
+  le code). Création par SQL puis lien de connexion par `deploy/lien-connexion.ps1 -Cible production`
+  — procédure dans [`installation.md`](docs/install/installation.md).
 
 ---
 
@@ -165,9 +166,12 @@ La prod, elle, n'a pas de verrou Access : le site est public.
 
 ### Tables purgées avant import
 
-Liste codée en dur (ordre = dépendances FK) : `liens`, `personnes_autorisees`, `identites`, `user_roles`, `adherents`, `saisons`, `users`, `d1_migrations`.
+Liste codée en dur (ordre = dépendances FK) : `sessions`, `liens_connexion`, `liens`, `personnes_autorisees`, `identites`, `user_roles`, `adherents`, `saisons`, `users`, `d1_migrations`.
 Présente à trois endroits, **à tenir à jour à chaque nouvelle table** :
 `app/package.json` (`db:reset:local`), `deploy/refresh-preview-db.ps1`, `.github/workflows/preview.yml`.
+
+Après import et migrations, les **sessions et liens de connexion** copiés de la prod sont supprimés
+(mêmes deux fichiers) : aucun accès ouvert en prod ne reste valable en qualif.
 
 ### Déploiement / refresh manuel (hors CI)
 
@@ -191,4 +195,4 @@ Suivi dans [`installation.md`](docs/install/installation.md) § « Mise en place
 - [x] Verrou Access sur la **preview** (« Protéger ce Worker », portée « Tout le trafic », politique `Condat Judo — bureau`, code PIN à usage unique) — vérifié : anonyme → 302
 - [x] Ruleset GitHub sur `main` et `preview` (PR obligatoire, check CI « Typecheck, tests, build »)
 - [ ] Premier tag (vitrine v1) → déploiement prod vérifié (site public accessible)
-- [ ] Premier administrateur créé en prod — après le chantier auth applicative
+- [ ] Premier administrateur créé en prod et connecté — possible dès la livraison de la spec 005a (`deploy/lien-connexion.ps1`)

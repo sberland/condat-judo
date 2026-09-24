@@ -36,7 +36,10 @@ export function Espace({
   } else if (data.etat === 'anonyme') {
     contenu = (
       <Message titre="Connexion requise">
-        L’espace membres ouvrira bientôt : la connexion des familles et du bureau est en préparation.
+        Connectez-vous avec le lien personnel envoyé par le bureau du club.{' '}
+        <Link to="/connexion" className="font-semibold text-brand">
+          Comment se connecter ?
+        </Link>
       </Message>
     )
   } else if (data.etat === 'inconnu') {

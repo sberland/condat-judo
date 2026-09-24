@@ -1,6 +1,7 @@
 import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router'
 import { Layout } from './components/Layout'
 import { ClubPage } from './pages/ClubPage'
+import { ConnexionPage } from './pages/ConnexionPage'
 import { ContactPage } from './pages/ContactPage'
 import { DisciplinesPage } from './pages/DisciplinesPage'
 import { HomePage } from './pages/HomePage'
@@ -28,6 +29,8 @@ const routeTree = rootRoute.addChildren([
   createRoute({ getParentRoute, path: '/reglement', component: ReglementPage }),
   createRoute({ getParentRoute, path: '/contact', component: ContactPage }),
   createRoute({ getParentRoute, path: '/mentions-legales', component: MentionsLegalesPage }),
+  // Connexion par lien personnel (spec 005a) : /connexion#<jeton>.
+  createRoute({ getParentRoute, path: '/connexion', component: ConnexionPage }),
   // Espace connecté (spec 004) — les droits sont vérifiés par l'API, les pages ne font que masquer.
   createRoute({ getParentRoute, path: '/espace', component: EspaceAccueilPage }),
   createRoute({ getParentRoute, path: '/espace/famille', component: FamillePage }),
