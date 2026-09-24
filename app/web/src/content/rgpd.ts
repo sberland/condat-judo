@@ -46,6 +46,15 @@ export const TRAITEMENTS: Traitement[] = [
     base: 'Exécution de l’adhésion à l’association.',
   },
   {
+    titre: 'Cotisations et paiements',
+    donnees: [
+      'Montant dû par adhérent et échéancier',
+      'Paiements reçus : date, montant, mode, référence du chèque (n°, banque), dates d’encaissement',
+    ],
+    finalite: 'Suivre qui a payé quoi et ce qui reste dû ; tenir la comptabilité de l’association.',
+    base: 'Exécution de l’adhésion à l’association ; obligations comptables de l’association.',
+  },
+  {
     titre: 'Compétitions',
     donnees: [
       'Inscription : compétition, qui a inscrit l’enfant et quand',

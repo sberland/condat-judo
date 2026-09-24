@@ -5,6 +5,7 @@ import { admin } from './routes/admin';
 import { auth } from './routes/auth';
 import { competitions } from './routes/competitions';
 import { famille } from './routes/famille';
+import { tresorerie } from './routes/tresorerie';
 import { cookieSession, jetonSession, prolongerSession } from './session';
 
 const app = new Hono<AppEnv>();
@@ -44,6 +45,7 @@ api.route('/competitions', competitions);
 
 api.route('/admin', admin);
 api.route('/famille', famille);
+api.route('/tresorerie', tresorerie);
 
 api.all('*', (c) => c.json({ error: 'Not found' }, 404));
 

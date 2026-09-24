@@ -68,3 +68,26 @@ INSERT OR IGNORE INTO competitions (id, nom, date, lieu, adresse, lien_officiel,
 INSERT OR IGNORE INTO inscriptions_competition (competition_id, adherent_id, inscrit_par) VALUES
   (1, 1, 2),
   (3, 1, 5);
+
+-- Cotisations (spec 011) : dossier de Hugo (réduction famille, comptant) ; un chèque commun à Léa
+-- (1er versement de son paiement en 3 fois) et Hugo (acompte), puis les 2 autres chèques de Léa ;
+-- Nina (autre famille) n'a rien payé.
+INSERT OR IGNORE INTO adhesions (adherent_id, saison, formule, passeport, hors_commune, reduction_famille,
+  montant_participation, montant_licence, montant_supplements, montant_reduction, montant_total,
+  paiement_mode, paiement_3_fois, echeance_1, echeance_2, echeance_3, formalite_type, formalite_recue_le,
+  soins_urgence, soins_urgence_le, soins_urgence_par, droit_image, droit_image_le, droit_image_par,
+  whatsapp, whatsapp_le, whatsapp_par, cree_par) VALUES
+  (2, '2026-2027', 'judo-micro-mini', 0, 0, 1, 8200, 4600, 0, 800, 12000, 'cheque', 0, 6600, 2700, 2700,
+   'attestation_qs_mineur', '2026-09-10', 'oui', '2026-09-10 18:00:00', 1, 'non_recueilli', NULL, NULL,
+   'oui', '2026-09-10 18:00:00', 1, 1);
+
+INSERT OR IGNORE INTO paiements (id, saison, montant, mode, reference, recu_le, encaisser_le, encaisse_le, saisi_par) VALUES
+  (1, '2026-2027', 13000, 'cheque', 'Chèque n° 0000001 — Banque Exemple', '2026-09-10', NULL, NULL, 1),
+  (2, '2026-2027', 3400, 'cheque', 'Chèque n° 0000002 — Banque Exemple', '2026-09-10', '2027-01-05', NULL, 1),
+  (3, '2026-2027', 3300, 'cheque', 'Chèque n° 0000003 — Banque Exemple', '2026-09-10', '2027-04-05', NULL, 1);
+
+INSERT OR IGNORE INTO paiement_parts (paiement_id, adhesion_id, montant) VALUES
+  (1, (SELECT id FROM adhesions WHERE adherent_id = 1 AND saison = '2026-2027'), 8000),
+  (1, (SELECT id FROM adhesions WHERE adherent_id = 2 AND saison = '2026-2027'), 5000),
+  (2, (SELECT id FROM adhesions WHERE adherent_id = 1 AND saison = '2026-2027'), 3400),
+  (3, (SELECT id FROM adhesions WHERE adherent_id = 1 AND saison = '2026-2027'), 3300);

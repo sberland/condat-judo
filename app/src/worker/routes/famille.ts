@@ -2,7 +2,9 @@
 // auxquels il est lié (filtre sur `liens.user_id` = lui-même, côté SQL). v1 : consultation, et mise
 // à jour de son propre téléphone ; la modification des fiches enfants viendra avec la spec 010.
 import { Hono, type Context } from 'hono';
+import { SAISON } from '../../../web/src/content/adhesion';
 import { categorieDe, eligible } from '../../../web/src/content/categories';
+import { ECHEANCES_3_FOIS, exigible, situation } from '../../../web/src/content/paiements';
 import { connexionRequise, type AppEnv } from '../droits';
 import { aujourdhuiParis, COLONNES_COMPETITION, inscriptionsOuvertes, lireCompetition, versCompetition } from './competitions';
 import { validerTelephoneSeul } from '../validation';
@@ -171,6 +173,58 @@ famille.delete('/competitions/:id/inscriptions/:adherentId', async (c) => {
   if ('erreur' in r) return r.erreur;
   await c.env.DB.prepare('DELETE FROM inscriptions_competition WHERE competition_id = ? AND adherent_id = ?').bind(r.comp.id, r.adherentId).run();
   return c.json({ ok: true });
+});
+
+// --- Cotisations (spec 011) : ce que la famille doit et a payé, pour SES enfants (et elle-même) ---
+
+type DossierFamille = {
+  adhesion_id: number;
+  prenom: string;
+  nom: string;
+  formule: string;
+  montant_total: number;
+  paiement_3_fois: number;
+  echeance_1: number;
+  echeance_2: number;
+  echeance_3: number;
+  paye: number;
+};
+
+famille.get('/paiements', async (c) => {
+  const moi = c.get('utilisateur').id;
+  const { results: dossiers } = await c.env.DB.prepare(
+    `SELECT d.id AS adhesion_id, a.prenom, a.nom, d.formule, d.montant_total, d.paiement_3_fois,
+            d.echeance_1, d.echeance_2, d.echeance_3,
+            COALESCE((SELECT sum(p.montant) FROM paiement_parts p WHERE p.adhesion_id = d.id), 0) AS paye
+     FROM adhesions d JOIN adherents a ON a.id = d.adherent_id
+     WHERE d.saison = ?1 AND (d.adherent_id IN (SELECT adherent_id FROM liens WHERE user_id = ?2) OR a.user_id = ?2)
+     ORDER BY a.date_naissance DESC`,
+  )
+    .bind(SAISON.id, moi)
+    .all<DossierFamille>();
+  const ids = dossiers.map((d) => d.adhesion_id);
+  // Versements : date, mode, montant de la part de chaque enfant — jamais la référence du chèque.
+  const versements = ids.length
+    ? (
+        await c.env.DB.prepare(
+          `SELECT pp.adhesion_id, pp.montant, p.mode, p.recu_le, p.encaisser_le, p.encaisse_le
+           FROM paiement_parts pp JOIN paiements p ON p.id = pp.paiement_id
+           WHERE pp.adhesion_id IN (${ids.map(() => '?').join(', ')}) ORDER BY p.recu_le, p.id`,
+        )
+          .bind(...ids)
+          .all<{ adhesion_id: number; montant: number; mode: string; recu_le: string; encaisser_le: string | null; encaisse_le: string | null }>()
+      ).results
+    : [];
+  const jour = aujourdhuiParis();
+  return c.json({
+    saison: SAISON,
+    echeances: ECHEANCES_3_FOIS,
+    dossiers: dossiers.map((d) => ({
+      ...d,
+      ...situation(d.montant_total, d.paye, exigible(d, jour)),
+      versements: versements.filter((v) => v.adhesion_id === d.adhesion_id).map(({ adhesion_id: _, ...v }) => v),
+    })),
+  });
 });
 
 famille.put('/moi', async (c) => {

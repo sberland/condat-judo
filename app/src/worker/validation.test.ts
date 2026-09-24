@@ -7,6 +7,7 @@ import {
   validerAdherent,
   validerCompte,
   validerLien,
+  validerPaiement,
   validerPersonneAutorisee,
 } from './validation';
 
@@ -156,5 +157,47 @@ describe('validerCompetition', () => {
   it('garde les sauts de ligne des infos pratiques', () => {
     const r = validerCompetition({ ...base, infos: 'Pesée 9 h\nCombats 10 h' });
     expect(r.ok && r.valeur.infos).toBe('Pesée 9 h\nCombats 10 h');
+  });
+});
+
+describe('validerPaiement', () => {
+  const cheque = {
+    montant: 13000,
+    mode: 'cheque',
+    reference: ' Chèque 0000001  Banque Exemple ',
+    recu_le: '2026-09-10',
+    encaisser_le: '2026-10-05',
+    parts: [
+      { adhesion_id: 1, montant: 8000 },
+      { adhesion_id: 3, montant: 5000 },
+    ],
+  };
+
+  it('accepte un chèque réparti sur deux dossiers', () => {
+    const r = validerPaiement(cheque);
+    expect(r.ok).toBe(true);
+    expect(r.ok && r.valeur.reference).toBe('Chèque 0000001 Banque Exemple');
+    expect(r.ok && r.valeur.parts).toHaveLength(2);
+  });
+
+  it('refuse une répartition qui ne totalise pas le montant', () => {
+    const r = validerPaiement({ ...cheque, montant: 12000 });
+    expect(!r.ok && r.erreurs.parts).toBe('La répartition doit totaliser le montant');
+  });
+
+  it('refuse montant, mode et dates invalides', () => {
+    const r = validerPaiement({ ...cheque, montant: 12.5, mode: 'bitcoin', recu_le: '10/09/2026', encaisser_le: '2026-02-30' });
+    expect(!r.ok && Object.keys(r.erreurs).sort()).toEqual(['encaisser_le', 'mode', 'montant', 'recu_le']);
+  });
+
+  it('refuse un paiement sans dossier, ou un dossier en double', () => {
+    expect(!validerPaiement({ ...cheque, parts: [] }).ok).toBe(true);
+    const r = validerPaiement({ ...cheque, parts: [{ adhesion_id: 1, montant: 6500 }, { adhesion_id: 1, montant: 6500 }] });
+    expect(!r.ok && r.erreurs.parts).toBe('Un dossier apparaît deux fois');
+  });
+
+  it('date d’encaissement facultative', () => {
+    const r = validerPaiement({ ...cheque, encaisser_le: '' });
+    expect(r.ok && r.valeur.encaisser_le).toBe(null);
   });
 });

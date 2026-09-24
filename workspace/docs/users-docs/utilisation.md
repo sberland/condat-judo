@@ -51,6 +51,18 @@ limite, « Annuler l'inscription » revient en arrière ; ensuite, prévenez le 
 enfants des catégories concernées peuvent être inscrits, et seulement par un responsable qui en a
 le droit.
 
+**Pour les parents — Cotisations** : dans « Mes enfants », le bloc « Cotisations » indique pour
+chaque enfant le montant de l'adhésion, ce qui a été payé, ce qui reste, l'échéancier d'un
+paiement en 3 fois et les versements reçus par le club.
+
+**Pour le trésorier — Trésorerie** : les totaux de la saison (dû, payé, reste, retards), les
+chèques et espèces à remettre en banque ce mois-ci, et les familles, filtrables (en retard, à
+payer, partiellement payées, soldées). Sur la fiche d'une famille : « Enregistrer un paiement »
+(montant proposé = ce qui reste ; un chèque pour deux enfants est réparti entre eux, répartition
+modifiable) ou « Enregistrer les 3 chèques » d'un paiement en 3 fois, avec leurs dates
+d'encaissement ; « Remis en banque » ; « Supprimer » en cas d'erreur. Exports CSV des paiements
+et des familles pour la comptabilité. Le rôle « bureau » seul ne voit pas les paiements.
+
 **Pour le bureau** :
 
 | Écran | Usage |

@@ -7,6 +7,10 @@ import { HistoriqueCompetitions } from '../../components/espace/HistoriqueCompet
 import { Alerte, Bouton, Champ } from '../../components/formulaire'
 import { age, appel, dateFr, ErreurApi, QUALITES, type Enfant, type Me } from '../../lib/api'
 import { CLUB } from '../../content/club'
+import { echeancier, LIBELLES_STATUT_PAIEMENT, MODES_ENCAISSEMENT } from '../../content/paiements'
+import { Pastille } from '../../components/ui'
+import type { MesCotisations as MesCotisationsApi } from '../../lib/paiements'
+import { euros } from '../../lib/tarifs'
 
 export function FamillePage() {
   const { data, isPending, isError } = useQuery({
@@ -31,6 +35,7 @@ export function FamillePage() {
               Une information à corriger ? Signalez-la au bureau du {CLUB.nom} : il met les fiches à jour.
             </p>
           )}
+          <MesCotisations />
           <MesCoordonnees me={me} />
           <p className="text-sm text-muted-foreground">
             Ce que le club enregistre sur vous et vos enfants, pour combien de temps, et comment consulter, corriger ou supprimer ces
@@ -119,6 +124,49 @@ function FicheEnfant({ enfant: e }: { enfant: Enfant }) {
         <h3 className="mb-1.5 text-sm font-semibold">Compétitions</h3>
         <HistoriqueCompetitions competitions={e.competitions} vers="public" />
       </div>
+    </Bloc>
+  )
+}
+
+/** Cotisations de la saison (spec 011) : dû, payé, reste, échéances et versements reçus. */
+function MesCotisations() {
+  const { data } = useQuery({
+    queryKey: ['famille', 'paiements'],
+    queryFn: () => appel<MesCotisationsApi>('GET', '/api/famille/paiements'),
+  })
+  if (!data || data.dossiers.length === 0) return null
+  return (
+    <Bloc titre={`Cotisations ${data.saison.libelle}`}>
+      <ul className="grid gap-4">
+        {data.dossiers.map((d) => (
+          <li key={d.adhesion_id} className="grid gap-1.5">
+            <p className="flex flex-wrap items-center gap-2">
+              <span className="font-semibold">{d.prenom}</span>
+              <Pastille ton={d.statut === 'solde' ? 'ouvert' : d.retard > 0 ? 'annule' : 'ferme'}>{LIBELLES_STATUT_PAIEMENT[d.statut]}</Pastille>
+            </p>
+            <p className="text-sm">
+              {euros(d.montant_total)} · payé {euros(d.paye)}
+              {d.restant > 0 && <strong> · reste {euros(d.restant)}</strong>}
+            </p>
+            {d.paiement_3_fois === 1 && (
+              <p className="text-sm text-muted-foreground">
+                En 3 fois : {echeancier(d).map((v) => `${euros(v.montant)} ${v.date ? `au ${dateFr(v.date)}` : 'à l’inscription'}`).join(', ')}
+              </p>
+            )}
+            {d.versements.length > 0 && (
+              <ul className="text-sm text-muted-foreground">
+                {d.versements.map((v, i) => (
+                  <li key={i}>
+                    {dateFr(v.recu_le)} · {MODES_ENCAISSEMENT[v.mode]} · {euros(v.montant)}
+                    {v.encaisser_le && !v.encaisse_le ? ` (encaissé à partir du ${dateFr(v.encaisser_le)})` : ''}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+      <p className="mt-4 text-sm text-muted-foreground">Une question sur un paiement ? Adressez-vous au trésorier du club.</p>
     </Bloc>
   )
 }

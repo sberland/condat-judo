@@ -28,7 +28,7 @@ export function Champ({
   onChange: (v: string) => void
   requis?: boolean
   autoComplete?: string
-  inputMode?: 'text' | 'numeric' | 'tel' | 'email' | 'url'
+  inputMode?: 'text' | 'numeric' | 'decimal' | 'tel' | 'email' | 'url'
 }) {
   return (
     <div>

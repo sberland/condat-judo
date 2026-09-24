@@ -1,7 +1,7 @@
 import { useState, type FormEvent, type ReactNode } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { CircleCheck, Pencil, Trash2, UserPlus } from 'lucide-react'
+import { CircleCheck, Pencil, Trash2, UserPlus, Wallet } from 'lucide-react'
 import {
   calculerMontant,
   FORMALITES,
@@ -16,7 +16,7 @@ import {
   type Recueil,
 } from '../../content/adhesion'
 import { TARIFS } from '../../content/tarifs'
-import { appel, dateFr, ErreurApi, type Adhesion, type DossierAdhesion } from '../../lib/api'
+import { appel, aUnRole, dateFr, ErreurApi, useMe, type Adhesion, type DossierAdhesion } from '../../lib/api'
 import { euros } from '../../lib/tarifs'
 import { Alerte, Bouton, Case, Champ, Selection } from '../formulaire'
 import { Bloc } from './Garde'
@@ -59,6 +59,7 @@ export function BlocAdhesion({ adherentId }: { adherentId: number }) {
   const [enregistre, setEnregistre] = useState(false)
   const [confirmer, setConfirmer] = useState(false)
   const [message, setMessage] = useState('')
+  const { data: me } = useMe()
 
   const mettreAJour = async (d: DossierAdhesion | null) => {
     if (d) client.setQueryData(cle, d)
@@ -136,14 +137,24 @@ export function BlocAdhesion({ adherentId }: { adherentId: number }) {
           )}
         </div>
         {a.valide_le && <p className="text-sm text-muted-foreground">Validé par le bureau le {dateFr(a.valide_le.slice(0, 10))}.</p>}
+        {me?.etat === 'ok' && aUnRole(me.me, 'tresorier', 'admin') && (
+          <Link to="/espace/tresorerie/familles/$id" params={{ id: String(a.id) }} className="inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-brand">
+            <Wallet className="size-4" aria-hidden /> Paiements de la famille
+          </Link>
+        )}
         {confirmer ? (
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <span className="text-sm">Supprimer ce dossier ?</span>
             <Bouton
               variante="danger"
               onClick={async () => {
-                await appel('DELETE', url)
-                await mettreAJour(null)
+                setMessage('')
+                try {
+                  await appel('DELETE', url)
+                  await mettreAJour(null)
+                } catch (err) {
+                  setMessage(err instanceof ErreurApi ? err.message : 'Suppression impossible.')
+                }
                 setConfirmer(false)
               }}
             >

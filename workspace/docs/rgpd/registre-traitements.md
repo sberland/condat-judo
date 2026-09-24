@@ -44,6 +44,20 @@
 | Export | Copie ou fichier CSV sur l'appareil du membre du bureau, le temps de la ressaisie, puis supprimé |
 | Durée | Comme l'adhérent (l'historique des compétitions fait partie de sa fiche) |
 
+## 1 ter. Cotisations et paiements
+
+| Rubrique | Contenu |
+| --- | --- |
+| Finalités | Suivi des cotisations (dû, payé, reste, retards), remises en banque, comptabilité de l'association |
+| Base légale | Exécution du contrat d'adhésion (art. 6.1.b) ; obligations comptables (art. 6.1.c) |
+| Personnes concernées | Adhérents et leurs responsables (payeurs) |
+| Données | Montant dû et échéancier (dossier d'adhésion) ; paiements : date de réception, montant, mode, référence (n° de chèque, banque), date d'encaissement prévue et effective, répartition entre les enfants, auteur de la saisie |
+| Accès | Trésorier et administrateur : tout. Chaque responsable : les paiements de ses enfants, **sans la référence du chèque**. Le rôle « bureau » seul n'y a pas accès |
+| Destinataires | Aucun hors du club (l'export comptable reste au trésorier) |
+| Export | Fichiers CSV (paiements, familles) sur l'appareil du trésorier, pour la comptabilité |
+| Durée | Sur le site : comme le dossier d'adhésion. Pièces comptables tenues par le trésorier hors du site : 10 ans (obligation comptable) |
+| Qualif | Référence des chèques remplacée par une valeur fictive (spec 008) |
+
 ## 2. Autorisations et consentements
 
 | Rubrique | Contenu |
@@ -90,3 +104,4 @@
 | --- | --- |
 | 2026-09-24 | Création (spec 006) : adhésions, consentements, espace membres, sauvegardes |
 | 2026-09-24 | Ajout du traitement « Compétitions » (spec 009) |
+| 2026-09-24 | Ajout du traitement « Cotisations et paiements » (spec 011) |

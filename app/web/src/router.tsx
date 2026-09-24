@@ -22,6 +22,8 @@ import { CompetitionsGestionPage } from './pages/espace/CompetitionsGestionPage'
 import { ComptesPage } from './pages/espace/ComptesPage'
 import { EspaceAccueilPage } from './pages/espace/EspaceAccueilPage'
 import { FamillePage } from './pages/espace/FamillePage'
+import { TresorerieFamillePage } from './pages/espace/TresorerieFamillePage'
+import { TresoreriePage } from './pages/espace/TresoreriePage'
 
 const rootRoute = createRootRoute({ component: Layout, notFoundComponent: NotFoundPage })
 const getParentRoute = () => rootRoute
@@ -52,6 +54,9 @@ const routeTree = rootRoute.addChildren([
   createRoute({ getParentRoute, path: '/espace/adhesions', component: AdhesionsPage }),
   createRoute({ getParentRoute, path: '/espace/competitions', component: CompetitionsGestionPage }),
   createRoute({ getParentRoute, path: '/espace/competitions/$id', component: CompetitionGestionPage }),
+  // Trésorerie (spec 011) : trésorier et administrateur.
+  createRoute({ getParentRoute, path: '/espace/tresorerie', component: TresoreriePage }),
+  createRoute({ getParentRoute, path: '/espace/tresorerie/familles/$id', component: TresorerieFamillePage }),
   createRoute({ getParentRoute, path: '/espace/aide', component: AidePage }),
 ])
 

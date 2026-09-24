@@ -16,13 +16,16 @@ export function Espace({
   retour,
   roles,
   aide,
+  refus = 'Cette page est réservée au bureau du club.',
   children,
 }: {
   titre: string
-  retour?: { to: '/espace' | '/espace/adherents' | '/espace/comptes' | '/espace/competitions'; libelle: string }
+  retour?: { to: '/espace' | '/espace/adherents' | '/espace/comptes' | '/espace/competitions' | '/espace/tresorerie'; libelle: string }
   roles?: Role[]
   /** Rubrique de l'aide intégrée liée à cet écran (lien « Aide » à côté du titre). */
   aide?: IdRubrique
+  /** Message si l'utilisateur n'a pas l'un des rôles (par défaut : réservé au bureau). */
+  refus?: string
   children: (me: Me) => ReactNode
 }) {
   usePageMeta(titre, 'Espace connecté du club Judo Condat-sur-Vienne.')
@@ -49,7 +52,7 @@ export function Espace({
   } else if (data.etat === 'inconnu') {
     contenu = <Message titre="Compte non reconnu">Contactez le bureau du club pour activer votre accès.</Message>
   } else if (roles && !aUnRole(data.me, ...roles)) {
-    contenu = <Message titre="Accès réservé">Cette page est réservée au bureau du club.</Message>
+    contenu = <Message titre="Accès réservé">{refus}</Message>
   } else {
     contenu = children(data.me)
   }

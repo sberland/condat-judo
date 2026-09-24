@@ -100,6 +100,24 @@ export const TABLES: Record<string, Table> = {
       ].map((c) => [c, 'conservee' as const]),
     ),
   },
+  // Paiements (011) : montants et dates ; `reference` (n° de chèque, banque, parfois le nom du
+  // titulaire) est pseudonymisée.
+  paiements: {
+    colonnes: {
+      id: 'conservee',
+      saison: 'conservee',
+      montant: 'conservee',
+      mode: 'conservee',
+      reference: 'pseudonymisee',
+      recu_le: 'conservee',
+      encaisser_le: 'conservee',
+      encaisse_le: 'conservee',
+      saisi_par: 'conservee',
+      created_at: 'conservee',
+      updated_at: 'conservee',
+    },
+  },
+  paiement_parts: { colonnes: { paiement_id: 'conservee', adhesion_id: 'conservee', montant: 'conservee' } },
   // Compétitions (009) : informations publiques ; `infos` = texte pratique du bureau (pesée…).
   competitions: {
     colonnes: Object.fromEntries(
