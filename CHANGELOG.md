@@ -6,6 +6,33 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+### Données personnelles : droits des familles et effacement automatique
+
+#### Notes client
+
+Les familles exercent elles-mêmes leurs droits depuis leur espace : elles téléchargent en un geste
+tout ce que le club enregistre sur elles et leurs enfants, et répondent oui ou non, à tout
+moment, pour les photos et vidéos et pour le groupe WhatsApp — ce qui règle aussi le recueil de
+ces accords cette saison. Une fois la durée de conservation confirmée par le club, les données
+d'un adhérent qui ne se réinscrit plus sont rendues anonymes automatiquement chaque semaine.
+Chaque consultation ou modification des coordonnées d'une famille par le bureau est enregistrée
+et consultable par l'administrateur pendant un an.
+
+#### Ajouts
+
+- Espace famille : « Autorisations » (photos et vidéos, groupe WhatsApp : oui ou non) et
+  « Télécharger mes données »
+- Effacement automatique (anonymisation) des adhérents arrivés à échéance et de leurs responsables
+  sans autre enfant au club, chaque lundi, une fois la durée confirmée par le club
+- Écran « Données personnelles » pour l'administrateur : durée, adhérents concernés, historique,
+  journal des accès aux coordonnées des familles
+- Export des données d'un compte pour répondre à une demande écrite
+
+#### Modifications
+
+- Page « Données personnelles » : droits exerçables depuis l'espace, effacement automatique,
+  journal des accès
+
 ### Cotisations : suivi des paiements par le trésorier
 
 #### Notes client

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { ASSOCIATION } from '../content/club'
-import { DUREES_TECHNIQUES, RGPD, TRAITEMENTS, type Valeur } from '../content/rgpd'
+import { DUREES_TECHNIQUES, RGPD, texteConservation, TRAITEMENTS, type Valeur } from '../content/rgpd'
 import { Container, PageHeader } from '../components/ui'
 import { usePageMeta } from '../lib/usePageMeta'
 
@@ -76,8 +76,9 @@ export function DonneesPersonnellesPage() {
         <Bloc titre="Combien de temps ?">
           <ul className="list-disc space-y-1 pl-5">
             <li>
-              Données d’un adhérent et de ses responsables : pendant l’adhésion, puis <ValeurClub v={RGPD.conservationAdherents} /> ; ensuite,
-              elles sont effacées ou rendues anonymes.
+              Données d’un adhérent et de ses responsables : pendant l’adhésion, puis{' '}
+              <ValeurClub v={{ valeur: texteConservation(RGPD.conservationAdherents.valeur), provisoire: RGPD.conservationAdherents.provisoire }} /> ;
+              ensuite, elles sont rendues anonymes automatiquement (le compte d’un responsable aussi, s’il n’a plus d’autre enfant au club).
             </li>
             {DUREES_TECHNIQUES.map((d) => (
               <li key={d.quoi}>
@@ -94,8 +95,12 @@ export function DonneesPersonnellesPage() {
             consentement</strong> (droit à l’image, groupe WhatsApp) sans avoir à vous justifier.
           </p>
           <p>
-            Pour cela : <ValeurClub v={RGPD.contact} />. Pour un enfant mineur, ces droits sont exercés par ses responsables légaux. Réponse
-            sous un mois.
+            <strong className="text-foreground">Depuis votre espace</strong> (« Mes enfants ») : télécharger toutes les données qui vous
+            concernent, vous et vos enfants, et donner ou retirer votre accord pour le droit à l’image et le groupe WhatsApp.
+          </p>
+          <p>
+            Pour le reste : <ValeurClub v={RGPD.contact} />. Pour un enfant mineur, ces droits sont exercés par ses responsables légaux.
+            Réponse sous un mois.
           </p>
           <p>
             Si vous estimez que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la CNIL (
@@ -116,6 +121,7 @@ export function DonneesPersonnellesPage() {
         <Bloc titre="Sécurité">
           <ul className="list-disc space-y-1 pl-5">
             <li>Connexion sans mot de passe, par lien personnel à usage unique ; chacun ne voit que ce qui le concerne.</li>
+            <li>Chaque consultation ou modification des coordonnées d’une famille par le bureau est enregistrée (conservé un an).</li>
             <li>Sauvegardes quotidiennes chiffrées, hors de l’hébergeur du site.</li>
             <li>Le site de test du club ne contient que des données rendues anonymes.</li>
           </ul>

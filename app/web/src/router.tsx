@@ -24,6 +24,7 @@ import { EspaceAccueilPage } from './pages/espace/EspaceAccueilPage'
 import { FamillePage } from './pages/espace/FamillePage'
 import { TresorerieFamillePage } from './pages/espace/TresorerieFamillePage'
 import { TresoreriePage } from './pages/espace/TresoreriePage'
+import { RgpdPage } from './pages/espace/RgpdPage'
 
 const rootRoute = createRootRoute({ component: Layout, notFoundComponent: NotFoundPage })
 const getParentRoute = () => rootRoute
@@ -57,6 +58,8 @@ const routeTree = rootRoute.addChildren([
   // Trésorerie (spec 011) : trésorier et administrateur.
   createRoute({ getParentRoute, path: '/espace/tresorerie', component: TresoreriePage }),
   createRoute({ getParentRoute, path: '/espace/tresorerie/familles/$id', component: TresorerieFamillePage }),
+  // Données personnelles (spec 019) : administrateur.
+  createRoute({ getParentRoute, path: '/espace/rgpd', component: RgpdPage }),
   createRoute({ getParentRoute, path: '/espace/aide', component: AidePage }),
 ])
 

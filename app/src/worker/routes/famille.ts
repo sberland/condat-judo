@@ -7,6 +7,7 @@ import { categorieDe, eligible } from '../../../web/src/content/categories';
 import { ECHEANCES_3_FOIS, exigible, situation } from '../../../web/src/content/paiements';
 import { connexionRequise, type AppEnv } from '../droits';
 import { aujourdhuiParis, COLONNES_COMPETITION, inscriptionsOuvertes, lireCompetition, versCompetition } from './competitions';
+import { donneesDuCompte } from '../export';
 import { validerTelephoneSeul } from '../validation';
 
 export const famille = new Hono<AppEnv>();
@@ -225,6 +226,51 @@ famille.get('/paiements', async (c) => {
       versements: versements.filter((v) => v.adhesion_id === d.adhesion_id).map(({ adhesion_id: _, ...v }) => v),
     })),
   });
+});
+
+// --- Droits RGPD (spec 019) ---
+
+// Toutes les données qui concernent ce compte et les adhérents qui lui sont liés.
+famille.get('/export', async (c) => {
+  const donnees = await donneesDuCompte(c.env, c.get('utilisateur').id);
+  return donnees ? c.json(donnees) : c.json({ error: 'Compte introuvable' }, 404);
+});
+
+type Accords = {
+  adhesion_id: number;
+  prenom: string;
+  qualite: string | null;
+  droit_image: string;
+  droit_image_le: string | null;
+  whatsapp: string;
+  whatsapp_le: string | null;
+};
+
+// Accords de la saison (droit à l'image, groupe WhatsApp) pour mes enfants — et moi, adhérent majeur.
+// Répondent : les responsables légaux (mère, père, tuteur), ou l'adhérent majeur pour lui-même.
+const ACCORDS = `SELECT d.id AS adhesion_id, a.prenom, l.qualite, d.droit_image, d.droit_image_le, d.whatsapp, d.whatsapp_le
+  FROM adhesions d JOIN adherents a ON a.id = d.adherent_id AND a.supprime_le IS NULL
+  LEFT JOIN liens l ON l.adherent_id = a.id AND l.user_id = ?2
+  WHERE d.saison = ?1 AND (l.qualite IN ('mere', 'pere', 'tuteur') OR a.user_id = ?2)`;
+
+famille.get('/accords', async (c) => {
+  const { results } = await c.env.DB.prepare(`${ACCORDS} ORDER BY a.date_naissance DESC`).bind(SAISON.id, c.get('utilisateur').id).all<Accords>();
+  return c.json({ saison: SAISON, accords: results.map(({ qualite: _, ...a }) => a) });
+});
+
+famille.put('/accords/:adhesionId', async (c) => {
+  const corps = (await c.req.json().catch(() => ({}))) as Record<string, unknown>;
+  const champ = corps.accord;
+  const valeur = corps.valeur;
+  if ((champ !== 'droit_image' && champ !== 'whatsapp') || (valeur !== 'oui' && valeur !== 'non')) return c.json({ error: 'Saisie invalide' }, 400);
+  const moi = c.get('utilisateur').id;
+  const dossier = await c.env.DB.prepare(`${ACCORDS} AND d.id = ?3`).bind(SAISON.id, moi, Number(c.req.param('adhesionId')) || 0).first<Accords>();
+  if (!dossier) return c.json({ error: 'Vous ne pouvez pas répondre pour cet adhérent' }, 403);
+  // Colonnes choisies dans une liste fermée (jamais la saisie) : pas d'injection possible.
+  await c.env.DB.prepare(`UPDATE adhesions SET ${champ} = ?, ${champ}_le = datetime('now'), ${champ}_par = ?, updated_at = datetime('now') WHERE id = ?`)
+    .bind(valeur, moi, dossier.adhesion_id)
+    .run();
+  return c.json({ ok: true });
 });
 
 famille.put('/moi', async (c) => {

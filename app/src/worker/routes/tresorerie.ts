@@ -6,11 +6,12 @@ import { SAISON } from '../../../web/src/content/adhesion';
 import { cumul, ECHEANCES_3_FOIS, ENCAISSES_A_RECEPTION, exigible, situation } from '../../../web/src/content/paiements';
 import { connexionRequise, roleRequis, type AppEnv } from '../droits';
 import { regrouperFamilles } from '../familles';
+import { journaliser } from '../journal';
 import { validerPaiement, type PaiementSaisi } from '../validation';
 import { aujourdhuiParis } from './competitions';
 
 export const tresorerie = new Hono<AppEnv>();
-tresorerie.use('*', connexionRequise, roleRequis('tresorier', 'admin'));
+tresorerie.use('*', connexionRequise, roleRequis('tresorier', 'admin'), journaliser);
 
 type LigneDossier = {
   adhesion_id: number;

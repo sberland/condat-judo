@@ -55,6 +55,17 @@ le droit.
 chaque enfant le montant de l'adhésion, ce qui a été payé, ce qui reste, l'échéancier d'un
 paiement en 3 fois et les versements reçus par le club.
 
+**Pour les parents — Autorisations et données** : dans « Mes enfants », le bloc « Autorisations »
+permet de répondre oui ou non, pour chaque enfant, aux photos et vidéos et au groupe WhatsApp du
+club, et de changer d'avis à tout moment. « Mes données » → « Télécharger mes données » donne une
+copie complète de ce que le club enregistre sur vous et vos enfants.
+
+**Pour l'administrateur — Données personnelles** : durée de conservation, état de la purge
+automatique (chaque lundi, en production, une fois la durée confirmée par le club), adhérents
+concernés à la prochaine purge et à la rentrée suivante, historique, et journal des consultations
+et modifications des coordonnées des familles. Comptes → Modifier → « Exporter ses données » pour
+répondre à une demande écrite.
+
 **Pour le trésorier — Trésorerie** : les totaux de la saison (dû, payé, reste, retards), les
 chèques et espèces à remettre en banque ce mois-ci, et les familles, filtrables (en retard, à
 payer, partiellement payées, soldées). Sur la fiche d'une famille : « Enregistrer un paiement »

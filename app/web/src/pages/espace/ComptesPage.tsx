@@ -1,10 +1,11 @@
 import { useState, type FormEvent } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { LogOut, Mail, Phone, Plus, Search, Trash2, UserCheck } from 'lucide-react'
+import { Download, LogOut, Mail, Phone, Plus, Search, Trash2, UserCheck } from 'lucide-react'
 import { Bloc, Espace } from '../../components/espace/Garde'
 import { LienConnexion } from '../../components/espace/LienConnexion'
 import { Alerte, Bouton, Case, Champ } from '../../components/formulaire'
 import { aUnRole, appel, ErreurApi, ROLES, type Compte, type Me, type Role } from '../../lib/api'
+import { slug, telechargerJson } from '../../lib/csv'
 
 type SaisieCompte = { prenom: string; nom: string; email: string; telephone: string }
 const VIDE: SaisieCompte = { prenom: '', nom: '', email: '', telephone: '' }
@@ -145,6 +146,7 @@ function LigneCompte({ compte: c, me }: { compte: Compte; me: Me }) {
           />
           <Connexion compte={c} me={me} rafraichir={rafraichir} />
           {aUnRole(me, 'admin') && <Roles compte={c} rafraichir={rafraichir} />}
+          {aUnRole(me, 'admin') && <ExportDonnees compte={c} />}
           {c.id !== me.id && <Suppression compte={c} rafraichir={rafraichir} />}
         </div>
       )}
@@ -342,6 +344,37 @@ function Suppression({ compte, rafraichir }: { compte: Compte; rafraichir: () =>
           Annuler
         </Bouton>
       </div>
+    </div>
+  )
+}
+
+/** Réponse à une demande d'accès reçue par écrit (spec 019) : toutes les données du compte. */
+function ExportDonnees({ compte }: { compte: Compte }) {
+  const [erreur, setErreur] = useState('')
+  return (
+    <div className="grid gap-2">
+      <h3 className="font-semibold">Données personnelles</h3>
+      <p className="text-sm text-muted-foreground">
+        Pour répondre à une demande écrite : toutes les données du compte et des adhérents qui lui sont liés. La consultation est notée au
+        journal.
+      </p>
+      <div>
+        <Bouton
+          variante="secondaire"
+          onClick={async () => {
+            setErreur('')
+            try {
+              const donnees = await appel<unknown>('GET', `/api/admin/comptes/${compte.id}/export`)
+              telechargerJson(`donnees-${slug(`${compte.prenom} ${compte.nom}`)}-${new Date().toISOString().slice(0, 10)}.json`, donnees)
+            } catch (err) {
+              setErreur(err instanceof ErreurApi ? err.message : 'Export impossible.')
+            }
+          }}
+        >
+          <Download className="size-4" aria-hidden /> Exporter ses données
+        </Bouton>
+      </div>
+      <Alerte>{erreur}</Alerte>
     </div>
   )
 }

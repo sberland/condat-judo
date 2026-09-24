@@ -29,7 +29,7 @@
 | Destinataires | Bureau du club (selon les rôles) ; responsables liés à l'enfant (fiche de l'enfant, nom des autres responsables) ; **À COMPLÉTER** (ex. France Judo pour la licence) |
 | Sous-traitants | Cloudflare (hébergement, D1 en juridiction UE) ; GitHub (sauvegardes **chiffrées**, clé détenue par le club) |
 | Transferts hors UE | Cloudflare et GitHub sont des sociétés américaines : données du site stockées dans l'UE ; sauvegardes illisibles sans la clé du club |
-| Durée | Pendant l'adhésion, puis **À COMPLÉTER** (ex. 3 saisons) après la dernière adhésion ; ensuite suppression ou anonymisation (automatisation : spec 019) |
+| Durée | Pendant l'adhésion, puis **À COMPLÉTER** (ex. 3 saisons) après la dernière adhésion ; ensuite **anonymisation automatique** (purge hebdomadaire, spec 019) : fiche, adresse, n° de licence, personnes autorisées, accords et références de chèques effacés ; responsables sans autre enfant anonymisés |
 
 ## 1 bis. Compétitions
 
@@ -66,6 +66,7 @@
 | Base légale | Consentement (art. 6.1.a), donné par un responsable légal pour un mineur, retirable à tout moment ; soins d'urgence : intérêt vital (art. 6.1.d) |
 | Données | Réponse (oui / non / non recueilli), date, auteur de la saisie |
 | Durée | Jusqu'au retrait, et au plus la durée de conservation de l'adhérent |
+| Exercice | La famille répond ou retire son accord (droit à l'image, WhatsApp) depuis son espace ; réponse datée, à son nom (spec 019) |
 | Remarque | Le formulaire papier 2026/2027 présentait le droit à l'image comme « accepté par l'inscription » : non valable, saisi « non recueilli » (spec 010) |
 
 ## 3. Espace membres (comptes et connexion)
@@ -96,6 +97,11 @@
   sous forme d'empreinte seulement.
 - Hébergement des données dans l'UE ; sauvegardes chiffrées hors de l'hébergeur.
 - Site de qualification : copie **anonymisée** (spec 008), verrou d'accès Cloudflare Access.
+- **Journal des accès sensibles** : chaque consultation ou modification des coordonnées d'une famille
+  (fiche adhérent, liste des comptes, fiche famille en trésorerie) est enregistrée — qui, quoi,
+  quand — et consultable par l'administrateur ; conservé un an, vidé dans la qualification.
+- **Droits outillés** : chaque responsable télécharge ses données et celles de ses enfants depuis son
+  espace ; l'administrateur produit le même export pour une demande écrite.
 - Aucune donnée personnelle dans le dépôt de code (public).
 
 ## Historique
@@ -105,3 +111,4 @@
 | 2026-09-24 | Création (spec 006) : adhésions, consentements, espace membres, sauvegardes |
 | 2026-09-24 | Ajout du traitement « Compétitions » (spec 009) |
 | 2026-09-24 | Ajout du traitement « Cotisations et paiements » (spec 011) |
+| 2026-09-24 | Purge automatique, journal des accès, export et accords depuis l’espace (spec 019) |

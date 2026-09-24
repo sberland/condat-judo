@@ -20,6 +20,7 @@ export type IdRubrique =
   | 'liens-connexion'
   | 'comptes'
   | 'roles'
+  | 'rgpd'
 
 export type RubriqueAide = {
   id: IdRubrique
@@ -171,12 +172,23 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
       },
       {
         q: 'Consulter, corriger ou supprimer mes données',
-        r: ['Adressez-vous au bureau du club. Vous pouvez aussi retirer à tout moment un accord donné (droit à l’image, groupe WhatsApp).'],
+        r: [
+          'Consulter : « Mes enfants » → « Mes données » → « Télécharger mes données » : un fichier avec tout ce que le club enregistre sur vous et vos enfants.',
+          'Corriger ou supprimer : adressez-vous au bureau du club.',
+        ],
+      },
+      {
+        q: 'Photos, groupe WhatsApp : donner ou retirer mon accord',
+        r: [
+          '« Mes enfants » → « Autorisations » : répondez « Oui » ou « Non » pour chaque enfant. Vous pouvez changer d’avis à tout moment ; votre réponse est datée et enregistrée à votre nom.',
+          'Seuls les responsables légaux (mère, père, tuteur) peuvent répondre ; un adhérent majeur répond pour lui-même.',
+        ],
       },
       {
         q: 'Combien de temps le club garde-t-il ces informations ?',
         r: [
           'Tout est détaillé sur la page « Données personnelles » (lien en bas de chaque page) : ce qui est enregistré, pourquoi, pour combien de temps, qui y a accès et vos droits.',
+          'Après la durée décidée par le club, les informations d’un adhérent qui ne se réinscrit plus sont rendues anonymes automatiquement.',
         ],
       },
     ],
@@ -467,7 +479,7 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
         q: 'Qui peut quoi ?',
         r: [
           'Bureau : adhérents, dossiers, compétitions, responsables, comptes, liens de connexion des familles.',
-          'Administrateur : tout, y compris les rôles et les liens de connexion des membres du bureau.',
+          'Administrateur : tout, y compris les rôles, les liens de connexion des membres du bureau et la page « Données personnelles » (purge, journal des accès).',
           'Trésorier : la trésorerie (cotisations, paiements, remises en banque) — le rôle « bureau » seul ne voit pas les paiements.',
           'Encadrant, gestion du site : leurs écrans arriveront avec les prochaines fonctionnalités (garderie, contenu du site).',
         ],
@@ -478,6 +490,35 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
           'Il reste toujours au moins un administrateur : le site refuse de retirer le rôle, ou de supprimer le compte, du dernier.',
           'Un administrateur qui a perdu son téléphone reçoit un lien d’un autre administrateur ; à défaut, la procédure d’installation permet d’en recréer un.',
         ],
+      },
+    ],
+  },
+  {
+    id: 'rgpd',
+    titre: 'Données personnelles : conservation, purge, journal',
+    profil: 'admin',
+    questions: [
+      {
+        q: 'Que fait la purge automatique ?',
+        r: [
+          'Chaque lundi, les adhérents dont la dernière saison est plus ancienne que la durée de conservation sont rendus anonymes : nom, adresse, n° de licence, personnes autorisées et accords effacés ; l’année de naissance, les montants et les compétitions restent, sans nom.',
+          'Leurs responsables qui n’ont plus d’autre enfant au club sont rendus anonymes aussi, et déconnectés. Les membres du bureau (comptes avec un rôle) ne sont jamais concernés.',
+          'Elle ne tourne qu’en production, et seulement une fois la durée de conservation confirmée par le club.',
+        ],
+      },
+      {
+        q: 'Voir qui sera concerné',
+        r: ['Mon espace → Données personnelles : la liste des adhérents concernés à la prochaine purge et à la rentrée suivante. Une réinscription (nouveau dossier) retire l’adhérent de la liste.'],
+      },
+      {
+        q: 'Journal des accès',
+        r: [
+          'Chaque consultation de la fiche d’un adhérent (coordonnées des responsables), de la liste des comptes ou de la fiche d’une famille en trésorerie, et chaque modification, est enregistrée : qui, quoi, quand. Conservé un an.',
+        ],
+      },
+      {
+        q: 'Répondre à une demande d’accès reçue par écrit',
+        r: ['Comptes → « Modifier » sur la personne → « Exporter ses données » : un fichier avec tout ce qui la concerne, elle et les adhérents qui lui sont liés. Les familles peuvent aussi le télécharger elles-mêmes depuis leur espace.'],
       },
     ],
   },
