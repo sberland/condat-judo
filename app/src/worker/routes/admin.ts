@@ -5,6 +5,16 @@ import { aUnRole, connexionRequise, roleRequis, type AppEnv } from '../droits';
 import { ROLES, type Role } from '../identite';
 import { couperAcces, creerLien } from '../session';
 import {
+  calculerMontant,
+  estMineur,
+  etatDossier,
+  formuleJudoSuggeree,
+  horsCommuneSuggere,
+  SAISON,
+  type Recueil,
+} from '../../../web/src/content/adhesion';
+import {
+  validerAdhesion,
   validerAdherent,
   validerCompte,
   validerLien,
@@ -351,4 +361,170 @@ admin.post('/comptes/:id/lien', async (c) => {
 admin.delete('/comptes/:id/sessions', async (c) => {
   const res = await c.env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(id(c, 'id')).run();
   return c.json({ ok: true, fermees: res.meta.changes });
+});
+
+// --- Dossiers d'adhésion (spec 010a) ---
+// Le Worker recalcule et FIGE les montants (grille de la saison, content/adhesion.ts) : l'écran
+// n'affiche qu'une estimation. Consentements et autorisations : datés, avec qui les a saisis.
+
+type Dossier = {
+  formule: string;
+  paiement_mode: string | null;
+  formalite_recue_le: string | null;
+  soins_urgence: Recueil;
+  droit_image: Recueil;
+  whatsapp: Recueil;
+  valide_le: string | null;
+} & Record<string, unknown>;
+
+const nombre = (r: D1Result | undefined) => (r?.results[0] as { n: number } | undefined)?.n ?? 0;
+
+async function contexteDossier(c: Context<AppEnv>, adherentId: number) {
+  const adherent = await c.env.DB.prepare('SELECT id, date_naissance, code_postal FROM adherents WHERE id = ? AND supprime_le IS NULL')
+    .bind(adherentId)
+    .first<{ id: number; date_naissance: string; code_postal: string | null }>();
+  if (!adherent) return null;
+  const [responsables, famille, dossier] = await c.env.DB.batch([
+    c.env.DB.prepare(
+      'SELECT count(*) AS n FROM liens l JOIN users u ON u.id = l.user_id WHERE l.adherent_id = ? AND u.supprime_le IS NULL',
+    ).bind(adherentId),
+    // Autres enfants d'un même responsable qui ont déjà un dossier cette saison → réduction famille.
+    c.env.DB.prepare(
+      `SELECT count(DISTINCT d.adherent_id) AS n
+       FROM liens l1 JOIN liens l2 ON l2.user_id = l1.user_id AND l2.adherent_id != l1.adherent_id
+       JOIN adhesions d ON d.adherent_id = l2.adherent_id AND d.saison = ?1
+       JOIN adherents a ON a.id = d.adherent_id AND a.supprime_le IS NULL
+       WHERE l1.adherent_id = ?2`,
+    ).bind(SAISON.id, adherentId),
+    c.env.DB.prepare('SELECT * FROM adhesions WHERE adherent_id = ? AND saison = ?').bind(adherentId, SAISON.id),
+  ]);
+  const contexte = {
+    mineur: estMineur(adherent.date_naissance),
+    responsables: nombre(responsables),
+    autresDossiersFamille: nombre(famille),
+    horsCommune: horsCommuneSuggere(adherent.code_postal),
+    formuleJudo: formuleJudoSuggeree(Number(adherent.date_naissance.slice(0, 4))),
+  };
+  const adhesion = (dossier?.results[0] as Dossier | undefined) ?? null;
+  return { saison: SAISON, contexte, adhesion, etat: adhesion ? etatDossier(adhesion, contexte) : null };
+}
+
+admin.get('/adherents/:id/adhesion', async (c) => {
+  const r = await contexteDossier(c, id(c, 'id') ?? 0);
+  return r ? c.json(r) : c.json({ error: 'Adhérent introuvable' }, 404);
+});
+
+admin.put('/adherents/:id/adhesion', async (c) => {
+  const adherentId = id(c, 'id') ?? 0;
+  const r = validerAdhesion((await corps(c)) ?? {});
+  if (!r.ok) return invalide(c, r);
+  const avant = await contexteDossier(c, adherentId);
+  if (!avant) return c.json({ error: 'Adhérent introuvable' }, 404);
+  const s = r.valeur;
+  const m = calculerMontant({ formule: s.formule, passeport: !!s.passeport, horsCommune: !!s.hors_commune, reductionFamille: !!s.reduction_famille });
+  if (!m) return c.json({ error: 'Saisie invalide', erreurs: { formule: 'Formule inconnue' } }, 400);
+  const moi = c.get('utilisateur').id;
+  // Consentement / autorisation : date et auteur mis à jour quand la réponse change.
+  const trace = (champ: 'soins_urgence' | 'droit_image' | 'whatsapp'): [unknown, unknown] => {
+    if (avant.adhesion?.[champ] === s[champ]) return [avant.adhesion[`${champ}_le`] ?? null, avant.adhesion[`${champ}_par`] ?? null];
+    return s[champ] === 'non_recueilli' ? [null, null] : [new Date().toISOString().slice(0, 19).replace('T', ' '), moi];
+  };
+  const [soinsLe, soinsPar] = trace('soins_urgence');
+  const [imageLe, imagePar] = trace('droit_image');
+  const [whatsappLe, whatsappPar] = trace('whatsapp');
+  // Toute modification annule la validation : le bureau revalide un dossier modifié.
+  await c.env.DB.prepare(
+    `INSERT INTO adhesions (adherent_id, saison, formule, passeport, hors_commune, reduction_famille,
+       montant_participation, montant_licence, montant_supplements, montant_reduction, montant_total,
+       paiement_mode, paiement_3_fois, echeance_1, echeance_2, echeance_3, formalite_type, formalite_recue_le,
+       soins_urgence, soins_urgence_le, soins_urgence_par, droit_image, droit_image_le, droit_image_par,
+       whatsapp, whatsapp_le, whatsapp_par, cree_par)
+     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27, ?28)
+     ON CONFLICT (adherent_id, saison) DO UPDATE SET
+       formule = excluded.formule, passeport = excluded.passeport, hors_commune = excluded.hors_commune,
+       reduction_famille = excluded.reduction_famille, montant_participation = excluded.montant_participation,
+       montant_licence = excluded.montant_licence, montant_supplements = excluded.montant_supplements,
+       montant_reduction = excluded.montant_reduction, montant_total = excluded.montant_total,
+       paiement_mode = excluded.paiement_mode, paiement_3_fois = excluded.paiement_3_fois,
+       echeance_1 = excluded.echeance_1, echeance_2 = excluded.echeance_2, echeance_3 = excluded.echeance_3,
+       formalite_type = excluded.formalite_type, formalite_recue_le = excluded.formalite_recue_le,
+       soins_urgence = excluded.soins_urgence, soins_urgence_le = excluded.soins_urgence_le, soins_urgence_par = excluded.soins_urgence_par,
+       droit_image = excluded.droit_image, droit_image_le = excluded.droit_image_le, droit_image_par = excluded.droit_image_par,
+       whatsapp = excluded.whatsapp, whatsapp_le = excluded.whatsapp_le, whatsapp_par = excluded.whatsapp_par,
+       valide_le = NULL, valide_par = NULL, updated_at = datetime('now')`,
+  )
+    .bind(
+      adherentId, SAISON.id, s.formule, s.passeport, s.hors_commune, s.reduction_famille,
+      m.participation, m.licence, m.supplements, m.reduction, m.total,
+      s.paiement_mode, s.paiement_3_fois, m.echeancier[0], m.echeancier[1], m.echeancier[2],
+      s.formalite_type, s.formalite_recue_le,
+      s.soins_urgence, soinsLe, soinsPar, s.droit_image, imageLe, imagePar, s.whatsapp, whatsappLe, whatsappPar, moi,
+    )
+    .run();
+  return c.json(await contexteDossier(c, adherentId));
+});
+
+admin.post('/adherents/:id/adhesion/valider', async (c) => {
+  const adherentId = id(c, 'id') ?? 0;
+  const r = await contexteDossier(c, adherentId);
+  if (!r?.adhesion || !r.etat) return c.json({ error: 'Dossier introuvable' }, 404);
+  if (r.etat.manques.length) return c.json({ error: `Dossier incomplet : ${r.etat.manques.join(', ')}` }, 409);
+  await c.env.DB.prepare("UPDATE adhesions SET valide_le = datetime('now'), valide_par = ? WHERE adherent_id = ? AND saison = ?")
+    .bind(c.get('utilisateur').id, adherentId, SAISON.id)
+    .run();
+  return c.json(await contexteDossier(c, adherentId));
+});
+
+admin.delete('/adherents/:id/adhesion', async (c) => {
+  const res = await c.env.DB.prepare('DELETE FROM adhesions WHERE adherent_id = ? AND saison = ?').bind(id(c, 'id'), SAISON.id).run();
+  if (!res.meta.changes) return c.json({ error: 'Dossier introuvable' }, 404);
+  return c.json({ ok: true });
+});
+
+type LigneDossiers = {
+  id: number;
+  prenom: string;
+  nom: string;
+  date_naissance: string;
+  responsables: number;
+  formule: string | null;
+  montant_total: number | null;
+  paiement_mode: string | null;
+  formalite_recue_le: string | null;
+  soins_urgence: Recueil | null;
+  droit_image: Recueil | null;
+  whatsapp: Recueil | null;
+  valide_le: string | null;
+};
+
+// Tous les adhérents actifs, avec leur dossier de la saison s'il existe (« sans dossier » sinon).
+admin.get('/adhesions', async (c) => {
+  const { results } = await c.env.DB.prepare(
+    `SELECT a.id, a.prenom, a.nom, a.date_naissance,
+            (SELECT count(*) FROM liens l JOIN users u ON u.id = l.user_id WHERE l.adherent_id = a.id AND u.supprime_le IS NULL) AS responsables,
+            d.formule, d.montant_total, d.paiement_mode, d.formalite_recue_le, d.soins_urgence, d.droit_image, d.whatsapp, d.valide_le
+     FROM adherents a LEFT JOIN adhesions d ON d.adherent_id = a.id AND d.saison = ?
+     WHERE a.supprime_le IS NULL
+     ORDER BY a.nom, a.prenom`,
+  )
+    .bind(SAISON.id)
+    .all<LigneDossiers>();
+  const lignes = results.map((l) => ({
+    adherent: { id: l.id, prenom: l.prenom, nom: l.nom, date_naissance: l.date_naissance },
+    dossier: l.formule ? { formule: l.formule, montant_total: l.montant_total ?? 0 } : null,
+    etat: l.formule
+      ? etatDossier(
+          {
+            paiement_mode: l.paiement_mode,
+            formalite_recue_le: l.formalite_recue_le,
+            soins_urgence: l.soins_urgence ?? 'non_recueilli',
+            droit_image: l.droit_image ?? 'non_recueilli',
+            whatsapp: l.whatsapp ?? 'non_recueilli',
+            valide_le: l.valide_le,
+          },
+          { mineur: estMineur(l.date_naissance), responsables: l.responsables },
+        )
+      : null,
+  }));
+  return c.json({ saison: SAISON, lignes });
 });

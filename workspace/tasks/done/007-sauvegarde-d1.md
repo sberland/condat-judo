@@ -28,10 +28,18 @@ de référence (StrategyHub, specs 008 / 013), transposé à GitHub.
 
 - Plan de reprise complet (sauvegarde du code : déjà sur GitHub)
 
-## Notes — à arbitrer en revue
+## Revue (2026-09-24) — décisions
 
-- **Où stocker les exports ?** Le dépôt étant public, les artefacts GitHub Actions et les Releases
-  sont exclus pour des données personnelles. Pistes : chiffrement (`age` / GPG, clé en secret
-  GitHub) puis stockage dans un **dépôt privé dédié**, ou un stockage objet européen. À trancher.
-- Réutiliser la logique de `backup-d1.mjs` de la référence (sélection de rétention testée).
+- **Stockage** (arbitré par le porteur de projet) : **dépôt GitHub privé dédié**
+  `sberland/condat-judo-sauvegardes`, exports **chiffrés avec age** (clé publique en variable
+  GitHub, clé privée détenue hors ligne par le responsable seul).
+- Choix appliqués : une **Release par sauvegarde** (supprimable → rétention réelle, contrairement
+  à des commits que l'historique Git garderait) ; rétention en fonction pure testée
+  (`app/src/outils/retention.ts`) ; jeton *fine-grained* limité au dépôt de sauvegarde ;
+  restauration vers la **qualif** seulement, via `refresh-preview-db.ps1` (donc anonymisée, 008).
+- Mise en place par le porteur de projet (ressources externes) : `installation.md` § « Sauvegarde
+  de la base ». Doc : [`sauvegarde.md`](../../docs/technical-docs/sauvegarde.md).
+
+## Notes
+
 - Droits requis : aucun écran. Données personnelles : oui (exports complets) → chiffrement.

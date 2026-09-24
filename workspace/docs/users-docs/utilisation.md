@@ -47,8 +47,9 @@ téléphone ; pour toute autre correction, adressez-vous au bureau.
 
 | Écran | Usage |
 | --- | --- |
+| **Dossiers 2026/2027** | Dossiers d'adhésion de la saison : filtres (sans dossier, à compléter, complets, validés), ce qui manque pour chacun, total des montants ; « Saisir un nouvel adhérent » pour ressaisir un formulaire papier |
 | **Adhérents** | Liste des pratiquants avec recherche ; « aucun responsable » signale une fiche à compléter |
-| **Fiche d'un adhérent** | Identité (modifier, supprimer — une fiche supprimée reste restaurable), responsables légaux, personnes autorisées à récupérer l'enfant |
+| **Fiche d'un adhérent** | Identité (modifier, supprimer — une fiche supprimée reste restaurable ; ceinture dans la liste officielle), responsables légaux, **dossier d'adhésion de la saison** (formule, montant calculé, paiement, formalité médicale, autorisations et consentements, validation), personnes autorisées à récupérer l'enfant |
 | **Ajouter un responsable** | Chercher un parent déjà enregistré (ex. pour un deuxième enfant) ou en créer un nouveau (nom, e-mail et/ou téléphone), puis choisir son lien avec l'enfant et ses droits : *peut inscrire*, *peut récupérer*, *prévenu par le club*. Si l'e-mail est déjà connu, le site propose de relier le compte existant |
 | **Comptes** | Tous les adultes enregistrés : coordonnées, nombre d'adhérents liés, « compte activé » dès la première connexion. L'administrateur y attribue les rôles (bureau, trésorier, encadrant, gestion du site) |
 | **Connexion au site** (Comptes → Modifier, ou « Lien de connexion » sur un responsable) | « Créer un lien de connexion » puis « Envoyer sur WhatsApp » (au numéro du compte) ou « Copier le lien ». Un nouveau lien annule le précédent. « Déconnecter tous ses appareils » coupe l'accès d'un téléphone perdu. Seul un administrateur crée un lien pour un membre du bureau |

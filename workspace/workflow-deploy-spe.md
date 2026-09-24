@@ -80,7 +80,8 @@ incidents du projet de référence (StrategyHub, v1.5.0 → v2.4.1) :
 | --- | --- | --- |
 | `.github/workflows/ci.yml` | PR vers `main`/`preview`, push sur `main`/`preview` | typecheck worker + front, tests, build |
 | `.github/workflows/preview.yml` | push sur `preview` (ou manuel) | copie D1 prod → preview, migrations, `wrangler deploy --env preview` |
-| `.github/workflows/deploy.yml` | tag `vX.Y.Z` | contrôle version tag = `app/package.json`, migrations prod, `wrangler deploy` |
+| `.github/workflows/deploy.yml` | tag `vX.Y.Z` | contrôle version tag = `app/package.json`, **sauvegarde chiffrée si migrations en attente**, migrations prod, `wrangler deploy` |
+| `.github/workflows/sauvegarde.yml` | chaque nuit (02 h 30 UTC, depuis `main`) ou manuel | sauvegarde chiffrée de la D1 de prod vers le dépôt privé, rétention (spec 007) |
 
 **Secrets GitHub Actions** (Settings → Secrets and variables → Actions, ou `gh secret set`) :
 
@@ -116,9 +117,12 @@ Prérequis : `npx wrangler login` (OAuth) ou `CLOUDFLARE_API_TOKEN` dans l'envir
 - Compte Cloudflare : compte perso `Sebastien.berland@gmail.com's Account` (partagé avec d'autres projets — l'équipe Zero Trust et son quota gratuit de 50 utilisateurs Access aussi).
 - ⚠️ **Ne jamais `db:seed` ni `db:reset` sur une base distante** : le seed est réservé au `--local`.
 - `migrations apply --remote` n'applique que les migrations en attente.
-- Sauvegarde : D1 **Time Travel** (restauration à un instant des 30 derniers jours) couvre le
-  démarrage. Une sauvegarde hors-Cloudflare est au backlog — **à livrer avant d'héberger les
-  données réelles des familles**.
+- **Sauvegarde** (spec 007, [`sauvegarde.md`](docs/technical-docs/sauvegarde.md)) : export
+  **chiffré** (age) chaque nuit et avant toute migration, dans le dépôt **privé**
+  `sberland/condat-judo-sauvegardes` (30 quotidiennes + une par mois sur un an) ; restauration
+  testable vers la qualif par `deploy/restaurer-sauvegarde.ps1`. En plus : D1 **Time Travel**
+  (30 jours, chez Cloudflare). ⚠️ Un déploiement qui migre **échoue** si la sauvegarde n'est pas
+  configurée (secrets) — c'est voulu.
 - **Premier administrateur** : aucun compte n'est promu automatiquement (pas d'email magique dans
   le code). Création par SQL puis lien de connexion par `deploy/lien-connexion.ps1 -Cible production`
   — procédure dans [`installation.md`](docs/install/installation.md).
@@ -166,12 +170,15 @@ La prod, elle, n'a pas de verrou Access : le site est public.
 
 ### Tables purgées avant import
 
-Liste codée en dur (ordre = dépendances FK) : `sessions`, `liens_connexion`, `liens`, `personnes_autorisees`, `identites`, `user_roles`, `adherents`, `saisons`, `users`, `d1_migrations`.
+Liste codée en dur (ordre = dépendances FK) : `adhesions`, `sessions`, `liens_connexion`, `liens`, `personnes_autorisees`, `identites`, `user_roles`, `adherents`, `saisons`, `users`, `d1_migrations`.
 Présente à trois endroits, **à tenir à jour à chaque nouvelle table** :
 `app/package.json` (`db:reset:local`), `deploy/refresh-preview-db.ps1`, `.github/workflows/preview.yml`.
 
-Après import et migrations, les **sessions et liens de connexion** copiés de la prod sont supprimés
-(mêmes deux fichiers) : aucun accès ouvert en prod ne reste valable en qualif.
+Après import et migrations, la copie est **anonymisée** (spec 008,
+`app/src/db/anonymisation-qualif.sql`, mêmes deux fichiers) : familles, adhérents et personnes
+autorisées pseudonymisés, sessions et liens de connexion de la prod supprimés ; comptes avec un
+rôle (testeurs) conservés. Toute nouvelle colonne est classée dans
+`app/src/db/donnees-personnelles.ts` (test bloquant en CI).
 
 ### Déploiement / refresh manuel (hors CI)
 
@@ -195,4 +202,5 @@ Suivi dans [`installation.md`](docs/install/installation.md) § « Mise en place
 - [x] Verrou Access sur la **preview** (« Protéger ce Worker », portée « Tout le trafic », politique `Condat Judo — bureau`, code PIN à usage unique) — vérifié : anonyme → 302
 - [x] Ruleset GitHub sur `main` et `preview` (PR obligatoire, check CI « Typecheck, tests, build »)
 - [ ] Premier tag (vitrine v1) → déploiement prod vérifié (site public accessible)
+- [ ] Sauvegarde : dépôt privé, clé age (privée hors ligne), variable `SAUVEGARDE_CLE_PUBLIQUE`, secret `SAUVEGARDE_TOKEN` ; première sauvegarde et restauration testées (spec 007)
 - [ ] Premier administrateur créé en prod et connecté — possible dès la livraison de la spec 005a (`deploy/lien-connexion.ps1`)

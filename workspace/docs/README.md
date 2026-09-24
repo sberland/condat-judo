@@ -17,8 +17,9 @@ Index de toute la documentation du projet.
 | Fichier | Contenu |
 | --- | --- |
 | [`identite-auth.md`](technical-docs/identite-auth.md) | Seam d'identité `resolveUser` et connexion applicative — lien de connexion personnel, sessions de 6 mois glissants (spec 005a), fournisseur dev, Access non utilisé comme identité |
-| [`comptes-adherents.md`](technical-docs/comptes-adherents.md) | Comptes, adhérents, responsables légaux et rôles (spec 004) — modèle de données, droits (CSRF, rôles, filtrage par liens), écrans de l'espace connecté |
+| [`comptes-adherents.md`](technical-docs/comptes-adherents.md) | Comptes, adhérents, responsables légaux et rôles (spec 004), dossiers d'adhésion (spec 010a) — modèle de données, droits (CSRF, rôles, filtrage par liens), calcul partagé écran / Worker, écrans de l'espace connecté |
 | [`cloudflare-access.md`](technical-docs/cloudflare-access.md) | Cloudflare Access — verrou d'accès à la qualification (sans lien avec l'auth de l'app), configuration, constat technique `workers.dev` |
+| [`sauvegarde.md`](technical-docs/sauvegarde.md) | Sauvegarde de la base de prod (spec 007) — export chiffré (age) quotidien et avant migration, dépôt GitHub privé, rétention, restauration vers la qualif |
 | [`cloudflare-preview.md`](technical-docs/cloudflare-preview.md) | Environnement de preview — Worker + D1 dédiés, flux de qualification, pièges |
 
 Utiliser `_template.md` pour créer un nouveau fichier technique.

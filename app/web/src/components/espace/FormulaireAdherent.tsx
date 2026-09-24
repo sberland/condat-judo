@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { CEINTURES } from '../../content/adhesion'
 import { ErreurApi, type Adherent } from '../../lib/api'
 import { Alerte, Bouton, Champ, Selection } from '../formulaire'
 
@@ -91,7 +92,19 @@ export function FormulaireAdherent({
           onChange={(v) => setS((p) => ({ ...p, sexe: v as 'F' | 'M' }))}
           erreur={erreurs.sexe}
         />
-        <Champ id="grade" libelle="Ceinture" valeur={s.grade ?? ''} onChange={maj('grade')} erreur={erreurs.grade} aide="Ex. blanche, jaune, orange…" />
+        <Selection
+          id="grade"
+          libelle="Ceinture"
+          valeur={s.grade ?? ''}
+          // Une valeur saisie avant la liste officielle reste proposée, pour ne pas la perdre.
+          options={[...(s.grade && !(CEINTURES as readonly string[]).includes(s.grade) ? [s.grade] : []), ...CEINTURES].map((c) => ({
+            valeur: c,
+            libelle: c,
+          }))}
+          onChange={maj('grade')}
+          erreur={erreurs.grade}
+          vide="Aucune (taïso, yoga, débutant)"
+        />
         <Champ
           id="numero_licence"
           libelle="N° de licence France Judo"

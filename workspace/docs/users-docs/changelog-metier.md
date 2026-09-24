@@ -4,6 +4,36 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.7.1 — 24 septembre 2026
+
+Les données du site sont désormais sauvegardées chaque nuit en dehors de l'hébergeur, et
+systématiquement avant chaque évolution de la base. Les sauvegardes sont chiffrées : seul le
+responsable du site détient la clé qui permet de les relire. Elles sont conservées un mois au
+jour le jour, puis une par mois pendant un an, et leur restauration a une procédure testée.
+
+---
+
+## v0.7.0 — 24 septembre 2026
+
+Le bureau peut désormais ressaisir sur le site les formulaires d'inscription papier de la saison
+2026/2027. Pour chaque adhérent : la formule (proposée d'après l'âge), le montant calculé
+automatiquement (passeport, hors commune, réduction famille, paiement en 3 fois), le mode de
+paiement, la formalité médicale reçue (sans aucune information de santé), l'autorisation de soins
+d'urgence et les consentements (droit à l'image, groupe WhatsApp). Un écran « Dossiers » montre
+d'un coup d'œil ce qui manque pour chacun et le total des montants. La ceinture se choisit dans la
+liste officielle de France Judo.
+
+---
+
+## v0.6.1 — 24 septembre 2026
+
+Le site de qualification (site de test réservé au bureau) reçoit une copie du site public pour
+vérifier chaque nouvelle version. Désormais, cette copie est rendue anonyme à chaque mise à jour :
+les noms, coordonnées et dates de naissance des familles et des enfants y sont remplacés par des
+valeurs fictives. Seuls les comptes des membres du bureau, qui font les tests, restent inchangés.
+
+---
+
 ## v0.6.0 — 24 septembre 2026
 
 L'espace membres a désormais sa propre aide, adaptée à chacun : un parent y trouve comment se
