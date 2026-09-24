@@ -21,11 +21,11 @@ des rôles), évite des questions au bureau et rassure (« que veut dire *peut r
 
 ## Critères d'acceptation
 
-- [ ] Un parent ne voit que l'aide famille ; un membre du bureau voit en plus l'aide bureau ; un
+- [x] Un parent ne voit que l'aide famille ; un membre du bureau voit en plus l'aide bureau ; un
   administrateur voit toutes les rubriques
-- [ ] Depuis chaque écran de l'espace, un geste mène à la bonne rubrique
-- [ ] Lisible et utilisable à 360 px
-- [ ] Un test garantit le filtrage par profil et l'unicité des rubriques
+- [x] Depuis chaque écran de l'espace, un geste mène à la bonne rubrique
+- [x] Lisible et utilisable à 360 px
+- [x] Un test garantit le filtrage par profil et l'unicité des rubriques
 
 ## Hors périmètre
 
