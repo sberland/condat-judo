@@ -14,6 +14,10 @@ Dès la revue de spec (step 0), toute spec identifie :
 - **Les données personnelles** traitées (RGPD) : finalité, minimisation, qui y accède, durée de
   conservation. Données de mineurs et photos = vigilance renforcée ; aucune donnée de santé stockée.
 - **L'usage mobile** : le parcours parent doit tenir sur un écran de téléphone (360 px).
+- **L'aide intégrée** : toute spec qui ajoute ou modifie un écran de l'espace membres met à jour
+  `app/web/src/content/aide.ts` (rubrique du profil concerné : famille, bureau, admin… ; nouvelle
+  rubrique pour un nouveau rôle) et relie l'écran à sa rubrique (`<Espace aide="…">`). C'est la
+  documentation que lisent les parents et le bureau.
 
 ---
 

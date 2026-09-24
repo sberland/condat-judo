@@ -101,7 +101,7 @@ reprise ici**) :
   son inscription, l'utilisation de son image à des fins d'information et de communication, avec
   droit de retrait.
 
-Analyse et points à arbitrer : spec [`010-adhesion-en-ligne.md`](../../tasks/pending/010-adhesion-en-ligne.md).
+Analyse et points à arbitrer : spec [`010-CHT-adhesion.md`](../../tasks/pending/010-CHT-adhesion.md).
 
 ## Sources d'inspiration
 

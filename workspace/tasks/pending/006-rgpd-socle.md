@@ -41,6 +41,11 @@ les durées. À livrer **avant** l'ouverture des espaces privés aux familles.
 
 ## Notes
 
+- **Découpage (2026-09-24)** — la ressaisie des dossiers papier (010a) met des données réelles
+  en prod. **Avant la ressaisie** (bloquant, avec 007 et 008) : registre des traitements, page
+  « Données personnelles » + mention d'information dans l'espace, durées de conservation
+  décidées, consentements tracés (portés par 010a). **Ensuite** : export des données par le
+  responsable, purge automatisée, journal des accès sensibles.
 - Le règlement intérieur et la mention « droit à l'image » du formulaire papier sont à mettre en
   conformité (cf. arbitrages de la spec 010).
 - Droits requis : `admin` pour les exports globaux et la purge ; chaque responsable pour ses

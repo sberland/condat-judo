@@ -55,8 +55,9 @@
 ---
 
 > Specs tirées de l'[expression du besoin](../docs/spec-fonctionnelle/expression-besoin.md)
-> (complétée le 2026-09-24 par le formulaire d'inscription papier). Priorités proposées le
-> 2026-09-24 — **à revoir par le porteur de projet**.
+> (complétée le 2026-09-24 par le formulaire d'inscription papier). Priorités revues le
+> 2026-09-24 : **la ressaisie des dossiers papier 2026/2027 passe en tête** (010a), précédée des
+> garde-fous sur les données réelles (006, 007, 008).
 
 | Fichier | Scope | Type | Impact utilisateur | Effort estimé | Priorité | Date cible | Notes |
 |---|---|---|---|---|---|---|---|
@@ -66,11 +67,12 @@
 | [007-sauvegarde-d1.md](pending/007-sauvegarde-d1.md) | Données | technique | Moyen — sécurité des données | S | P1 | — | Avant données réelles ; lieu de stockage chiffré à arbitrer (dépôt public exclu) |
 | [008-anonymisation-qualif.md](pending/008-anonymisation-qualif.md) | Données | technique | Moyen — RGPD hors prod | S | P1 | — | Avant données réelles ; échec si colonne personnelle non couverte |
 | [009-competitions.md](pending/009-competitions.md) | Compétitions | feature | Élevé — **besoin d'origine** | M | P1 | — | Lien WhatsApp → inscription en 3 gestes ; liste à ressaisir sur le site fédéral |
-| [010-adhesion-en-ligne.md](pending/010-adhesion-en-ligne.md) | Adhésions | feature | Élevé — toutes les infos adhérents et parents | L | P2 | 2027-06 | Remplace le formulaire papier ; **13 points à arbitrer** (A1-A13) ; cible : inscriptions 2027/2028 |
+| [010-CHT-adhesion.md](pending/010-CHT-adhesion.md) | Adhésions | feature | Élevé — toutes les infos adhérents et parents | L | P1 | 010a : saison en cours · 010b : 2027-06 | Chantier (a=ressaisie des dossiers papier 2026/2027 par le bureau, b=dossier en ligne pour les familles) ; revue du 2026-09-24 ; arbitrages A1-A13 rendus (A3, A11 à voir avec le club) |
 | [011-cotisations-paiements.md](pending/011-cotisations-paiements.md) | Paiements | feature | Moyen — travail du trésorier | M | P2 | — | Dû / encaissé / restant, paiement en 3 fois, modes, export ; pas de paiement en ligne |
 | [012-CHT-garderie-mercredi.md](pending/012-CHT-garderie-mercredi.md) | Garderie | feature | Élevé — remplace un fil WhatsApp confus | M | P2 | — | Chantier (a=demande, b=liste du jour + photo, c=pointage) |
 | [013-communication.md](pending/013-communication.md) | Communication | feature | Moyen — actualités et calendrier | M | P3 | — | WhatsApp / Facebook relaient des liens ; abonnement agenda |
 | [014-administration-contenu.md](pending/014-administration-contenu.md) | Contenu | feature | Élevé — le club tient son site à jour sans développeur | M | P2 | — | Rôle `contenu` ; coordonnées, équipe, disciplines, partenaires, règlement, mentions ; historique ; horaires / tarifs dans 003 |
+| [017-idees-whatsapp-api.md](pending/017-idees-whatsapp-api.md) | Communication | proposition | Moyen — messages envoyés par le site | M | P4 | — | Idées seulement : numéro WhatsApp du club, envoi depuis le site (liens de connexion, rappels), agent conversationnel ; payant, modèles validés par Meta, opt-in |
 | — | Import des adhérents | proposition | Moyen — gain de saisie | S | P3 | — | Import depuis un tableur existant (si le club en a un), sinon saisie bureau (004) |
 | — | Nom de domaine du club | proposition | Moyen — image, e-mails d'envoi | S | P3 | — | Ex. judo-condat.fr (~10 €/an) ; utile pour l'envoi des e-mails de connexion (005, arbitrage A3) |
 | — | Résultats et palmarès | proposition | Faible | S | P4 | — | Résultats des compétitions par enfant (suite de 009) |
@@ -84,11 +86,12 @@
 | Phase | Specs | Pourquoi dans cet ordre |
 | --- | --- | --- |
 | 0 — Tout de suite | ~~002~~ (livrée en v0.3.0) | Gain rapide, sans dépendance |
-| 1 — Fondations (bureau d'abord) | ~~004~~ (livrée en v0.4.0) → **005-CHT** (005a livrée en v0.5.0 ; 005b attend le domaine) → **003** → **014** | On ne peut inviter que des personnes connues (004) ; les écrans bureau exigent la connexion (005) ; puis le club administre référentiels et contenu lui-même |
-| 2 — Avant toute donnée réelle | **006**, **007**, **008** | Obligations RGPD et sécurité avant d'héberger des données de mineurs |
-| 3 — Valeur pour les familles | **009** puis **012-CHT** | Besoin d'origine d'abord ; la garderie ensuite (hebdomadaire) — pour la saison en cours, le bureau saisit les adhérents depuis les dossiers papier |
-| 4 — Gestion du club | **011** puis **010** | Le trésorier dès que les adhérents existent ; l'adhésion en ligne pour les inscriptions 2027/2028 |
-| 5 — Communication | **013** | Relais du site vers WhatsApp / Facebook |
+| 1 — Fondations (bureau d'abord) | ~~004~~ (v0.4.0) → **005-CHT** (005a livrée en v0.5.0 ; 005b attend le domaine) | On ne peut inviter que des personnes connues (004) ; les écrans exigent la connexion (005) |
+| 2 — Ressaisie des dossiers 2026/2027 | **010a** en parallèle de **006** (socle minimal), **007**, **008** | Priorité du 2026-09-24 : les formulaires papier sont remis ; la ressaisie réelle en prod attend les trois garde-fous (données de mineurs) |
+| 3 — Le club autonome | **003** → **014** | Référentiels en base (saison 2027/2028) et contenu du site administrés par le club |
+| 4 — Valeur pour les familles | **009** puis **012-CHT** | Besoin d'origine d'abord ; la garderie ensuite (hebdomadaire) |
+| 5 — Gestion du club | **011** puis **010b** | Le trésorier dès que les dossiers existent ; le dossier en ligne pour les inscriptions 2027/2028 |
+| 6 — Communication | **013** (et idées **017**) | Relais du site vers WhatsApp / Facebook |
 
 ---
 
@@ -102,12 +105,12 @@
 - **#007** — [Sauvegarde de la base hors Cloudflare](pending/007-sauvegarde-d1.md)
 - **#008** — [Anonymisation de la copie de qualification](pending/008-anonymisation-qualif.md)
 - **#009** — [Compétitions : publication et inscription des enfants](pending/009-competitions.md)
+- **#010-CHT** — [Dossier d'adhésion (inscription)](pending/010-CHT-adhesion.md)
 
 ---
 
 ### P2 — Important
 
-- **#010** — [Adhésion en ligne (dossier d'inscription)](pending/010-adhesion-en-ligne.md)
 - **#011** — [Cotisations : suivi des paiements](pending/011-cotisations-paiements.md)
 - **#012-CHT** — [Garderie du mercredi](pending/012-CHT-garderie-mercredi.md)
 - **#014** — [Administration du contenu du site](pending/014-administration-contenu.md)
@@ -127,3 +130,4 @@
 - **—** — Résultats et palmarès
 - **—** — Paiement en ligne HelloAsso
 - **—** — Notifications push (PWA)
+- **#017** — [Idées : messages WhatsApp envoyés par le site](pending/017-idees-whatsapp-api.md)

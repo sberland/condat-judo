@@ -1,6 +1,17 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, CalendarDays, IdCard, MapPin } from 'lucide-react'
-import { CLUB, CODE_MORAL, DISCIPLINES, ITINERAIRE, SAISON } from '../content/club'
+import {
+  CLUB,
+  CODE_MORAL,
+  DISCIPLINES,
+  DISCIPLINES_PUBLIQUES,
+  enLettres,
+  enumerer,
+  ITINERAIRE,
+  LISTE_DISCIPLINES,
+  majuscule,
+  SAISON,
+} from '../content/club'
 import { Provisoire, useProvisoireVisible } from '../components/Provisoire'
 import { BoutonExterne, BoutonLien, Card, Container, FacebookIcon, Section, SectionTitle } from '../components/ui'
 import { usePageMeta } from '../lib/usePageMeta'
@@ -8,7 +19,7 @@ import { usePageMeta } from '../lib/usePageMeta'
 export function HomePage() {
   usePageMeta(
     null,
-    'Club de judo, jujitsu et taïso de Condat-sur-Vienne (Haute-Vienne). Éveil judo dès 4 ans, cours de septembre à juin au dojo, 9 rue Jules Ferry.',
+    `Club de ${LISTE_DISCIPLINES} de Condat-sur-Vienne (Haute-Vienne). Éveil judo dès 4 ans, cours de septembre à juin au dojo, 9 rue Jules Ferry.`,
   )
   const provisoireVisible = useProvisoireVisible()
   const disciplines = DISCIPLINES.filter((d) => !d.provisoire || provisoireVisible)
@@ -18,9 +29,8 @@ export function HomePage() {
       <Hero />
 
       <Section>
-        <SectionTitle surtitre="Nos disciplines" titre="Trois façons de pratiquer au dojo">
-          Du judo pour les petits comme pour les grands, du jujitsu pour la self-défense, du taïso
-          pour garder la forme en douceur.
+        <SectionTitle surtitre="Nos disciplines" titre={`${enLettres(disciplines.length)} façons de pratiquer au dojo`}>
+          {enLettres(disciplines.length)} disciplines, un même esprit : progresser à son rythme, dans le respect des autres.
         </SectionTitle>
         <div className={`grid gap-4 sm:grid-cols-2 ${disciplines.length > 3 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'}`}>
           {disciplines.map((d) => {
@@ -149,11 +159,10 @@ function Hero() {
             Club affilié à France Judo · Haute-Vienne
           </p>
           <h1 className="text-4xl leading-[1.08] font-extrabold tracking-tight text-balance sm:text-5xl lg:text-6xl">
-            Judo, jujitsu et taïso à <span className="whitespace-nowrap text-brand">Condat-sur-Vienne</span>
+            {majuscule(LISTE_DISCIPLINES)} à <span className="whitespace-nowrap text-brand">Condat-sur-Vienne</span>
           </h1>
           <p className="mt-5 max-w-xl text-lg text-white/75">
-            Un sport éducatif et un vrai équilibre pour toute la famille : l’éveil judo dès 4 ans,
-            le judo pour tous les âges, le jujitsu pour la self-défense et le taïso pour garder la forme.
+            Un sport éducatif et un vrai équilibre pour toute la famille : {enumerer(DISCIPLINES_PUBLIQUES.map((d) => d.enBref))}.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <BoutonLien to="/disciplines">

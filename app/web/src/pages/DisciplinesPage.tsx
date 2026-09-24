@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { Sparkles } from 'lucide-react'
-import { DISCIPLINES, type Discipline } from '../content/club'
+import { DISCIPLINES, enLettres, enumerer, LISTE_DISCIPLINES, majuscule, type Discipline } from '../content/club'
 import { Provisoire, useProvisoireVisible } from '../components/Provisoire'
 import { Container, PageHeader } from '../components/ui'
 import { usePageMeta } from '../lib/usePageMeta'
@@ -8,15 +8,15 @@ import { usePageMeta } from '../lib/usePageMeta'
 export function DisciplinesPage() {
   usePageMeta(
     'Disciplines',
-    'Judo (éveil judo dès 4 ans), jujitsu et taïso au dojo de Condat-sur-Vienne : présentation de chaque discipline par le club.',
+    `${majuscule(LISTE_DISCIPLINES)} au dojo de Condat-sur-Vienne (éveil judo dès 4 ans) : présentation de chaque discipline par le club.`,
   )
   const provisoireVisible = useProvisoireVisible()
   const disciplines = DISCIPLINES.filter((d) => !d.provisoire || provisoireVisible)
 
   return (
     <div className="animate-apparition">
-      <PageHeader surtitre="Disciplines" titre="Judo, jujitsu et taïso">
-        Trois disciplines, un même esprit : progresser à son rythme, dans le respect des autres.
+      <PageHeader surtitre="Disciplines" titre={majuscule(enumerer(disciplines.map((d) => d.nom.toLocaleLowerCase('fr-FR'))))}>
+        {enLettres(disciplines.length)} disciplines, un même esprit : progresser à son rythme, dans le respect des autres.
       </PageHeader>
 
       {/* Accès rapide (collant sous l'en-tête) */}

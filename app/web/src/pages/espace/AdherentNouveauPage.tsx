@@ -8,7 +8,7 @@ export function AdherentNouveauPage() {
   const navigate = useNavigate()
   const client = useQueryClient()
   return (
-    <Espace titre="Nouvel adhérent" retour={{ to: '/espace/adherents', libelle: 'Adhérents' }} roles={['bureau', 'admin']}>
+    <Espace titre="Nouvel adhérent" retour={{ to: '/espace/adherents', libelle: 'Adhérents' }} roles={['bureau', 'admin']} aide="adherents">
       {() => (
         <Bloc titre="Identité">
           <FormulaireAdherent

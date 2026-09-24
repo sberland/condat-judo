@@ -6,6 +6,46 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.6.0] — 2026-09-24
+
+### Aide intégrée à l'espace membres
+
+#### Notes client
+
+L'espace membres a désormais sa propre aide, adaptée à chacun : un parent y trouve comment se
+connecter, ce que signifient les droits sur ses enfants et comment corriger une information ; le
+bureau y ajoute la saisie des adhérents, des responsables et l'envoi des liens de connexion ;
+l'administrateur y trouve en plus la gestion des rôles. Un bouton « Aide » en haut de chaque écran
+mène directement à la bonne réponse.
+
+#### Ajouts
+
+- Page « Aide » dans Mon espace : questions / réponses par thème, filtrées selon le profil
+- Bouton « Aide » sur chaque écran de l'espace, vers la rubrique correspondante ; tuile « Aide »
+  sur l'accueil de l'espace
+
+## [0.5.1] — 2026-09-24
+
+### Le yoga sur tout le site, qualification repérable
+
+#### Notes client
+
+Le yoga figure désormais partout sur le site, au même titre que le judo, le jujitsu et le taïso :
+accroche de l'accueil, présentation dans la page Disciplines (séances le lundi et le jeudi), pied
+de page et référencement dans les moteurs de recherche. Sur le site de qualification, l'onglet du
+navigateur commence par « Qualif » pour ne jamais le confondre avec le site public.
+
+#### Ajouts
+
+- Présentation du yoga (postures, respiration, détente ; lundi et jeudi), visible sur le site
+  public — texte à affiner avec le club
+- Mention « Qualif · » devant le titre de l'onglet, sur le site de qualification uniquement
+
+#### Modifications
+
+- Accueil, page Disciplines, pied de page, titre et description du site : quatre disciplines au
+  lieu de trois ; ces textes suivent désormais automatiquement la liste des disciplines
+
 ## [0.5.0] — 2026-09-24
 
 ### Connexion à l'espace membres par lien personnel
