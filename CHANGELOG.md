@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-09-24
+
 ### Tarifs de la saison 2026/2027
 
 #### Notes client
