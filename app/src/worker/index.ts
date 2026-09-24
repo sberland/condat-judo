@@ -2,7 +2,9 @@ import { Hono } from 'hono';
 import pkg from '../../package.json';
 import { connexionRequise, protectionCsrf, type AppEnv } from './droits';
 import { admin } from './routes/admin';
+import { auth } from './routes/auth';
 import { famille } from './routes/famille';
+import { cookieSession, jetonSession, prolongerSession } from './session';
 
 const app = new Hono<AppEnv>();
 const api = new Hono<AppEnv>();
@@ -23,8 +25,15 @@ api.get('/me', connexionRequise, async (c) => {
   await c.env.DB.prepare("UPDATE users SET last_login = datetime('now') WHERE id = ?")
     .bind(utilisateur.id)
     .run();
+  // Session glissante : le front appelle /me à chaque ouverture du site.
+  const jeton = utilisateur.provider === 'app' ? jetonSession(c.req.raw) : null;
+  if (jeton && (await prolongerSession(c.env, jeton))) c.header('Set-Cookie', cookieSession(jeton));
   return c.json(utilisateur);
 });
+
+// --- Connexion (spec 005a) — publique ---
+
+api.route('/auth', auth);
 
 // --- Espaces connectés (spec 004) ---
 

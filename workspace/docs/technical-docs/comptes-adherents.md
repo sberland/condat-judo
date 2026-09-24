@@ -56,10 +56,11 @@ lien retire immédiatement l'accès. L'e-mail n'intervient jamais dans un droit.
 
 `/espace` (accueil), `/espace/famille` (mes enfants, mon téléphone), `/espace/adherents` (liste,
 recherche), `/espace/adherents/nouveau`, `/espace/adherents/$id` (identité, responsables,
-personnes autorisées), `/espace/comptes` (comptes, rôles). Le composant `Espace`
+personnes autorisées), `/espace/comptes` (comptes, rôles, liens de connexion — spec 005a, cf.
+[`identite-auth.md`](identite-auth.md)). Le composant `Espace`
 (`components/espace/Garde.tsx`) masque selon les rôles ; **le masquage n'est pas la sécurité**,
 l'API vérifie les mêmes droits. L'entrée « Mon espace » n'apparaît dans le menu que pour un
-utilisateur reconnu (aujourd'hui : en local seulement).
+utilisateur connecté.
 
 ## Points de vigilance
 

@@ -35,9 +35,13 @@ feature/NNN ─PR▶ preview ─(preview.yml)▶ deploy --env preview + copie D1
 - **Access obligatoire sur le host de preview** : sinon la preview est une copie publique des
   données des familles.
 - **Saisies preview écrasées** à chaque push sur `preview` (D1 jetable) — voulu.
-- **Liste des tables à purger codée en dur** (`liens`, `personnes_autorisees`, `identites`, `user_roles`, `adherents`, `saisons`, `users`, `d1_migrations`) à
+- **Liste des tables à purger codée en dur** (`sessions`, `liens_connexion`, `liens`, `personnes_autorisees`, `identites`, `user_roles`, `adherents`, `saisons`, `users`, `d1_migrations`) à
   trois endroits (`app/package.json`, `deploy/refresh-preview-db.ps1`, `preview.yml`) — à mettre
   à jour à chaque nouvelle table, ordre = dépendances FK (enfants d'abord).
+- **Sessions et liens de connexion de la prod supprimés** après import + migrations (`DELETE FROM
+  sessions; DELETE FROM liens_connexion;`, dans `preview.yml` et `refresh-preview-db.ps1`) : aucun
+  accès ouvert en prod ne reste valable en qualif. Un testeur obtient son lien par
+  `deploy/lien-connexion.ps1 -Cible preview`, puis passe le verrou Access **et** la connexion de l'app.
 - **Snapshot prod vide** (avant la première mise en prod) : l'import est sauté, les migrations
   créent le schéma.
 - **Clés étrangères à l'import** : l'import D1 se fait par lots et n'honore pas

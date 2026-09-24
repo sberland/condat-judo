@@ -42,9 +42,16 @@ export function MentionsLegalesPage() {
 
         <Bloc titre="Données personnelles et cookies">
           <p>
-            Ce site ne collecte aucune donnée personnelle, ne dépose aucun cookie et n’utilise aucun
-            outil de mesure d’audience. Il ne charge aucune ressource d’un site tiers (polices,
-            cartes, vidéos).
+            Pour ses visiteurs, ce site ne collecte aucune donnée personnelle, ne dépose aucun cookie
+            et n’utilise aucun outil de mesure d’audience. Il ne charge aucune ressource d’un site
+            tiers (polices, cartes, vidéos).
+          </p>
+          <p>
+            Espace membres : les personnes à qui le bureau du club a ouvert un compte reçoivent, en se
+            connectant, un unique cookie strictement nécessaire au maintien de leur connexion (6 mois
+            au plus, sans usage publicitaire ni mesure d’audience). Les informations des adhérents et
+            de leurs responsables sont gérées par le bureau pour la vie du club ; pour les consulter,
+            les corriger ou les supprimer, adressez-vous au bureau.
           </p>
           <p>
             Les liens vers des sites extérieurs (France Judo, Facebook, services de cartographie)

@@ -14,12 +14,24 @@ Le site est accessible à tous, sans compte : <https://condat-judo.sebastien-ber
 
 Sur téléphone, le menu s'ouvre avec le bouton en haut à droite (trois traits).
 
-Le site ne dépose aucun cookie et ne collecte aucune donnée personnelle.
+Pour ses visiteurs, le site ne dépose aucun cookie et ne collecte aucune donnée personnelle. Les
+membres connectés reçoivent un seul cookie, strictement nécessaire à leur connexion.
 
-## Mon espace (ouverture avec la connexion au site)
+## Se connecter
 
-Réservé aux personnes qui ont un compte, créé par le bureau. Il ouvrira en ligne avec la connexion
-au site (prochaine étape) ; l'entrée « Mon espace » apparaît alors dans le menu.
+Réservé aux personnes qui ont un compte, créé par le bureau. Pas de mot de passe :
+
+1. Le bureau vous envoie un **lien personnel** (WhatsApp ou SMS), valable 7 jours et une seule fois.
+2. Touchez-le **depuis votre téléphone**, puis « Me connecter sur cet appareil ».
+3. Vous restez connecté·e **6 mois** ; chaque visite prolonge ce délai. L'entrée « Mon espace »
+   apparaît dans le menu.
+
+Lien expiré ou perdu, nouveau téléphone : demandez un nouveau lien au bureau. Le lien est
+personnel : ne le transférez pas, il ouvre une session sur votre compte. Pour vous déconnecter :
+**Mon espace → Se déconnecter**. Le lien « Espace membres » en bas de chaque page rappelle la
+marche à suivre.
+
+## Mon espace
 
 **Pour les parents — Mes enfants** : la fiche de chaque enfant (âge, ceinture, n° de licence), ce
 que vous pouvez faire pour lui (l'inscrire, venir le chercher, être prévenu), les autres
@@ -34,6 +46,7 @@ téléphone ; pour toute autre correction, adressez-vous au bureau.
 | **Fiche d'un adhérent** | Identité (modifier, supprimer — une fiche supprimée reste restaurable), responsables légaux, personnes autorisées à récupérer l'enfant |
 | **Ajouter un responsable** | Chercher un parent déjà enregistré (ex. pour un deuxième enfant) ou en créer un nouveau (nom, e-mail et/ou téléphone), puis choisir son lien avec l'enfant et ses droits : *peut inscrire*, *peut récupérer*, *prévenu par le club*. Si l'e-mail est déjà connu, le site propose de relier le compte existant |
 | **Comptes** | Tous les adultes enregistrés : coordonnées, nombre d'adhérents liés, « compte activé » dès la première connexion. L'administrateur y attribue les rôles (bureau, trésorier, encadrant, gestion du site) |
+| **Connexion au site** (Comptes → Modifier, ou « Lien de connexion » sur un responsable) | « Créer un lien de connexion » puis « Envoyer sur WhatsApp » (au numéro du compte) ou « Copier le lien ». Un nouveau lien annule le précédent. « Déconnecter tous ses appareils » coupe l'accès d'un téléphone perdu. Seul un administrateur crée un lien pour un membre du bureau |
 
 Deux parents séparés ont chacun leur propre compte et leurs propres droits sur l'enfant : aucun
 n'a besoin de connaître l'e-mail ou le téléphone de l'autre.
