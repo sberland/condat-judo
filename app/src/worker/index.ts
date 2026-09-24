@@ -4,6 +4,7 @@ import { connexionRequise, protectionCsrf, type AppEnv } from './droits';
 import { admin } from './routes/admin';
 import { auth } from './routes/auth';
 import { competitions } from './routes/competitions';
+import { encadrant } from './routes/encadrant';
 import { famille } from './routes/famille';
 import { tresorerie } from './routes/tresorerie';
 import type { Env } from './env';
@@ -53,6 +54,7 @@ api.get('/saison', async (c) => c.json(saisonPublique(await saisonCourante(c))))
 api.route('/admin', admin);
 api.route('/famille', famille);
 api.route('/tresorerie', tresorerie);
+api.route('/encadrant', encadrant);
 
 api.all('*', (c) => c.json({ error: 'Not found' }, 404));
 

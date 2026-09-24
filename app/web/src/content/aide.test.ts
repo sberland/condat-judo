@@ -24,8 +24,16 @@ describe('aide intégrée — filtrage par profil', () => {
     expect(ids(['tresorier'])).toEqual([...ids([]), 'tresorerie'])
   })
 
-  it('un rôle sans écran (encadrant, contenu) voit l’aide famille', () => {
-    for (const role of ['encadrant', 'contenu'] as const) expect(ids([role])).toEqual(ids([]))
+  it('l’encadrant voit l’aide famille et celle du mercredi du jour', () => {
+    expect(ids(['encadrant'])).toEqual([...ids([]), 'garderie-jour'])
+  })
+
+  it('le bureau voit aussi l’aide de l’encadrant', () => {
+    expect(ids(['bureau'])).toContain('garderie-jour')
+  })
+
+  it('un rôle sans écran (contenu) voit l’aide famille', () => {
+    expect(ids(['contenu'])).toEqual(ids([]))
   })
 
   it('rubriques et questions : identifiants uniques, contenu non vide', () => {

@@ -13,6 +13,8 @@ import type { MesCotisations as MesCotisationsApi } from '../../lib/paiements'
 import { euros } from '../../lib/tarifs'
 import { telechargerJson } from '../../lib/csv'
 import { ACCORDS, type AccordsFamille } from '../../lib/rgpd'
+import { GestionPhoto, PhotoEnfant } from '../../components/espace/Photo'
+import { PersonnesAutorisees } from '../../components/espace/PersonnesAutorisees'
 
 export function FamillePage() {
   const { data, isPending, isError } = useQuery({
@@ -47,7 +49,7 @@ export function FamillePage() {
   )
 }
 
-/** Droit à l'image et groupe WhatsApp (spec 019) : la famille répond elle-même, oui ou non. */
+/** Droit à l'image, groupe WhatsApp (spec 019) et photo pour la garderie (012b) : la famille répond elle-même, oui ou non. */
 function MesAccords() {
   const client = useQueryClient()
   const [erreur, setErreur] = useState('')
@@ -58,12 +60,13 @@ function MesAccords() {
   })
   if (!data || data.accords.length === 0) return null
 
-  async function repondre(adhesionId: number, accord: 'droit_image' | 'whatsapp', valeur: 'oui' | 'non') {
+  async function repondre(adhesionId: number, accord: keyof typeof ACCORDS, valeur: 'oui' | 'non') {
     setErreur('')
     setEnCours(`${adhesionId}-${accord}`)
     try {
       await appel('PUT', `/api/famille/accords/${adhesionId}`, { accord, valeur })
-      await client.invalidateQueries({ queryKey: ['famille', 'accords'] })
+      // « Non » à la photo l'efface : la fiche de l'enfant est rechargée aussi.
+      await client.invalidateQueries({ queryKey: ['famille'] })
     } catch (err) {
       setErreur(err instanceof ErreurApi ? err.message : 'Enregistrement impossible.')
     } finally {
@@ -74,6 +77,7 @@ function MesAccords() {
   const LIBELLES: [keyof typeof ACCORDS, string][] = [
     ['droit_image', 'Photos et vidéos'],
     ['whatsapp', 'Groupe WhatsApp du club'],
+    ['photo_garderie', 'Photo pour la garderie du mercredi'],
   ]
   return (
     <Bloc titre={`Autorisations ${data.saison.libelle}`}>
@@ -164,6 +168,8 @@ function MesDonnees() {
 }
 
 function FicheEnfant({ enfant: e }: { enfant: Enfant }) {
+  const client = useQueryClient()
+  const rafraichir = () => client.invalidateQueries({ queryKey: ['famille'] })
   const droits = [
     ['Vous pouvez l’inscrire (compétitions, garderie)', e.peut_inscrire],
     ['Vous pouvez le récupérer', e.peut_recuperer],
@@ -201,7 +207,7 @@ function FicheEnfant({ enfant: e }: { enfant: Enfant }) {
         ))}
       </ul>
 
-      <div className="mt-5 grid gap-4 border-t pt-4 sm:grid-cols-2">
+      <div className="mt-5 border-t pt-4">
         <div>
           <h3 className="mb-1.5 text-sm font-semibold">Autres responsables</h3>
           {e.coResponsables.length ? (
@@ -216,20 +222,32 @@ function FicheEnfant({ enfant: e }: { enfant: Enfant }) {
             <p className="text-muted-foreground">Aucun</p>
           )}
         </div>
-        <div>
-          <h3 className="mb-1.5 text-sm font-semibold">Autorisés à le récupérer</h3>
-          {e.personnesAutorisees.length ? (
-            <ul className="grid gap-1">
-              {e.personnesAutorisees.map((p) => (
-                <li key={`${p.prenom}-${p.nom}`}>
-                  {p.prenom} {p.nom} <span className="text-muted-foreground">· {p.lien}</span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-muted-foreground">Personne d’autre que les responsables</p>
-          )}
-        </div>
+      </div>
+
+      <div className="mt-5 border-t pt-4">
+        <h3 className="mb-1.5 text-sm font-semibold">Autorisés à le récupérer</h3>
+        <p className="mb-3 text-sm text-muted-foreground">
+          En plus des responsables : grands-parents, nounou… L’encadrant ne confie l’enfant qu’aux personnes de cette liste.
+        </p>
+        <PersonnesAutorisees
+          base={`/api/famille/enfants/${e.id}/personnes-autorisees`}
+          personnes={e.personnesAutorisees}
+          modifiable={e.peut_inscrire === 1}
+          rafraichir={rafraichir}
+          prefixe={`pa-${e.id}`}
+        />
+      </div>
+
+      <div className="mt-5 border-t pt-4">
+        <h3 className="mb-1.5 text-sm font-semibold">Photo pour la garderie du mercredi</h3>
+        {e.responsableLegal ? (
+          <GestionPhoto prenom={e.prenom} nom={e.nom} etat={e.photo} url={`/api/famille/enfants/${e.id}/photo`} mode="famille" rafraichir={rafraichir} />
+        ) : (
+          <div className="flex items-center gap-4">
+            <PhotoEnfant src={e.photo.deposeeLe ? `/api/famille/enfants/${e.id}/photo?v=${encodeURIComponent(e.photo.deposeeLe)}` : null} prenom={e.prenom} nom={e.nom} />
+            <p className="text-sm text-muted-foreground">Seul un responsable légal peut déposer ou retirer la photo.</p>
+          </div>
+        )}
       </div>
 
       <div className="mt-5 border-t pt-4">

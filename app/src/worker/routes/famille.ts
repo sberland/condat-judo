@@ -9,7 +9,8 @@ import { connexionRequise, type AppEnv } from '../droits';
 import { aujourdhuiParis, COLONNES_COMPETITION, inscriptionsOuvertes, lireCompetition, versCompetition } from './competitions';
 import { donneesDuCompte } from '../export';
 import { saisonCourante, saisonPourDate } from '../saison';
-import { validerTelephoneSeul } from '../validation';
+import { accordPhoto, effacerPhoto, enregistrerPhoto, lirePhoto, PHOTO_RECENTE, reponsePhoto } from '../photos';
+import { validerPersonneAutorisee, validerPhoto, validerTelephoneSeul } from '../validation';
 
 export const famille = new Hono<AppEnv>();
 famille.use('*', connexionRequise);
@@ -26,18 +27,23 @@ type Enfant = {
   peut_inscrire: number;
   peut_recuperer: number;
   est_contact: number;
+  photo_le: string | null;
+  accord_photo: string | null;
 };
 
 famille.get('/enfants', async (c) => {
   const moi = c.get('utilisateur').id;
+  const saison = await saisonCourante(c);
   const { results: enfants } = await c.env.DB.prepare(
     `SELECT a.id, a.prenom, a.nom, a.date_naissance, a.sexe, a.grade, a.numero_licence,
-            l.qualite, l.peut_inscrire, l.peut_recuperer, l.est_contact
+            l.qualite, l.peut_inscrire, l.peut_recuperer, l.est_contact,
+            (SELECT p.deposee_le FROM photos_adherents p WHERE p.adherent_id = a.id AND ${PHOTO_RECENTE}) AS photo_le,
+            (SELECT d.photo_garderie FROM adhesions d WHERE d.adherent_id = a.id AND d.saison = ?2) AS accord_photo
      FROM liens l JOIN adherents a ON a.id = l.adherent_id
-     WHERE l.user_id = ? AND a.supprime_le IS NULL
+     WHERE l.user_id = ?1 AND a.supprime_le IS NULL
      ORDER BY a.date_naissance DESC`,
   )
-    .bind(moi)
+    .bind(moi, saison.id)
     .all<Enfant>();
   if (!enfants.length) return c.json([]);
 
@@ -50,8 +56,8 @@ famille.get('/enfants', async (c) => {
          AND l.adherent_id IN (SELECT adherent_id FROM liens WHERE user_id = ?1)`,
     ).bind(moi),
     c.env.DB.prepare(
-      `SELECT adherent_id, prenom, nom, lien FROM personnes_autorisees
-       WHERE adherent_id IN (SELECT adherent_id FROM liens WHERE user_id = ?)`,
+      `SELECT id, adherent_id, prenom, nom, lien FROM personnes_autorisees
+       WHERE adherent_id IN (SELECT adherent_id FROM liens WHERE user_id = ?) ORDER BY nom, prenom`,
     ).bind(moi),
     c.env.DB.prepare(
       `SELECT i.adherent_id, co.id, co.nom, co.date, co.statut FROM inscriptions_competition i
@@ -61,20 +67,100 @@ famille.get('/enfants', async (c) => {
     ).bind(moi),
   ]);
   type Co = { adherent_id: number; prenom: string; nom: string; qualite: string };
-  type Pa = { adherent_id: number; prenom: string; nom: string; lien: string };
+  type Pa = { id: number; adherent_id: number; prenom: string; nom: string; lien: string };
   type Ic = { adherent_id: number; id: number; nom: string; date: string; statut: string };
   const co = (coResponsables?.results ?? []) as Co[];
   const pa = (personnes?.results ?? []) as Pa[];
   const ic = (competitions?.results ?? []) as Ic[];
 
   return c.json(
-    enfants.map((e) => ({
+    enfants.map(({ photo_le, accord_photo, ...e }) => ({
       ...e,
+      responsableLegal: ['mere', 'pere', 'tuteur'].includes(e.qualite),
+      // Photo pour la garderie (012b) : dossier de la saison requis pour recueillir l'accord.
+      photo: { deposeeLe: photo_le, accord: accord_photo },
       coResponsables: co.filter((r) => r.adherent_id === e.id).map(({ prenom, nom, qualite }) => ({ prenom, nom, qualite })),
-      personnesAutorisees: pa.filter((p) => p.adherent_id === e.id).map(({ prenom, nom, lien }) => ({ prenom, nom, lien })),
+      personnesAutorisees: pa.filter((p) => p.adherent_id === e.id).map(({ id, prenom, nom, lien }) => ({ id, prenom, nom, lien })),
       competitions: ic.filter((i) => i.adherent_id === e.id).map(({ id, nom, date, statut }) => ({ id, nom, date, statut })),
     })),
   );
+});
+
+// --- Photo pour la garderie et personnes autorisées (spec 012b) ---
+
+/** Lien du responsable connecté avec cet enfant (actif), ou null. */
+async function monLien(c: Context<AppEnv>, adherentId: number) {
+  return c.env.DB.prepare(
+    `SELECT l.qualite, l.peut_inscrire FROM liens l JOIN adherents a ON a.id = l.adherent_id
+     WHERE l.user_id = ? AND l.adherent_id = ? AND a.supprime_le IS NULL`,
+  )
+    .bind(c.get('utilisateur').id, adherentId)
+    .first<{ qualite: string; peut_inscrire: number }>();
+}
+
+/** Mère, père ou tuteur : répond aux accords et dépose la photo de l'enfant (specs 019, 012b). */
+const estResponsableLegal = (l: { qualite: string } | null) => !!l && ['mere', 'pere', 'tuteur'].includes(l.qualite);
+
+famille.get('/enfants/:id/photo', async (c) => {
+  const adherentId = Number(c.req.param('id')) || 0;
+  if (!(await monLien(c, adherentId))) return c.json({ error: 'Pas de photo' }, 404);
+  return reponsePhoto(c, await lirePhoto(c.env, adherentId));
+});
+
+// Déposer (ou remplacer) la photo : un responsable légal ; l'accord est donné en même temps si besoin.
+famille.put('/enfants/:id/photo', async (c) => {
+  const adherentId = Number(c.req.param('id')) || 0;
+  if (!estResponsableLegal(await monLien(c, adherentId))) return c.json({ error: 'Seul un responsable légal peut déposer la photo' }, 403);
+  const corps = (await c.req.json().catch(() => ({}))) as Record<string, unknown>;
+  const r = validerPhoto(corps);
+  if (!r.ok) return c.json({ error: r.erreurs.image ?? 'Photo invalide', erreurs: r.erreurs }, 400);
+  const saison = await saisonCourante(c);
+  const accord = await accordPhoto(c.env, adherentId, saison.id);
+  if (accord === null) return c.json({ error: 'Le dossier d’adhésion de la saison doit d’abord être enregistré par le bureau' }, 409);
+  if (accord !== 'oui' && corps.accord !== true) return c.json({ error: 'Donnez d’abord votre accord pour la photo' }, 409);
+  const moi = c.get('utilisateur').id;
+  await c.env.DB.batch([
+    ...(accord === 'oui'
+      ? []
+      : [
+          c.env.DB.prepare(
+            `UPDATE adhesions SET photo_garderie = 'oui', photo_garderie_le = datetime('now'), photo_garderie_par = ?, updated_at = datetime('now')
+             WHERE adherent_id = ? AND saison = ?`,
+          ).bind(moi, adherentId, saison.id),
+        ]),
+    enregistrerPhoto(c.env, adherentId, r.valeur, moi),
+  ]);
+  return c.json({ ok: true });
+});
+
+famille.delete('/enfants/:id/photo', async (c) => {
+  const adherentId = Number(c.req.param('id')) || 0;
+  if (!estResponsableLegal(await monLien(c, adherentId))) return c.json({ error: 'Seul un responsable légal peut retirer la photo' }, 403);
+  await effacerPhoto(c.env, adherentId).run();
+  return c.json({ ok: true });
+});
+
+// Personnes autorisées à récupérer l'enfant : gérées par un responsable qui peut l'inscrire.
+famille.post('/enfants/:id/personnes-autorisees', async (c) => {
+  const adherentId = Number(c.req.param('id')) || 0;
+  if ((await monLien(c, adherentId))?.peut_inscrire !== 1) return c.json({ error: 'Vous ne pouvez pas modifier cette liste' }, 403);
+  const r = validerPersonneAutorisee((await c.req.json().catch(() => ({}))) as Record<string, unknown>);
+  if (!r.ok) return c.json({ error: 'Saisie invalide', erreurs: r.erreurs }, 400);
+  const p = r.valeur;
+  const cree = await c.env.DB.prepare('INSERT INTO personnes_autorisees (adherent_id, prenom, nom, lien, telephone) VALUES (?, ?, ?, ?, ?) RETURNING id')
+    .bind(adherentId, p.prenom, p.nom, p.lien, p.telephone)
+    .first<{ id: number }>();
+  return c.json({ id: cree?.id }, 201);
+});
+
+famille.delete('/enfants/:id/personnes-autorisees/:pid', async (c) => {
+  const adherentId = Number(c.req.param('id')) || 0;
+  if ((await monLien(c, adherentId))?.peut_inscrire !== 1) return c.json({ error: 'Vous ne pouvez pas modifier cette liste' }, 403);
+  const res = await c.env.DB.prepare('DELETE FROM personnes_autorisees WHERE id = ? AND adherent_id = ?')
+    .bind(Number(c.req.param('pid')) || 0, adherentId)
+    .run();
+  if (!res.meta.changes) return c.json({ error: 'Personne introuvable' }, 404);
+  return c.json({ ok: true });
 });
 
 // --- Compétitions (spec 009) : un responsable inscrit SES enfants, s'il en a le droit ---
@@ -251,11 +337,15 @@ type Accords = {
   droit_image_le: string | null;
   whatsapp: string;
   whatsapp_le: string | null;
+  photo_garderie: string;
+  photo_garderie_le: string | null;
+  adherent_id: number;
 };
 
-// Accords de la saison (droit à l'image, groupe WhatsApp) pour mes enfants — et moi, adhérent majeur.
+// Accords de la saison (droit à l'image, groupe WhatsApp, photo pour la garderie) pour mes enfants — et moi, adhérent majeur.
 // Répondent : les responsables légaux (mère, père, tuteur), ou l'adhérent majeur pour lui-même.
-const ACCORDS = `SELECT d.id AS adhesion_id, a.prenom, l.qualite, d.droit_image, d.droit_image_le, d.whatsapp, d.whatsapp_le
+const ACCORDS = `SELECT d.id AS adhesion_id, d.adherent_id, a.prenom, l.qualite, d.droit_image, d.droit_image_le, d.whatsapp, d.whatsapp_le,
+    d.photo_garderie, d.photo_garderie_le
   FROM adhesions d JOIN adherents a ON a.id = d.adherent_id AND a.supprime_le IS NULL
   LEFT JOIN liens l ON l.adherent_id = a.id AND l.user_id = ?2
   WHERE d.saison = ?1 AND (l.qualite IN ('mere', 'pere', 'tuteur') OR a.user_id = ?2)`;
@@ -263,21 +353,27 @@ const ACCORDS = `SELECT d.id AS adhesion_id, a.prenom, l.qualite, d.droit_image,
 famille.get('/accords', async (c) => {
   const saison = await saisonCourante(c);
   const { results } = await c.env.DB.prepare(`${ACCORDS} ORDER BY a.date_naissance DESC`).bind(saison.id, c.get('utilisateur').id).all<Accords>();
-  return c.json({ saison: { id: saison.id, libelle: saison.libelle }, accords: results.map(({ qualite: _, ...a }) => a) });
+  return c.json({ saison: { id: saison.id, libelle: saison.libelle }, accords: results.map(({ qualite: _, adherent_id: __, ...a }) => a) });
 });
 
 famille.put('/accords/:adhesionId', async (c) => {
   const corps = (await c.req.json().catch(() => ({}))) as Record<string, unknown>;
   const champ = corps.accord;
   const valeur = corps.valeur;
-  if ((champ !== 'droit_image' && champ !== 'whatsapp') || (valeur !== 'oui' && valeur !== 'non')) return c.json({ error: 'Saisie invalide' }, 400);
+  if ((champ !== 'droit_image' && champ !== 'whatsapp' && champ !== 'photo_garderie') || (valeur !== 'oui' && valeur !== 'non')) return c.json({ error: 'Saisie invalide' }, 400);
   const moi = c.get('utilisateur').id;
   const dossier = await c.env.DB.prepare(`${ACCORDS} AND d.id = ?3`).bind((await saisonCourante(c)).id, moi, Number(c.req.param('adhesionId')) || 0).first<Accords>();
   if (!dossier) return c.json({ error: 'Vous ne pouvez pas répondre pour cet adhérent' }, 403);
   // Colonnes choisies dans une liste fermée (jamais la saisie) : pas d'injection possible.
-  await c.env.DB.prepare(`UPDATE adhesions SET ${champ} = ?, ${champ}_le = datetime('now'), ${champ}_par = ?, updated_at = datetime('now') WHERE id = ?`)
-    .bind(valeur, moi, dossier.adhesion_id)
-    .run();
+  await c.env.DB.batch([
+    c.env.DB.prepare(`UPDATE adhesions SET ${champ} = ?, ${champ}_le = datetime('now'), ${champ}_par = ?, updated_at = datetime('now') WHERE id = ?`).bind(
+      valeur,
+      moi,
+      dossier.adhesion_id,
+    ),
+    // Accord « photo pour la garderie » retiré : la photo est effacée aussitôt (spec 012b).
+    ...(champ === 'photo_garderie' && valeur === 'non' ? [effacerPhoto(c.env, dossier.adherent_id)] : []),
+  ]);
   return c.json({ ok: true });
 });
 

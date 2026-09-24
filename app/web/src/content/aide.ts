@@ -4,7 +4,7 @@
 import type { Role } from '../lib/api'
 
 /** Profil minimal pour voir une rubrique : famille = tout compte connecté. */
-export type ProfilAide = 'famille' | 'bureau' | 'tresorier' | 'admin'
+export type ProfilAide = 'famille' | 'encadrant' | 'bureau' | 'tresorier' | 'admin'
 
 export type IdRubrique =
   | 'connexion'
@@ -16,6 +16,7 @@ export type IdRubrique =
   | 'competitions-bureau'
   | 'saisons'
   | 'garderie-bureau'
+  | 'garderie-jour'
   | 'tresorerie'
   | 'adherents'
   | 'adhesions'
@@ -34,12 +35,13 @@ export type RubriqueAide = {
 
 // Rôles qui donnent accès à chaque profil (un administrateur voit tout).
 const ROLES_DU_PROFIL: Record<Exclude<ProfilAide, 'famille'>, Role[]> = {
+  encadrant: ['encadrant', 'bureau', 'admin'],
   bureau: ['bureau', 'admin'],
   tresorier: ['tresorier', 'admin'],
   admin: ['admin'],
 }
 
-export const LIBELLES_PROFIL: Record<ProfilAide, string> = { famille: 'Tous', bureau: 'Bureau', tresorier: 'Trésorier', admin: 'Administrateur' }
+export const LIBELLES_PROFIL: Record<ProfilAide, string> = { famille: 'Tous', encadrant: 'Encadrant', bureau: 'Bureau', tresorier: 'Trésorier', admin: 'Administrateur' }
 
 export const RUBRIQUES_AIDE: RubriqueAide[] = [
   // --- Famille : tout compte connecté ---
@@ -104,7 +106,24 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
         q: 'Une information est fausse, ou mon numéro a changé',
         r: [
           'Votre téléphone : modifiez-le vous-même dans « Mes coordonnées ».',
-          'Tout le reste (fiche d’un enfant, personnes autorisées…) : signalez-le au bureau, qui met la fiche à jour.',
+          'Les personnes autorisées à venir chercher votre enfant : vous les gérez vous-même (voir ci-dessous).',
+          'Tout le reste (fiche d’un enfant…) : signalez-le au bureau, qui met la fiche à jour.',
+        ],
+      },
+      {
+        q: 'Autoriser un grand-parent ou une nounou à venir chercher mon enfant',
+        r: [
+          'Mes enfants → la fiche de l’enfant → « Autorisés à le récupérer » → « Ajouter une personne » : prénom, nom, lien avec l’enfant et, de préférence, son téléphone. « Retirer » (corbeille) pour l’enlever.',
+          'L’encadrant ne confie l’enfant qu’aux responsables qui peuvent le récupérer et aux personnes de cette liste. Si quelqu’un d’autre se présente, il vous appelle : ajoutez alors la personne, la liste de l’encadrant se met à jour.',
+          'Seul un responsable qui peut « inscrire » l’enfant modifie cette liste.',
+        ],
+      },
+      {
+        q: 'Ajouter une photo pour la garderie du mercredi',
+        r: [
+          'Mes enfants → la fiche de l’enfant → « Photo pour la garderie du mercredi » : cochez l’accord, puis « Ajouter une photo » (prise sur le moment ou choisie dans vos photos). Un portrait bien éclairé, visage dégagé, suffit.',
+          'La photo est réduite sur votre téléphone avant l’envoi. Elle n’est montrée qu’aux encadrants, le mercredi même, pour reconnaître votre enfant à la garderie ; elle est effacée au bout d’un an (pensez à la renouveler).',
+          '« Retirer la photo » l’efface ; répondre « Non » à « Photo pour la garderie » dans les autorisations l’efface aussi. Seul un responsable légal (mère, père, tuteur) peut déposer ou retirer la photo.',
         ],
       },
     ],
@@ -203,9 +222,9 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
         ],
       },
       {
-        q: 'Photos, groupe WhatsApp : donner ou retirer mon accord',
+        q: 'Photos, groupe WhatsApp, photo pour la garderie : donner ou retirer mon accord',
         r: [
-          '« Mes enfants » → « Autorisations » : répondez « Oui » ou « Non » pour chaque enfant. Vous pouvez changer d’avis à tout moment ; votre réponse est datée et enregistrée à votre nom.',
+          '« Mes enfants » → « Autorisations » : répondez « Oui » ou « Non » pour chaque enfant (photos et vidéos publiées par le club, groupe WhatsApp, photo montrée aux encadrants de la garderie). Vous pouvez changer d’avis à tout moment ; votre réponse est datée et enregistrée à votre nom.',
           'Seuls les responsables légaux (mère, père, tuteur) peuvent répondre ; un adhérent majeur répond pour lui-même.',
         ],
       },
@@ -374,6 +393,32 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
     ],
   },
   {
+    id: 'garderie-jour',
+    titre: 'Mercredi du jour (encadrant)',
+    profil: 'encadrant',
+    questions: [
+      {
+        q: 'Voir les enfants à récupérer',
+        r: [
+          'Mon espace → « Mercredi du jour » : les enfants demandés pour aujourd’hui, par lieu de récupération, avec leur photo quand la famille l’a donnée. Touchez la photo pour l’agrandir.',
+          'La liste n’est visible que le mercredi même. Chaque consultation est enregistrée (journal des accès).',
+        ],
+      },
+      {
+        q: 'Qui peut venir chercher un enfant ?',
+        r: [
+          '« Qui peut venir le chercher » : les responsables qui peuvent le récupérer et les personnes autorisées par la famille, avec leur téléphone (touchez le numéro pour appeler).',
+          'Ne confiez jamais un enfant à une personne absente de cette liste : appelez un responsable, qui peut l’ajouter depuis son espace ; la liste se met à jour en rechargeant la page.',
+          '« À prévenir, mais ne peut pas le récupérer » : un responsable à contacter, qui n’est pas autorisé à venir le chercher.',
+        ],
+      },
+      {
+        q: 'Un enfant n’a pas de photo',
+        r: ['La famille ne l’a pas encore déposée, ou n’a pas donné son accord. Le bureau peut aussi en déposer une, si l’accord figure au dossier.'],
+      },
+    ],
+  },
+  {
     id: 'garderie-bureau',
     titre: 'Garderie du mercredi : suivi',
     profil: 'bureau',
@@ -387,6 +432,13 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
       {
         q: 'Une demande tardive, ou une erreur',
         r: ['« Ajouter un enfant » (recherche par nom) ou « Retirer » : le bureau n’est pas limité par le délai des familles.'],
+      },
+      {
+        q: 'Photo d’un enfant pour la garderie',
+        r: [
+          'Accord : « Photo pour la garderie du mercredi » dans le dossier d’adhésion (ou la famille répond dans son espace). « Non » efface la photo.',
+          'Avec l’accord, la fiche de l’adhérent → « Photo pour la garderie » → « Ajouter une photo » (vous pouvez la prendre au dojo). La famille peut aussi la déposer elle-même.',
+        ],
       },
       {
         q: 'Régler lieux, calendrier et délai',

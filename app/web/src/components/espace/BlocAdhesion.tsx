@@ -37,6 +37,8 @@ type Saisie = {
   soins_urgence: Recueil
   droit_image: Recueil
   whatsapp: Recueil
+  /** Absent = inchangé (la famille a pu répondre depuis son espace entre-temps). */
+  photo_garderie?: Recueil
 }
 
 const COULEURS_STATUT: Record<EtatDossier['statut'], string> = {
@@ -224,6 +226,7 @@ function Resume({ a, mineur, tarifs }: { a: Adhesion; mineur: boolean; tarifs: T
       {mineur && <Ligne libelle="Soins d’urgence">{RECUEILS[a.soins_urgence]}</Ligne>}
       <Ligne libelle="Droit à l’image">{RECUEILS[a.droit_image]}</Ligne>
       <Ligne libelle="Groupe WhatsApp">{RECUEILS[a.whatsapp]}</Ligne>
+      <Ligne libelle="Photo pour la garderie">{RECUEILS[a.photo_garderie]}</Ligne>
     </dl>
   )
 }
@@ -276,6 +279,7 @@ function FormulaireAdhesion({
     soins_urgence: a?.soins_urgence ?? 'non_recueilli',
     droit_image: a?.droit_image ?? 'non_recueilli',
     whatsapp: a?.whatsapp ?? 'non_recueilli',
+    photo_garderie: a?.photo_garderie ?? 'non_recueilli',
   }))
   const [erreurs, setErreurs] = useState<Record<string, string>>({})
   const [message, setMessage] = useState('')
@@ -289,7 +293,9 @@ function FormulaireAdhesion({
     setErreurs({})
     setMessage('')
     try {
-      await enregistrer({ ...s, passeport: s.passeport && passeportPossible(tarifs, s.formule) })
+      // Accord photo envoyé seulement s'il a été modifié ici : il peut avoir changé côté famille.
+      const photo = s.photo_garderie === (a?.photo_garderie ?? 'non_recueilli') ? undefined : s.photo_garderie
+      await enregistrer({ ...s, passeport: s.passeport && passeportPossible(tarifs, s.formule), photo_garderie: photo })
     } catch (err) {
       if (err instanceof ErreurApi) {
         setErreurs(err.erreurs)
@@ -411,6 +417,13 @@ function FormulaireAdhesion({
           onChange={maj('droit_image')}
         />
         <ChoixRecueil id="whatsapp" libelle="Groupe WhatsApp du club" aide="Tel que coché sur le formulaire" valeur={s.whatsapp} onChange={maj('whatsapp')} />
+        <ChoixRecueil
+          id="photo_garderie"
+          libelle="Photo pour la garderie du mercredi"
+          aide="Photo de l’enfant montrée aux encadrants le mercredi même, pour le reconnaître. « Non » efface la photo déposée."
+          valeur={s.photo_garderie ?? 'non_recueilli'}
+          onChange={maj('photo_garderie')}
+        />
       </fieldset>
 
       <Alerte>{message}</Alerte>

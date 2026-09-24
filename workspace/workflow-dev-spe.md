@@ -48,7 +48,7 @@ Remise à zéro complète de la base locale : `npm run db:reset:local`.
 
 Utilisateur simulé en local : `app/.dev.vars` (copie de `app/.dev.vars.example`, non commité)
 définit `ENVIRONMENT=local` et `DEV_SUBJECT=dev-admin`, qui correspond à l'utilisateur
-« Admin Dev » du seed. Changer `DEV_SUBJECT` (ex. `dev-parent`, `dev-bureau`) pour se mettre dans
+« Admin Dev » du seed. Changer `DEV_SUBJECT` (ex. `dev-parent`, `dev-bureau`, `dev-encadrant`) pour se mettre dans
 la peau d'un autre utilisateur du seed.
 
 Tester la vraie connexion par lien (spec 005a) : une session ouverte par un lien **prime** sur

@@ -28,3 +28,26 @@ export const moisDe = (iso: string) => jour(iso).toLocaleDateString('fr-FR', { m
 
 /** Première lettre en majuscule (« Mercredi 30 septembre ») ; la classe CSS `capitalize` toucherait chaque mot. */
 export const majuscule = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
+
+/** Liste du mercredi de l'encadrant (spec 012b). `enfants` : null hors d'un mercredi. */
+export type GarderieJour = {
+  date: string
+  aujourdhui: string
+  /** Hors production : un mercredi peut être choisi pour les essais. */
+  essais: boolean
+  mercredis: string[]
+  prochain: string | null
+  lieux: string[]
+  enfants: EnfantDuJour[] | null
+}
+
+export type EnfantDuJour = {
+  id: number
+  prenom: string
+  nom: string
+  categorie: string | null
+  lieu: string
+  photo: boolean
+  responsables: { prenom: string; nom: string; qualite: string; telephone: string | null; peutRecuperer: boolean; estContact: boolean }[]
+  personnes: { prenom: string; nom: string; lien: string; telephone: string | null }[]
+}

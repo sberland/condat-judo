@@ -14,14 +14,14 @@ accès aux coordonnées des familles.
 `RGPD.conservationAdherents` (`app/web/src/content/rgpd.ts`) : **nombre de saisons** après la
 dernière adhésion (`Valeur<number>`), texte affiché par `texteConservation`. Tant qu'il est
 `provisoire`, la page « Données personnelles » le signale, le déploiement en prod échoue
-(`deploy.yml`) et la purge ne fait rien.
+(`deploy.yml`) et la purge n'anonymise personne (seules les durées techniques s'appliquent).
 
 ### Purge automatique (`app/src/worker/purge.ts`)
 
 - **Déclencheur** : `[triggers] crons = ["0 3 * * 1"]` (lundi 3 h UTC) dans `wrangler.toml`,
   aucun en preview (`[env.preview.triggers] crons = []`). Gestionnaire `scheduled` exporté par
-  `index.ts` → `purgerRgpd(env)` : ne fait rien hors `ENVIRONMENT = production`, ni tant que la
-  durée est provisoire.
+  `index.ts` → `purgerRgpd(env)` : ne fait rien hors `ENVIRONMENT = production` ; tant que la
+  durée est provisoire, n'applique que les durées techniques (`instructionsDurees`, spec 012b).
 - **Saison** : septembre → août ; `saisonCourante(jour)` = année de début. Dernière saison d'un
   adhérent = son dernier dossier (`adhesions.saison`), sinon la saison de création de sa fiche.
   Anonymisé si dernière saison < saison courante − N (`seuilPurge`). Jamais un adhérent dont le
@@ -29,10 +29,10 @@ dernière adhésion (`Valeur<number>`), texte affiché par `texteConservation`. 
 - **Instructions** (`instructionsPurge`, un lot D1 = une transaction ; `anonymise_le` = horodatage
   du passage marque le lot) : marquer les adhérents, puis leurs comptes (responsables, ou compte
   de l'adhérent majeur) sans autre adhérent actif ni rôle ; effacer personnes autorisées, liens,
-  accords des dossiers, références des chèques ; anonymiser fiches (« Ancien adhérent n° id »,
+  demandes et photo de garderie, accords des dossiers, références des chèques ; anonymiser fiches (« Ancien adhérent n° id »,
   année de naissance gardée, adresse / licence / compte effacés) et comptes (e-mail et téléphone
-  effacés, identités, sessions et liens de connexion supprimés) ; durées techniques (journal > 1 an,
-  sessions et liens expirés) ; rapport dans `purges` (nombres seulement).
+  effacés, identités, sessions et liens de connexion supprimés) ; durées techniques (`instructionsDurees` : journal,
+  demandes de garderie et photos de plus d'un an, sessions et liens expirés) ; rapport dans `purges` (nombres seulement).
 - **Gardé** : montants des dossiers et paiements (comptabilité), inscriptions aux compétitions,
   année de naissance et sexe — rattachés à une fiche anonyme. Une fiche anonymisée ne se restaure
   pas (`POST /adherents/:id/restaurer` l'exclut).

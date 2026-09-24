@@ -54,15 +54,24 @@ le droit.
 **Pour les parents — Garderie du mercredi** : Mon espace → « Garderie du mercredi » : « Demander »
 à côté d’un mercredi pour que le club récupère votre enfant à la garderie, ou « Tous les mercredis
 jusqu’au … » en un geste ; « Annuler » un mercredi. Possible jusqu’au délai indiqué (par défaut la
-veille au soir) ; ensuite, prévenez le bureau.
+veille au soir) ; ensuite, prévenez le bureau. Dans « Mes enfants », sur la fiche de chaque enfant :
+« Autorisés à le récupérer » (ajouter ou retirer un grand-parent, une nounou… : l'encadrant ne
+confie l'enfant qu'aux personnes de cette liste) et « Photo pour la garderie du mercredi » (une
+photo montrée aux encadrants le mercredi même pour reconnaître l'enfant, sur votre accord,
+retirable à tout moment, effacée au bout d'un an).
+
+**Pour l'encadrant — Mercredi du jour** : Mon espace → « Mercredi du jour » : le mercredi même, les
+enfants à récupérer par lieu, avec leur photo (touchez-la pour l'agrandir) et « Qui peut venir le
+chercher » (responsables autorisés et personnes autorisées, avec leur téléphone). Ne confiez
+jamais un enfant à une personne absente de la liste : appelez un responsable.
 
 **Pour les parents — Cotisations** : dans « Mes enfants », le bloc « Cotisations » indique pour
 chaque enfant le montant de l'adhésion, ce qui a été payé, ce qui reste, l'échéancier d'un
 paiement en 3 fois et les versements reçus par le club.
 
 **Pour les parents — Autorisations et données** : dans « Mes enfants », le bloc « Autorisations »
-permet de répondre oui ou non, pour chaque enfant, aux photos et vidéos et au groupe WhatsApp du
-club, et de changer d'avis à tout moment. « Mes données » → « Télécharger mes données » donne une
+permet de répondre oui ou non, pour chaque enfant, aux photos et vidéos, au groupe WhatsApp du
+club et à la photo pour la garderie, et de changer d'avis à tout moment. « Mes données » → « Télécharger mes données » donne une
 copie complète de ce que le club enregistre sur vous et vos enfants.
 
 **Pour l'administrateur — Données personnelles** : durée de conservation, état de la purge
@@ -88,7 +97,7 @@ et des familles pour la comptabilité. Le rôle « bureau » seul ne voit pas le
 | **Compétitions** | Créer une compétition (date, lieu, catégories, date limite, infos pratiques), « Envoyer sur WhatsApp » (message prêt avec le lien), suivre les inscrits avec leurs alertes (licence, dossier, formalité médicale), « Copier » ou « CSV » pour la ressaisie sur le site fédéral, case « Ressaisi », inscrire un enfant à la place de ses parents (même après la date limite), clôturer ou annuler |
 | **Dossiers 2026/2027** | Dossiers d'adhésion de la saison : filtres (sans dossier, à compléter, complets, validés), ce qui manque pour chacun, total des montants ; « Saisir un nouvel adhérent » pour ressaisir un formulaire papier |
 | **Adhérents** | Liste des pratiquants avec recherche ; « aucun responsable » signale une fiche à compléter |
-| **Fiche d'un adhérent** | Identité (modifier, supprimer — une fiche supprimée reste restaurable ; ceinture dans la liste officielle), responsables légaux, **dossier d'adhésion de la saison** (formule, montant calculé, paiement, formalité médicale, autorisations et consentements, validation), personnes autorisées à récupérer l'enfant |
+| **Fiche d'un adhérent** | Identité (modifier, supprimer — une fiche supprimée reste restaurable ; ceinture dans la liste officielle), responsables légaux, **dossier d'adhésion de la saison** (formule, montant calculé, paiement, formalité médicale, autorisations et consentements, validation), personnes autorisées à récupérer l'enfant, **photo pour la garderie** (si l'accord figure au dossier) |
 | **Ajouter un responsable** | Chercher un parent déjà enregistré (ex. pour un deuxième enfant) ou en créer un nouveau (nom, e-mail et/ou téléphone), puis choisir son lien avec l'enfant et ses droits : *peut inscrire*, *peut récupérer*, *prévenu par le club*. Si l'e-mail est déjà connu, le site propose de relier le compte existant |
 | **Comptes** | Tous les adultes enregistrés : coordonnées, nombre d'adhérents liés, « compte activé » dès la première connexion. L'administrateur y attribue les rôles (bureau, trésorier, encadrant, gestion du site) |
 | **Connexion au site** (Comptes → Modifier, ou « Lien de connexion » sur un responsable) | « Créer un lien de connexion » puis « Envoyer sur WhatsApp » (au numéro du compte) ou « Copier le lien ». Un nouveau lien annule le précédent. « Déconnecter tous ses appareils » coupe l'accès d'un téléphone perdu. Seul un administrateur crée un lien pour un membre du bureau |

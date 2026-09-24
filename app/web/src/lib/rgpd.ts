@@ -6,6 +6,8 @@ import type { Valeur } from '../content/rgpd'
 export const ACCORDS = {
   droit_image: 'Le club peut publier des images de l’enfant sur son site, sa page Facebook ou dans la presse locale.',
   whatsapp: 'Votre numéro est ajouté au groupe du club (informations, compétitions).',
+  photo_garderie:
+    'Une photo de l’enfant, déposée par vous ou par le bureau, est montrée aux encadrants le mercredi même, pour le reconnaître à la garderie. Répondre non efface la photo.',
 } as const
 
 export type AccordsFamille = {
@@ -17,6 +19,8 @@ export type AccordsFamille = {
     droit_image_le: string | null
     whatsapp: Recueil
     whatsapp_le: string | null
+    photo_garderie: Recueil
+    photo_garderie_le: string | null
   }[]
 }
 

@@ -1,8 +1,8 @@
 // Export des données d'un compte (spec 019, droits d'accès et à la portabilité) : le compte, et
 // pour chaque adhérent lié (ses enfants, ou lui-même s'il est adhérent) : fiche, responsables,
-// personnes autorisées, dossiers et versements, compétitions. Fichier JSON aux clés lisibles.
-// Pas d'identifiant technique inutile, jamais la référence d'un chèque (elle peut être celle d'un
-// autre responsable) ni les coordonnées des autres responsables.
+// personnes autorisées, dossiers et versements, compétitions, garderie (demandes, photo). Fichier
+// JSON aux clés lisibles. Pas d'identifiant technique inutile, jamais la référence d'un chèque
+// (elle peut être celle d'un autre responsable) ni les coordonnées des autres responsables.
 import type { Env } from './env';
 
 type Ligne = Record<string, unknown>;
@@ -27,7 +27,7 @@ export async function donneesDuCompte(env: Env, userId: number): Promise<Ligne |
 
   const enfants: Ligne[] = [];
   for (const a of (adherents?.results ?? []) as Ligne[]) {
-    const [co, pa, dossiers, versements, competitions] = await env.DB.batch([
+    const [co, pa, dossiers, versements, competitions, garderie, photo] = await env.DB.batch([
       env.DB.prepare(
         `SELECT u.prenom, u.nom, l.qualite FROM liens l JOIN users u ON u.id = l.user_id
          WHERE l.adherent_id = ? AND l.user_id != ? AND u.supprime_le IS NULL`,
@@ -36,7 +36,7 @@ export async function donneesDuCompte(env: Env, userId: number): Promise<Ligne |
       env.DB.prepare(
         `SELECT saison, formule, passeport, hors_commune, reduction_famille, montant_total, paiement_mode, paiement_3_fois,
                 echeance_1, echeance_2, echeance_3, formalite_type, formalite_recue_le, soins_urgence, soins_urgence_le,
-                droit_image, droit_image_le, whatsapp, whatsapp_le, valide_le, created_at
+                droit_image, droit_image_le, whatsapp, whatsapp_le, photo_garderie, photo_garderie_le, valide_le, created_at
          FROM adhesions WHERE adherent_id = ? ORDER BY saison`,
       ).bind(a.id),
       env.DB.prepare(
@@ -48,7 +48,10 @@ export async function donneesDuCompte(env: Env, userId: number): Promise<Ligne |
         `SELECT co.nom, co.date, co.lieu, i.inscrit_le FROM inscriptions_competition i JOIN competitions co ON co.id = i.competition_id
          WHERE i.adherent_id = ? ORDER BY co.date`,
       ).bind(a.id),
+      env.DB.prepare('SELECT date, lieu, demande_le FROM garderie_demandes WHERE adherent_id = ? ORDER BY date').bind(a.id),
+      env.DB.prepare('SELECT type, image, deposee_le FROM photos_adherents WHERE adherent_id = ?').bind(a.id),
     ]);
+    const p = photo?.results[0] as { type: string; image: string; deposee_le: string } | undefined;
     const { id: _, qualite, peut_inscrire, peut_recuperer, est_contact, ...fiche } = a;
     enfants.push({
       fiche,
@@ -61,6 +64,8 @@ export async function donneesDuCompte(env: Env, userId: number): Promise<Ligne |
       dossiers_adhesion: dossiers?.results ?? [],
       versements: versements?.results ?? [],
       competitions: competitions?.results ?? [],
+      garderie_demandes: garderie?.results ?? [],
+      photo_garderie: p ? { deposee_le: p.deposee_le, image: `data:${p.type};base64,${p.image}` } : null,
     });
   }
 

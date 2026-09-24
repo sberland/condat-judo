@@ -23,6 +23,8 @@ const REGLES: Regle[] = [
   R('DELETE', /\/adherents\/:id\/responsables\/:userId$/, 'modification', 'adherent', 'responsable retiré'),
   R('POST', /\/adherents\/:id\/personnes-autorisees$/, 'modification', 'adherent', 'personne autorisée'),
   R('DELETE', /\/adherents\/:id\/personnes-autorisees\/:pid$/, 'modification', 'adherent', 'personne autorisée retirée'),
+  R('PUT', /\/adherents\/:id\/photo$/, 'modification', 'adherent', 'photo'),
+  R('DELETE', /\/adherents\/:id\/photo$/, 'modification', 'adherent', 'photo retirée'),
   R('PUT', /\/adherents\/:id\/adhesion$/, 'modification', 'adherent', 'dossier'),
   R('DELETE', /\/adherents\/:id\/adhesion$/, 'suppression', 'adherent', 'dossier'),
   R('GET', /\/comptes$/, 'consultation', 'comptes'),

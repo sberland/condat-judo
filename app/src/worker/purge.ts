@@ -32,6 +32,22 @@ const ADHERENTS_DU_LOT = 'SELECT id FROM adherents WHERE anonymise_le = ?1';
 export type Instruction = { sql: string; params: (string | number)[] };
 
 /**
+ * Durées techniques, appliquées chaque semaine même tant que la durée de conservation des
+ * adhérents attend la réponse du club : journal des accès, demandes de garderie et photos (1 an),
+ * sessions et liens de connexion expirés.
+ */
+export function instructionsDurees(maintenant: string): Instruction[] {
+  const lot = (sql: string): Instruction => ({ sql, params: [maintenant] });
+  return [
+    lot("DELETE FROM journal_acces WHERE cree_le < datetime(?1, '-1 year')"),
+    lot("DELETE FROM garderie_demandes WHERE date < date(?1, '-1 year')"),
+    lot("DELETE FROM photos_adherents WHERE deposee_le < datetime(?1, '-1 year')"),
+    lot('DELETE FROM sessions WHERE expire_le < ?1'),
+    lot('DELETE FROM liens_connexion WHERE expire_le < ?1'),
+  ];
+}
+
+/**
  * Instructions de la purge, dans l'ordre. `maintenant` (AAAA-MM-JJ HH:MM:SS) marque le lot : les
  * lignes anonymisées par ce passage portent cette date dans `anonymise_le`.
  */
@@ -52,10 +68,12 @@ export function instructionsPurge(maintenant: string, seuil: number): Instructio
     lot(`DELETE FROM personnes_autorisees WHERE adherent_id IN (${ADHERENTS_DU_LOT})`),
     lot(`DELETE FROM liens WHERE adherent_id IN (${ADHERENTS_DU_LOT})`),
     lot(`DELETE FROM garderie_demandes WHERE adherent_id IN (${ADHERENTS_DU_LOT})`),
+    lot(`DELETE FROM photos_adherents WHERE adherent_id IN (${ADHERENTS_DU_LOT})`),
     lot(`UPDATE adhesions SET
         soins_urgence = 'non_recueilli', soins_urgence_le = NULL, soins_urgence_par = NULL,
         droit_image = 'non_recueilli', droit_image_le = NULL, droit_image_par = NULL,
-        whatsapp = 'non_recueilli', whatsapp_le = NULL, whatsapp_par = NULL
+        whatsapp = 'non_recueilli', whatsapp_le = NULL, whatsapp_par = NULL,
+        photo_garderie = 'non_recueilli', photo_garderie_le = NULL, photo_garderie_par = NULL
       WHERE adherent_id IN (${ADHERENTS_DU_LOT})`),
     lot(`UPDATE paiements SET reference = NULL WHERE id IN (
         SELECT pp.paiement_id FROM paiement_parts pp JOIN adhesions d ON d.id = pp.adhesion_id WHERE d.adherent_id IN (${ADHERENTS_DU_LOT}))`),
@@ -71,11 +89,8 @@ export function instructionsPurge(maintenant: string, seuil: number): Instructio
     lot(`UPDATE users SET prenom = 'Ancien', nom = printf('responsable n° %d', id), email = NULL, telephone = NULL,
         supprime_le = COALESCE(supprime_le, ?1)
       WHERE anonymise_le = ?1`),
-    // 5. Durées techniques : journal des accès et demandes de garderie (1 an), sessions et liens expirés.
-    lot("DELETE FROM journal_acces WHERE cree_le < datetime(?1, '-1 year')"),
-    lot("DELETE FROM garderie_demandes WHERE date < date(?1, '-1 year')"),
-    lot('DELETE FROM sessions WHERE expire_le < ?1'),
-    lot('DELETE FROM liens_connexion WHERE expire_le < ?1'),
+    // 5. Durées techniques.
+    ...instructionsDurees(maintenant),
     // 6. Rapport.
     {
       sql: `INSERT INTO purges (execute_le, seuil, adherents, comptes) VALUES (?1, ?2,
@@ -86,15 +101,19 @@ export function instructionsPurge(maintenant: string, seuil: number): Instructio
 }
 
 /**
- * Tâche planifiée (wrangler.toml, lundi 3 h UTC) : ne fait rien hors production, ni tant que la
- * durée de conservation attend la réponse du club (`provisoire`).
+ * Tâche planifiée (wrangler.toml, lundi 3 h UTC) : ne fait rien hors production ; tant que la
+ * durée de conservation attend la réponse du club (`provisoire`), seules les durées techniques
+ * s'appliquent.
  */
 export async function purgerRgpd(env: Env, maintenant = new Date()): Promise<string> {
   if (env.ENVIRONMENT !== 'production') return 'purge ignorée : hors production';
   const { valeur, provisoire } = RGPD.conservationAdherents;
-  if (provisoire) return 'purge ignorée : durée de conservation à confirmer par le club';
   const jour = maintenant.toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' });
   const horodatage = maintenant.toISOString().slice(0, 19).replace('T', ' ');
+  if (provisoire) {
+    await env.DB.batch(instructionsDurees(horodatage).map(({ sql, params }) => env.DB.prepare(sql).bind(...params)));
+    return 'durées techniques appliquées ; anonymisation en attente de la durée de conservation confirmée par le club';
+  }
   await env.DB.batch(instructionsPurge(horodatage, seuilPurge(jour, valeur)).map(({ sql, params }) => env.DB.prepare(sql).bind(...params)));
   return 'purge effectuée';
 }

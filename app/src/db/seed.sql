@@ -8,17 +8,20 @@ INSERT OR IGNORE INTO users (id, prenom, nom, email, telephone) VALUES
   (2, 'Parent', 'Dev',     'parent.dev@example.test',  '06 00 00 00 02'),
   (3, 'Claire', 'Exemple', 'claire.exemple@example.test', '06 00 00 00 03'),
   (4, 'Marc',   'Exemple', 'marc.exemple@example.test',   '06 00 00 00 04'),
-  (5, 'Bureau', 'Dev',     'bureau.dev@example.test',  '06 00 00 00 05');
+  (5, 'Bureau', 'Dev',     'bureau.dev@example.test',  '06 00 00 00 05'),
+  (6, 'Encadrant', 'Dev',  'encadrant.dev@example.test', '06 00 00 00 06');
 
 INSERT OR IGNORE INTO identites (provider, subject, user_id) VALUES
   ('dev', 'dev-admin',  1),
   ('dev', 'dev-parent', 2),
-  ('dev', 'dev-bureau', 5);
+  ('dev', 'dev-bureau', 5),
+  ('dev', 'dev-encadrant', 6);
 
 INSERT OR IGNORE INTO user_roles (user_id, role) VALUES
   (1, 'admin'),
   (5, 'bureau'),
-  (5, 'contenu');
+  (5, 'contenu'),
+  (6, 'encadrant');
 
 -- Adhérents fictifs.
 INSERT OR IGNORE INTO adherents (id, prenom, nom, date_naissance, sexe, grade, code_postal, ville) VALUES
@@ -89,3 +92,8 @@ INSERT OR IGNORE INTO paiement_parts (paiement_id, adhesion_id, montant) VALUES
   (1, (SELECT id FROM adhesions WHERE adherent_id = 2 AND saison = '2026-2027'), 5000),
   (2, (SELECT id FROM adhesions WHERE adherent_id = 1 AND saison = '2026-2027'), 3400),
   (3, (SELECT id FROM adhesions WHERE adherent_id = 1 AND saison = '2026-2027'), 3300);
+
+-- Garderie (spec 012b) : accord « photo pour la garderie » donné pour Léa (la photo se dépose
+-- depuis l'espace : aucune image dans le dépôt).
+UPDATE adhesions SET photo_garderie = 'oui', photo_garderie_le = '2026-09-10 18:00:00', photo_garderie_par = 1
+WHERE adherent_id = 1 AND saison = '2026-2027' AND photo_garderie = 'non_recueilli';

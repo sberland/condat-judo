@@ -32,8 +32,9 @@ export const DUREES_TECHNIQUES = [
   { quoi: 'Session de connexion (cookie)', duree: '6 mois après la dernière visite' },
   { quoi: 'Lien de connexion', duree: '7 jours, une seule utilisation' },
   { quoi: 'Sauvegardes chiffrées de la base', duree: '1 an au plus (30 quotidiennes, puis une par mois)' },
-  { quoi: 'Consentements (droit à l’image, WhatsApp)', duree: 'jusqu’à leur retrait, et au plus la durée de conservation de l’adhérent' },
+  { quoi: 'Consentements (droit à l’image, WhatsApp, photo pour la garderie)', duree: 'jusqu’à leur retrait, et au plus la durée de conservation de l’adhérent' },
   { quoi: 'Journal des consultations et modifications des coordonnées des familles', duree: '1 an' },
+  { quoi: 'Photo d’un enfant pour la garderie', duree: '1 an après son dépôt, ou jusqu’au retrait de l’accord' },
 ] as const
 
 export type Traitement = { titre: string; donnees: string[]; finalite: string; base: string }
@@ -61,9 +62,14 @@ export const TRAITEMENTS: Traitement[] = [
   },
   {
     titre: 'Garderie du mercredi',
-    donnees: ['Demande : enfant, mercredi, lieu de récupération, qui l’a faite et quand'],
-    finalite: 'Savoir quels enfants récupérer chaque mercredi, et où.',
-    base: 'Exécution de l’adhésion à l’association, à votre demande. Demandes effacées un an après le mercredi.',
+    donnees: [
+      'Demande : enfant, mercredi, lieu de récupération, qui l’a faite et quand',
+      'Photo de l’enfant (si vous l’acceptez), montrée aux seuls encadrants, le mercredi même',
+      'Pour l’encadrant, le jour même : responsables et personnes autorisées à récupérer l’enfant, avec leur téléphone',
+    ],
+    finalite: 'Savoir quels enfants récupérer chaque mercredi, et où ; les reconnaître et ne les confier qu’aux personnes autorisées.',
+    base:
+      'Exécution de l’adhésion à l’association, à votre demande ; photo : votre consentement, retirable à tout moment. Demandes effacées un an après le mercredi, photo un an après son dépôt.',
   },
   {
     titre: 'Compétitions',
@@ -76,7 +82,7 @@ export const TRAITEMENTS: Traitement[] = [
   },
   {
     titre: 'Autorisations et consentements',
-    donnees: ['Autorisation de soins d’urgence', 'Droit à l’image', 'Ajout au groupe WhatsApp du club'],
+    donnees: ['Autorisation de soins d’urgence', 'Droit à l’image', 'Ajout au groupe WhatsApp du club', 'Photo pour la garderie du mercredi'],
     finalite: 'Savoir ce que chaque famille a accepté ou refusé, avec la date et qui l’a saisi.',
     base: 'Votre consentement, retirable à tout moment (soins d’urgence : intérêt vital de l’enfant).',
   },
