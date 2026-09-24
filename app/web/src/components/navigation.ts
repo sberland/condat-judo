@@ -37,6 +37,7 @@ export function useNavigation(): Entree[] {
 
   const navigation: Entree[] = [
     { to: '/', libelle: 'Accueil' },
+    { to: '/club', libelle: 'Le club' },
     { to: '/disciplines', libelle: 'Disciplines' },
     // Page provisoire tant que ni horaires ni tarifs ne sont fournis ; « Tarifs » seuls sinon.
     {
@@ -45,7 +46,6 @@ export function useNavigation(): Entree[] {
       provisoire: horairesProvisoires && tarifsProvisoires,
     },
     { to: '/competitions', libelle: 'Compétitions' },
-    { to: '/club', libelle: 'Le club' },
     { to: '/reglement', libelle: 'Règlement' },
     { to: '/contact', libelle: 'Contact' },
   ]

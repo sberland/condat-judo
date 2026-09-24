@@ -4,6 +4,18 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.17.0 — 24 septembre 2026
+
+Chaque discipline a désormais sa petite illustration, reprise sur l'accueil, la page Disciplines,
+les horaires et les tarifs. Le yoga est présenté plus complètement, comme les autres disciplines.
+Les valeurs trouvent leur place sur la page Disciplines : le code moral pour le judo, le jujitsu
+et le taïso, et les principes de vie du yoga ; l'accueil ne met plus en avant le seul judo. La
+page « Le club » présente l'esprit du club — convivial, familial et ouvert à tous —, un texte que
+le club peut modifier lui-même. Le menu suit un nouvel ordre : Accueil, Le club, Disciplines,
+Horaires & tarifs, puis Règlement et Contact.
+
+---
+
 ## v0.16.0 — 24 septembre 2026
 
 Le club tient désormais son site à jour lui-même : la personne qui gère le site (ou

@@ -36,6 +36,30 @@ export const CONTENU_INITIAL: Contenus = {
       { role: 'Secrétaire', nom: 'Catherine Granet' },
     ],
   },
+  // Proposé le 2026-09-24 (retours du club : « convivial, familial et ouvert à tous »), à ajuster.
+  esprit: {
+    titre: 'Un club convivial, familial et ouvert à tous',
+    intro:
+      'Au Judo Condat, on vient pour progresser, mais aussi pour se retrouver. Petits et grands, débutants ou confirmés, en loisir ou en compétition : chacun trouve sa place sur le tatami.',
+    valeurs: [
+      {
+        nom: 'Convivial',
+        texte: 'Une ambiance détendue et chaleureuse, où l’on s’entraide et où l’on prend plaisir à se retrouver, sur le tatami comme en dehors.',
+      },
+      {
+        nom: 'Familial',
+        texte: 'Enfants, parents, frères et sœurs : au club, on se connaît, on se soutient et on grandit ensemble, dès l’éveil judo.',
+      },
+      {
+        nom: 'Ouvert à tous',
+        texte: 'Quels que soient l’âge, le niveau ou la condition physique, chacun est accueilli et progresse à son rythme.',
+      },
+      {
+        nom: 'Bénévole',
+        texte: 'Le club vit grâce à ses bénévoles : bureau, parents, pratiquants… chacun peut apporter sa pierre à la vie de l’association.',
+      },
+    ],
+  },
   disciplines: {
     disciplines: [
       {
@@ -95,7 +119,7 @@ export const CONTENU_INITIAL: Contenus = {
         conclusion:
           'Exercices d’échauffement précédant une activité physique, mais aussi exercices spécifiques de renforcement musculaire, d’étirement ou de relaxation : le taïso est une méthode accessible à tous, et non réservée aux seuls pratiquants d’arts martiaux.',
       },
-      // Présentation volontairement sobre et générale (spec 015, 2026-09-24), à affiner avec le club.
+      // Présentation générale (spec 015), étoffée pour équilibrer les disciplines (spec 020) : à relire avec le club.
       {
         id: 'yoga',
         nom: 'Yoga',
@@ -103,9 +127,16 @@ export const CONTENU_INITIAL: Contenus = {
         enBref: 'le yoga pour la souplesse et la détente',
         public: 'Lundi et jeudi',
         paragraphes: [
-          'Le yoga associe des postures, un travail sur la respiration et des temps de relaxation. Chacun pratique à son rythme, sans esprit de compétition.',
-          'Il entretient la souplesse, le tonus musculaire et l’équilibre, et aide à relâcher les tensions du quotidien.',
+          'Le yoga associe des postures, un travail sur la respiration et des temps de relaxation. Chacun pratique à son rythme, sans esprit de compétition, dans une ambiance calme et bienveillante.',
+          'Il entretient la souplesse, le tonus musculaire et l’équilibre, soulage le dos et les articulations, et aide à relâcher les tensions du quotidien.',
+          'Nul besoin d’être souple pour commencer : chaque posture s’adapte aux possibilités de chacun, débutant ou pratiquant confirmé, jeune ou moins jeune.',
+          'La respiration guide chaque mouvement : apprendre à respirer plus calmement, c’est aussi apprendre à mieux gérer le stress et à retrouver un sommeil plus paisible.',
         ],
+        encart: {
+          titre: 'Une séance au dojo',
+          texte:
+            'Un temps d’accueil et de respiration pour arriver, un enchaînement de postures en douceur, puis une relaxation guidée pour repartir détendu. Prévoyez simplement une tenue souple, dans laquelle vous êtes à l’aise.',
+        },
         conclusion:
           'Les séances ont lieu au dojo le lundi et le jeudi : un cours par semaine ou les deux, au choix (voir les tarifs).',
       },
@@ -231,6 +262,7 @@ export const STATUTS_INITIAUX: Record<CleContenu, StatutContenu> = {
   club: 'publie',
   association: 'publie',
   equipe: 'publie',
+  esprit: 'publie',
   disciplines: 'publie',
   partenaires: 'publie',
   reglement: 'publie',

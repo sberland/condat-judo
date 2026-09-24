@@ -1,8 +1,9 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, CalendarDays, IdCard, MapPin } from 'lucide-react'
-import { CODE_MORAL, enLettres, enumerer, majuscule } from '../content/club'
+import { enLettres, enumerer, majuscule } from '../content/club'
 import { disciplinesPubliques, itineraire, listeDisciplines } from '../content/contenu'
 import { useContenu } from '../lib/contenu'
+import { IllustrationDiscipline } from '../components/IllustrationDiscipline'
 import { Provisoire, useProvisoireVisible } from '../components/Provisoire'
 import { BoutonExterne, BoutonLien, Card, Container, FacebookIcon, Section, SectionTitle } from '../components/ui'
 import { usePageMeta } from '../lib/usePageMeta'
@@ -33,8 +34,9 @@ export function HomePage() {
                 hash={d.id}
                 className="group flex h-full flex-col rounded-2xl border bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-md"
               >
-                <span className="mb-4 inline-flex w-fit rounded-full bg-brand-soft px-3 py-1 text-xs font-semibold text-brand">
-                  {d.public}
+                <span className="mb-4 flex items-center justify-between gap-3">
+                  <IllustrationDiscipline id={d.id} className="size-20 shrink-0 transition-transform group-hover:scale-105" />
+                  <span className="rounded-full bg-brand-soft px-3 py-1 text-right text-xs font-semibold text-brand">{d.public}</span>
                 </span>
                 <h3 className="text-2xl font-bold">{d.nom}</h3>
                 <p className="mt-2 flex-1 text-muted-foreground">{d.accroche}</p>
@@ -47,25 +49,6 @@ export function HomePage() {
           })}
         </div>
       </Section>
-
-      <section className="bg-surface py-14 sm:py-20">
-        <Container>
-          <SectionTitle surtitre="Le code moral du judo" titre="Huit valeurs, sur le tatami comme dans la vie" />
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-            {CODE_MORAL.map((v) => (
-              <div key={v.nom} className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
-                <p className="font-bold">{v.nom}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{v.definition}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-8">
-            <BoutonLien to="/club" hash="code-moral" variante="contour">
-              Découvrir le code moral <ArrowRight className="size-4" />
-            </BoutonLien>
-          </div>
-        </Container>
-      </section>
 
       <Section>
         <SectionTitle surtitre="Infos pratiques" titre="Le club en bref" />
