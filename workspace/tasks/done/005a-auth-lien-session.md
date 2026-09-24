@@ -1,6 +1,6 @@
 # 005a — Connexion par lien personnel et session longue
 
-> Chantier : [005-CHT-authentification](005-CHT-authentification.md)
+> Chantier : [005-CHT-authentification](../pending/005-CHT-authentification.md)
 
 ## Pourquoi
 

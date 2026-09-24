@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-09-24
+
 ### Connexion à l'espace membres par lien personnel
 
 #### Notes client

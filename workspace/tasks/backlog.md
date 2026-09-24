@@ -84,7 +84,7 @@
 | Phase | Specs | Pourquoi dans cet ordre |
 | --- | --- | --- |
 | 0 — Tout de suite | ~~002~~ (livrée en v0.3.0) | Gain rapide, sans dépendance |
-| 1 — Fondations (bureau d'abord) | ~~004~~ (livrée en v0.4.0) → **005-CHT** → **003** → **014** | On ne peut inviter que des personnes connues (004) ; les écrans bureau exigent la connexion (005) ; puis le club administre référentiels et contenu lui-même |
+| 1 — Fondations (bureau d'abord) | ~~004~~ (livrée en v0.4.0) → **005-CHT** (005a livrée en v0.5.0 ; 005b attend le domaine) → **003** → **014** | On ne peut inviter que des personnes connues (004) ; les écrans bureau exigent la connexion (005) ; puis le club administre référentiels et contenu lui-même |
 | 2 — Avant toute donnée réelle | **006**, **007**, **008** | Obligations RGPD et sécurité avant d'héberger des données de mineurs |
 | 3 — Valeur pour les familles | **009** puis **012-CHT** | Besoin d'origine d'abord ; la garderie ensuite (hebdomadaire) — pour la saison en cours, le bureau saisit les adhérents depuis les dossiers papier |
 | 4 — Gestion du club | **011** puis **010** | Le trésorier dès que les adhérents existent ; l'adhésion en ligne pour les inscriptions 2027/2028 |

@@ -9,7 +9,7 @@ Cloudflare Access n'est qu'un verrou de la qualification, jamais l'authentificat
 
 ## Sous-specs (dans l'ordre)
 
-- [ ] [`005a-auth-lien-session.md`](005a-auth-lien-session.md) — lien de connexion personnel
+- [x] [`005a-auth-lien-session.md`](../done/005a-auth-lien-session.md) — lien de connexion personnel
   remis par le bureau (WhatsApp), session de 6 mois glissants, déconnexion. **Sans e-mail** :
   livrable sans attendre le nom de domaine
 - [ ] [`005b-auth-code-email.md`](005b-auth-code-email.md) — reconnexion autonome par code à 6
