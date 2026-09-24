@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-09-24
+
 ### Adhérents, responsables légaux et rôles du bureau
 
 #### Notes client

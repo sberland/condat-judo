@@ -30,11 +30,11 @@ WhatsApp, on ne le sait pas (parents séparés, numéros changés…). Il faut u
 
 ## Critères d'acceptation
 
-- [ ] Un enfant peut avoir deux responsables qui ne partagent ni e-mail ni téléphone
-- [ ] Un responsable ne voit que les enfants auxquels il est lié (contrôlé côté API)
-- [ ] Les droits s'appuient sur `users.id` et les liens, jamais sur l'e-mail
-- [ ] Le bureau saisit un adhérent et ses responsables en moins de 2 minutes, sur mobile
-- [ ] Supprimer un lien retire immédiatement les droits correspondants
+- [x] Un enfant peut avoir deux responsables qui ne partagent ni e-mail ni téléphone
+- [x] Un responsable ne voit que les enfants auxquels il est lié (contrôlé côté API)
+- [x] Les droits s'appuient sur `users.id` et les liens, jamais sur l'e-mail
+- [x] Le bureau saisit un adhérent et ses responsables en moins de 2 minutes, sur mobile
+- [x] Supprimer un lien retire immédiatement les droits correspondants
 
 ## Hors périmètre
 

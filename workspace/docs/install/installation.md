@@ -1,6 +1,6 @@
 ---
-doc-version: "0.1"
-doc-date: "2026-09-23"
+doc-version: "0.2"
+doc-date: "2026-09-24"
 ---
 
 # Condat Judo — Guide d'installation

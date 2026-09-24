@@ -79,5 +79,5 @@ utilisateur reconnu (aujourd'hui : en local seulement).
 
 - Fichiers source : `app/src/db/migrations/0002_comptes_adherents.sql`, `app/src/worker/droits.ts`,
   `app/src/worker/validation.ts`, `app/src/worker/routes/`, `app/web/src/pages/espace/`
-- Spec : `workspace/tasks/pending/004-comptes-foyers-roles.md`
+- Spec : [`004-comptes-foyers-roles.md`](../../tasks/done/004-comptes-foyers-roles.md)
 - Seam d'identité : [`identite-auth.md`](identite-auth.md)
