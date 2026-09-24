@@ -63,3 +63,20 @@ export function libelleLimite(g: ReglagesGarderie): string {
   if (g.limite.jours === 1) return `la veille à ${h}`
   return `${g.limite.jours} jours avant, à ${h}`
 }
+
+// --- Pointage du mercredi (spec 012c) ---
+
+/** Pointage d'un enfant demandé : heures en UTC (« AAAA-MM-JJ HH:MM:SS »). */
+export type Pointage = { recupere_le: string | null; absent_le: string | null; parti_le: string | null; parti_avec: string | null }
+
+export type EtatPointage = 'demande' | 'recupere' | 'absent' | 'parti'
+
+export function etatPointage(p: Pointage): EtatPointage {
+  if (p.parti_le) return 'parti'
+  if (p.absent_le) return 'absent'
+  if (p.recupere_le) return 'recupere'
+  return 'demande'
+}
+
+/** Libellé du lien d'un responsable (« Parti avec Claire Exemple (mère) »). */
+export const LIENS_RESPONSABLE: Record<string, string> = { mere: 'mère', pere: 'père', tuteur: 'tuteur / tutrice', autre: 'responsable' }

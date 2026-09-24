@@ -65,9 +65,9 @@
 | Finalités | Savoir quels enfants récupérer chaque mercredi (garderie → goûter et cours), et où ; les reconnaître et ne les confier qu'aux personnes autorisées (spec 012b) |
 | Base légale | Exécution du contrat d'adhésion (art. 6.1.b), à la demande du responsable ; photo : consentement (art. 6.1.a) d'un responsable légal, retirable à tout moment |
 | Personnes concernées | Enfants adhérents ; responsables et personnes autorisées à les récupérer ; auteur de la demande |
-| Données | Enfant, mercredi, lieu de récupération, auteur et date de la demande ; photo d'identification (réduite, sans métadonnées) si accord ; pour l'encadrant, le jour même : responsables et personnes autorisées avec leur téléphone — **aucune donnée de santé** (allergies : rien de collecté, arbitrage A12) |
+| Données | Enfant, mercredi, lieu de récupération, auteur et date de la demande ; photo d'identification (réduite, sans métadonnées) si accord ; pour l'encadrant, le jour même : responsables et personnes autorisées avec leur téléphone ; pointage (heure de prise en charge ou absence, personne avec qui l'enfant est parti — nom recopié —, heure, auteur ; spec 012c) — **aucune donnée de santé** (allergies : rien de collecté, arbitrage A12) |
 | Accès | Le responsable qui peut inscrire l'enfant (ses demandes, les personnes autorisées) ; les responsables légaux (photo) ; le bureau (liste de chaque mercredi) ; encadrants, bureau et admin : liste du jour avec photos et contacts, **le mercredi même seulement**, chaque consultation journalisée |
-| Durée | Demandes : un an après le mercredi ; photo : un an après son dépôt, effacée aussitôt au retrait de l'accord (purge hebdomadaire) ; tout est effacé à l'anonymisation de l'adhérent |
+| Durée | Demandes et pointages : un an après le mercredi ; photo : un an après son dépôt, effacée aussitôt au retrait de l'accord (purge hebdomadaire) ; tout est effacé à l'anonymisation de l'adhérent |
 | Sécurité | Photo stockée dans la base (UE), servie par l'API sans mise en cache, jamais copiée dans la qualification |
 
 ## 2. Autorisations et consentements
@@ -126,3 +126,4 @@
 | 2026-09-24 | Purge automatique, journal des accès, export et accords depuis l’espace (spec 019) |
 | 2026-09-24 | Ajout du traitement « Garderie du mercredi » (spec 012a) |
 | 2026-09-24 | Garderie : photo d'identification sur accord, liste du jour de l'encadrant, personnes autorisées gérées par les familles (spec 012b) |
+| 2026-09-24 | Garderie : pointage de l'encadrant, suivi par les parents (spec 012c) |

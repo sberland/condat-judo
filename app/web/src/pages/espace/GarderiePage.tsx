@@ -4,10 +4,11 @@ import { Check, Repeat } from 'lucide-react'
 import { Bloc, Espace } from '../../components/espace/Garde'
 import { Alerte, Bouton, Selection } from '../../components/formulaire'
 import { appel, ErreurApi } from '../../lib/api'
-import { jourLong, majuscule, type GarderieFamille } from '../../lib/garderie'
+import { jourLong, libellePointage, majuscule, type GarderieFamille } from '../../lib/garderie'
 
 // Garderie du mercredi (spec 012a) : le responsable demande (ou annule) la récupération de ses
-// enfants, mercredi par mercredi ou pour toute une période.
+// enfants, mercredi par mercredi ou pour toute une période. Le mercredi même, l'état de chaque
+// enfant (récupéré, parti avec …) se met à jour toutes les 30 secondes (spec 012c).
 
 const VISIBLES = 8
 
@@ -15,6 +16,7 @@ export function GarderiePage() {
   const { data, isPending, isError } = useQuery({
     queryKey: ['famille', 'garderie'],
     queryFn: () => appel<GarderieFamille>('GET', '/api/famille/garderie'),
+    refetchInterval: (q) => (duJour(q.state.data).length ? 30_000 : false),
   })
 
   return (
@@ -41,6 +43,7 @@ export function GarderiePage() {
               <strong className="text-foreground">{g.limite}</strong> ; ensuite, contactez le bureau.
               {g.provisoire && <span className="text-amber-800"> (Réglages à confirmer par le club.)</span>}
             </p>
+            <Aujourdhui donnees={data} />
             {data.enfants.length === 0 && <Alerte>Aucun enfant n’est rattaché à votre compte.</Alerte>}
             {data.mercredis.length === 0 && data.enfants.length > 0 && <p className="text-muted-foreground">Plus de mercredi de garderie cette saison.</p>}
             {avecDroit.map((e) => (
@@ -64,6 +67,38 @@ export function GarderiePage() {
         )
       }}
     </Espace>
+  )
+}
+
+/**
+ * Enfants demandés aujourd'hui, avec leur pointage. Un mercredi à venir déjà pointé ne se voit
+ * qu'hors production (essais de l'encadrant) : en production, on ne pointe que le jour même.
+ */
+const duJour = (d: GarderieFamille | undefined) =>
+  d
+    ? d.enfants.flatMap((e) =>
+        e.demandes.filter((x) => x.date === d.aujourdhui || x.pointage.etat !== 'demande').map((x) => ({ prenom: e.prenom, demande: x })),
+      )
+    : []
+
+function Aujourdhui({ donnees }: { donnees: GarderieFamille }) {
+  const tous = duJour(donnees)
+  // Le mercredi le plus proche (les enfants sont listés du plus jeune au plus âgé, pas par date).
+  const jour = tous.map((x) => x.demande.date).sort()[0]
+  if (!jour) return null
+  const liste = tous.filter((x) => x.demande.date === jour)
+  return (
+    <Bloc titre={jour === donnees.aujourdhui ? `Aujourd’hui, ${jourLong(jour)}` : majuscule(jourLong(jour))}>
+      <ul className="grid gap-2" aria-live="polite">
+        {liste.map(({ prenom, demande }) => (
+          <li key={prenom} className="flex flex-wrap items-baseline gap-x-2">
+            <strong>{prenom}</strong>
+            <span className={demande.pointage.etat === 'absent' ? 'font-semibold text-amber-800' : ''}>{libellePointage(demande.pointage)}</span>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-3 text-sm text-muted-foreground">Mis à jour automatiquement par l’encadrant, page ouverte.</p>
+    </Bloc>
   )
 }
 

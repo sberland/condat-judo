@@ -62,5 +62,8 @@ UPDATE personnes_autorisees SET
     WHEN 3 THEN 'Roux' WHEN 4 THEN 'Vincent' ELSE 'Fournier' END,
   telephone = CASE WHEN telephone IS NULL THEN NULL ELSE printf('07 00 00 %02d %02d', (id / 100) % 100, id % 100) END;
 
+-- Garderie (spec 012c) : nom de la personne avec qui l'enfant est parti.
+UPDATE garderie_demandes SET parti_avec = CASE WHEN parti_avec IS NULL THEN NULL ELSE 'Personne autorisée (fictive)' END;
+
 -- Paiements (spec 011) : la référence (n° de chèque, banque, titulaire) devient fictive.
 UPDATE paiements SET reference = CASE WHEN reference IS NULL THEN NULL ELSE printf('Réf. fictive %06d', id) END;

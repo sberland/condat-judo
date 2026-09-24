@@ -4,7 +4,7 @@
 import { Hono, type Context } from 'hono';
 import { categorieDe, eligible, type Categorie } from '../../../web/src/content/categories';
 import { exigible, situation } from '../../../web/src/content/paiements';
-import { libelleLimite, maintenantParis, mercredisOuverts, modifiable, type ReglagesGarderie } from '../../../web/src/content/garderie';
+import { etatPointage, libelleLimite, maintenantParis, mercredisOuverts, modifiable, type Pointage, type ReglagesGarderie } from '../../../web/src/content/garderie';
 import { connexionRequise, type AppEnv } from '../droits';
 import { aujourdhuiParis, COLONNES_COMPETITION, inscriptionsOuvertes, lireCompetition, versCompetition } from './competitions';
 import { donneesDuCompte } from '../export';
@@ -395,13 +395,15 @@ famille.get('/garderie', async (c) => {
     .bind(moi)
     .all<{ id: number; prenom: string; nom: string; peut_inscrire: number }>();
   const { results: demandes } = await c.env.DB.prepare(
-    `SELECT d.adherent_id, d.date, d.lieu FROM garderie_demandes d JOIN liens l ON l.adherent_id = d.adherent_id AND l.user_id = ?
+    `SELECT d.adherent_id, d.date, d.lieu, d.recupere_le, d.absent_le, d.parti_le, d.parti_avec
+     FROM garderie_demandes d JOIN liens l ON l.adherent_id = d.adherent_id AND l.user_id = ?
      WHERE d.date >= ? ORDER BY d.date`,
   )
     .bind(moi, aujourdhui)
-    .all<{ adherent_id: number; date: string; lieu: string }>();
+    .all<{ adherent_id: number; date: string; lieu: string } & Pointage>();
   return c.json({
     saison: { id: saison.id, libelle: saison.libelle },
+    aujourdhui,
     garderie: { lieux: g.lieux, limite: libelleLimite(g), ouverte: garderieOuverte(c, g), provisoire: g.provisoire, fin: g.fin },
     mercredis: mercredisOuverts(g)
       .filter((m) => m >= aujourdhui)
@@ -411,7 +413,14 @@ famille.get('/garderie', async (c) => {
       prenom: e.prenom,
       nom: e.nom,
       peutInscrire: e.peut_inscrire === 1,
-      demandes: demandes.filter((d) => d.adherent_id === e.id).map(({ date, lieu }) => ({ date, lieu })),
+      demandes: demandes
+        .filter((d) => d.adherent_id === e.id)
+        // Pointage de l'encadrant (spec 012c) : suivi en direct le mercredi même.
+        .map(({ date, lieu, recupere_le, absent_le, parti_le, parti_avec }) => ({
+          date,
+          lieu,
+          pointage: { etat: etatPointage({ recupere_le, absent_le, parti_le, parti_avec }), recupere_le, absent_le, parti_le, parti_avec },
+        })),
     })),
   });
 });
