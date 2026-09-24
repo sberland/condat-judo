@@ -101,6 +101,16 @@
 | Durée | 30 sauvegardes quotidiennes, puis une par mois pendant un an ; avant migration : un an |
 | Accès | Clé de déchiffrement détenue par le seul responsable du site ; restauration uniquement vers la qualification, anonymisée |
 
+## 5. Site public (contenu administré par le club)
+
+| Rubrique | Contenu |
+| --- | --- |
+| Finalités | Présenter le club : équipe, coordonnées, partenaires (spec 014) |
+| Base légale | Consentement des personnes nommées (professeur, membres du bureau), intérêt légitime de l'association |
+| Données | Nom et rôle du professeur et des membres du bureau, publiés avec leur accord ; coordonnées **du club** (jamais un contact personnel sans consentement) ; auteur et date de chaque modification |
+| Durée | Tant que la personne est en fonction ; historique : 30 dernières versions par contenu |
+| Accès | Public (site) ; modification : rôles « contenu » et administrateur |
+
 ## Mesures de sécurité (toutes les activités)
 
 - Accès au strict nécessaire par rôle (bureau, trésorier, encadrant…), contrôlé par l'API ; un
@@ -127,3 +137,4 @@
 | 2026-09-24 | Ajout du traitement « Garderie du mercredi » (spec 012a) |
 | 2026-09-24 | Garderie : photo d'identification sur accord, liste du jour de l'encadrant, personnes autorisées gérées par les familles (spec 012b) |
 | 2026-09-24 | Garderie : pointage de l'encadrant, suivi par les parents (spec 012c) |
+| 2026-09-24 | Site public : contenu administré par le club, historique des modifications (spec 014) |

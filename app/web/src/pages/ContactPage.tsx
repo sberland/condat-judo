@@ -1,6 +1,7 @@
 import { IdCard, Mail, MapPin, Navigation, Phone } from 'lucide-react'
-import { CLUB, CONTACT, ITINERAIRE, SAISON } from '../content/club'
+import { itineraire, type Contact } from '../content/contenu'
 import { Provisoire } from '../components/Provisoire'
+import { useContenu } from '../lib/contenu'
 import { BoutonExterne, Card, Container, FacebookIcon, PageHeader } from '../components/ui'
 import { usePageMeta } from '../lib/usePageMeta'
 
@@ -9,6 +10,8 @@ export function ContactPage() {
     'Contact',
     'Contacter le club Judo Condat-sur-Vienne : dojo 9 rue Jules Ferry à Condat-sur-Vienne, page Facebook, prise de licence.',
   )
+  const c = useContenu()
+  const iti = itineraire(c.club)
 
   return (
     <div className="animate-apparition">
@@ -18,13 +21,13 @@ export function ContactPage() {
       </PageHeader>
 
       <Container className="grid gap-4 py-12 sm:py-16 md:grid-cols-2 lg:grid-cols-3">
-        {CONTACT.provisoire ? (
+        {c.statuts.contact === 'a_completer' ? (
           <Provisoire className="md:col-span-2 lg:col-span-3">
-            <CarteCoordonnees />
+            <CarteCoordonnees contact={c.contact} />
           </Provisoire>
         ) : (
           <div className="md:col-span-2 lg:col-span-3">
-            <CarteCoordonnees />
+            <CarteCoordonnees contact={c.contact} />
           </div>
         )}
 
@@ -37,7 +40,7 @@ export function ContactPage() {
             Actualités, compétitions et messages : la page du club est le meilleur moyen de nous écrire.
           </p>
           <div className="mt-6">
-            <BoutonExterne href={CLUB.facebook}>Écrire au club</BoutonExterne>
+            <BoutonExterne href={c.club.facebook}>Écrire au club</BoutonExterne>
           </div>
         </Card>
 
@@ -47,14 +50,14 @@ export function ContactPage() {
           </span>
           <h2 className="mt-5 text-xl font-bold">Au dojo</h2>
           <p className="mt-2 flex-1 text-muted-foreground">
-            {CLUB.dojo.nom}
+            {c.club.nomDojo}
             <br />
-            {ITINERAIRE.adresse}
+            {iti.adresse}
             <br />
-            <span className="text-sm">{SAISON.resume}, hors vacances scolaires et jours fériés.</span>
+            <span className="text-sm">{c.club.saisonResume}, hors vacances scolaires et jours fériés.</span>
           </p>
           <div className="mt-6">
-            <BoutonExterne href={ITINERAIRE.googleMaps}>
+            <BoutonExterne href={iti.googleMaps}>
               <Navigation className="size-4" aria-hidden /> Itinéraire
             </BoutonExterne>
           </div>
@@ -80,25 +83,25 @@ export function ContactPage() {
   )
 }
 
-function CarteCoordonnees() {
+function CarteCoordonnees({ contact }: { contact: Contact }) {
   return (
     <Card className="grid gap-4 sm:grid-cols-2">
-      <a href={`mailto:${CONTACT.email}`} className="flex items-center gap-4 rounded-xl p-2 hover:bg-surface">
+      <a href={`mailto:${contact.email}`} className="flex items-center gap-4 rounded-xl p-2 hover:bg-surface">
         <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
           <Mail className="size-5" aria-hidden />
         </span>
         <span>
           <span className="block text-sm text-muted-foreground">E-mail</span>
-          <span className="block font-semibold break-all">{CONTACT.email}</span>
+          <span className="block font-semibold break-all">{contact.email}</span>
         </span>
       </a>
-      <a href={`tel:${CONTACT.telephone.replace(/\s/g, '')}`} className="flex items-center gap-4 rounded-xl p-2 hover:bg-surface">
+      <a href={`tel:${contact.telephone.replace(/\s/g, '')}`} className="flex items-center gap-4 rounded-xl p-2 hover:bg-surface">
         <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
           <Phone className="size-5" aria-hidden />
         </span>
         <span>
           <span className="block text-sm text-muted-foreground">Téléphone</span>
-          <span className="block font-semibold">{CONTACT.telephone}</span>
+          <span className="block font-semibold">{contact.telephone}</span>
         </span>
       </a>
     </Card>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
 import { Menu, UserRound, X } from 'lucide-react'
 import { CLUB } from '../content/club'
+import { useContenu } from '../lib/contenu'
 import { useAccesEspace, useNavigation } from './navigation'
 import { Container, FacebookIcon } from './ui'
 
@@ -11,6 +12,7 @@ export function Header() {
   const [defile, setDefile] = useState(false)
   const navigation = useNavigation()
   const acces = useAccesEspace()
+  const facebook = useContenu().club.facebook
 
   // Fermer le menu mobile à chaque navigation.
   useEffect(() => setOuvert(false), [pathname])
@@ -87,7 +89,7 @@ export function Header() {
             </Link>
 
             <a
-              href={CLUB.facebook}
+              href={facebook}
               target="_blank"
               rel="noopener noreferrer"
               className="hidden size-10 shrink-0 items-center justify-center rounded-full bg-ink text-white transition-colors hover:bg-brand xl:inline-flex"
@@ -132,7 +134,7 @@ export function Header() {
             </Link>
           ))}
           <a
-            href={CLUB.facebook}
+            href={facebook}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-auto inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-ink px-6 font-semibold text-white"

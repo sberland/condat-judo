@@ -155,6 +155,11 @@ export const TABLES: Record<string, Table> = {
       parti_par: 'conservee',
     },
   },
+  // Contenu du site (014) : textes publics (équipe publiée avec son accord), auteur des modifications.
+  contenus: { colonnes: { cle: 'conservee', valeur: 'conservee', statut: 'conservee', modifie_le: 'conservee', modifie_par: 'conservee' } },
+  contenus_versions: {
+    colonnes: { id: 'conservee', cle: 'conservee', valeur: 'conservee', statut: 'conservee', modifie_le: 'conservee', modifie_par: 'conservee' },
+  },
   // Photos d'identification de la garderie (012b) : visages d'enfants — jamais dans la qualif.
   photos_adherents: { colonnes: { adherent_id: 'purgee', image: 'purgee', type: 'purgee', deposee_le: 'purgee', deposee_par: 'purgee' } },
   // Journal des accès (019) : qui a consulté quelle famille en prod — vidé dans la qualif.

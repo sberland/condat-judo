@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react'
 import { ArrowRight, BadgeEuro, BadgeMinus, BadgePlus, Clock, CreditCard } from 'lucide-react'
-import { SAISON } from '../content/club'
 import { coursTries, heure } from '../content/referentiel'
 import type { Formule } from '../content/tarifs'
 import { Provisoire, useProvisoireVisible } from '../components/Provisoire'
 import { BoutonLien, Card, Container, PageHeader } from '../components/ui'
+import { useContenu } from '../lib/contenu'
 import { useSaisonCourante } from '../lib/saison'
 import { euros, totalFormule } from '../lib/tarifs'
 import { usePageMeta } from '../lib/usePageMeta'
@@ -13,6 +13,7 @@ export function HorairesTarifsPage() {
   const provisoireVisible = useProvisoireVisible()
   // Horaires et grille : référentiel de la saison courante (spec 003).
   const { data: saison, isError } = useSaisonCourante()
+  const periode = useContenu().club.saisonResume
   const r = saison?.referentiel
   const horairesVisibles = !!r && (!r.horaires.provisoire || provisoireVisible)
   const tarifsVisibles = !!r && (!r.tarifs.provisoire || provisoireVisible)
@@ -23,7 +24,7 @@ export function HorairesTarifsPage() {
   return (
     <div className="animate-apparition">
       <PageHeader surtitre={saison ? `Saison ${saison.libelle}` : 'Saison'} titre={titre}>
-        {SAISON.resume}, hors vacances scolaires et jours fériés. Licence France Judo comprise.
+        {periode}, hors vacances scolaires et jours fériés. Licence France Judo comprise.
       </PageHeader>
 
       <Container className="space-y-14 py-12 sm:py-16">

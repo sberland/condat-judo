@@ -4,7 +4,8 @@ import { LoaderCircle } from 'lucide-react'
 // Composants de formulaire de l'espace connecté : gros champs (mobile), libellé toujours visible,
 // message d'erreur de l'API sous le champ concerné.
 
-const CHAMP =
+/** Classe des champs de saisie (partagée avec l'éditeur du contenu du site). */
+export const CHAMP =
   'block min-h-12 w-full rounded-xl border bg-white px-3.5 text-base text-foreground outline-none transition-colors focus:border-brand aria-[invalid=true]:border-brand'
 
 export function Champ({

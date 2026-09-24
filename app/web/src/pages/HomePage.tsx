@@ -1,28 +1,21 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, CalendarDays, IdCard, MapPin } from 'lucide-react'
-import {
-  CLUB,
-  CODE_MORAL,
-  DISCIPLINES,
-  DISCIPLINES_PUBLIQUES,
-  enLettres,
-  enumerer,
-  ITINERAIRE,
-  LISTE_DISCIPLINES,
-  majuscule,
-  SAISON,
-} from '../content/club'
+import { CODE_MORAL, enLettres, enumerer, majuscule } from '../content/club'
+import { disciplinesPubliques, itineraire, listeDisciplines } from '../content/contenu'
+import { useContenu } from '../lib/contenu'
 import { Provisoire, useProvisoireVisible } from '../components/Provisoire'
 import { BoutonExterne, BoutonLien, Card, Container, FacebookIcon, Section, SectionTitle } from '../components/ui'
 import { usePageMeta } from '../lib/usePageMeta'
 
 export function HomePage() {
+  const c = useContenu()
+  const iti = itineraire(c.club)
   usePageMeta(
     null,
-    `Club de ${LISTE_DISCIPLINES} de Condat-sur-Vienne (Haute-Vienne). Éveil judo dès 4 ans, cours de septembre à juin au dojo, 9 rue Jules Ferry.`,
+    `Club de ${listeDisciplines(c.disciplines.disciplines)} de Condat-sur-Vienne (Haute-Vienne). Éveil judo dès 4 ans, cours de septembre à juin au dojo, 9 rue Jules Ferry.`,
   )
   const provisoireVisible = useProvisoireVisible()
-  const disciplines = DISCIPLINES.filter((d) => !d.provisoire || provisoireVisible)
+  const disciplines = c.disciplines.disciplines.filter((d) => !d.provisoire || provisoireVisible)
 
   return (
     <div className="animate-apparition">
@@ -81,12 +74,12 @@ export function HomePage() {
             <MapPin className="size-6 text-brand" aria-hidden />
             <h3 className="mt-4 text-lg font-bold">Le dojo</h3>
             <p className="mt-1 text-muted-foreground">
-              {CLUB.dojo.adresse}
+              {c.club.adresse}
               <br />
-              {CLUB.dojo.codePostal} {CLUB.dojo.ville}
+              {c.club.codePostal} {c.club.ville}
             </p>
             <a
-              href={ITINERAIRE.googleMaps}
+              href={iti.googleMaps}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand"
@@ -97,7 +90,7 @@ export function HomePage() {
           <Card>
             <CalendarDays className="size-6 text-brand" aria-hidden />
             <h3 className="mt-4 text-lg font-bold">La saison</h3>
-            <p className="mt-1 text-muted-foreground">{SAISON.detail}</p>
+            <p className="mt-1 text-muted-foreground">{c.club.saisonDetail}</p>
           </Card>
           <Card>
             <IdCard className="size-6 text-brand" aria-hidden />
@@ -134,7 +127,7 @@ export function HomePage() {
               Nous contacter <ArrowRight className="size-4" />
             </Link>
             <a
-              href={CLUB.facebook}
+              href={c.club.facebook}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/40 px-6 font-semibold transition-colors hover:bg-white/10"
@@ -149,6 +142,8 @@ export function HomePage() {
 }
 
 function Hero() {
+  const c = useContenu()
+  const iti = itineraire(c.club)
   return (
     <div className="relative overflow-hidden bg-ink text-white">
       <div className="pointer-events-none absolute -top-40 -left-40 size-[28rem] rounded-full bg-brand/30 blur-3xl" />
@@ -159,16 +154,16 @@ function Hero() {
             Club affilié à France Judo · Haute-Vienne
           </p>
           <h1 className="text-4xl leading-[1.08] font-extrabold tracking-tight text-balance sm:text-5xl lg:text-6xl">
-            {majuscule(LISTE_DISCIPLINES)} à <span className="whitespace-nowrap text-brand">Condat-sur-Vienne</span>
+            {majuscule(listeDisciplines(c.disciplines.disciplines))} à <span className="whitespace-nowrap text-brand">Condat-sur-Vienne</span>
           </h1>
           <p className="mt-5 max-w-xl text-lg text-white/75">
-            Un sport éducatif et un vrai équilibre pour toute la famille : {enumerer(DISCIPLINES_PUBLIQUES.map((d) => d.enBref))}.
+            Un sport éducatif et un vrai équilibre pour toute la famille : {enumerer(disciplinesPubliques(c.disciplines.disciplines).map((d) => d.enBref))}.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <BoutonLien to="/disciplines">
               Découvrir les disciplines <ArrowRight className="size-4" />
             </BoutonLien>
-            <BoutonExterne href={ITINERAIRE.googleMaps} variante="secondaire">
+            <BoutonExterne href={iti.googleMaps} variante="secondaire">
               Venir au dojo
             </BoutonExterne>
           </div>

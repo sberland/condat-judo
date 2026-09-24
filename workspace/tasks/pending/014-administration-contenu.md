@@ -40,6 +40,29 @@ site à jour lui-même**, avec un compte admin ou celui de la personne qui gère
 - Actualités et calendrier : spec **013**
 - Éditeur de mise en page libre (on édite des champs, pas la structure des pages)
 
+## Revue (2026-09-24) — décisions
+
+1. **Stockage** : un document JSON par type de contenu (comme les saisons, spec 003), décrit champ
+   par champ dans `content/contenu.ts` ; la même description sert à la validation (Worker) et à
+   un éditeur générique. Historique : les 30 dernières versions par contenu, retour à une version.
+2. **Cache et repli** : lecture publique revalidée par ETag ; dernier contenu gardé dans le
+   navigateur ; première visite : attente de 1,5 s au plus, puis contenu initial du code.
+3. **Statut** : « à compléter » par contenu (coordonnées, équipe, partenaires, règlement, liens),
+   et par élément pour les disciplines et les partenaires ; toujours affichés : dojo, association.
+4. **Aperçu** : « Voir sur le site » après enregistrement (minimum de la spec) ; le statut « à
+   compléter » permet de relire un contenu sur le site de test avant de le publier.
+5. Restent dans le code : nom et logo du club, code moral (texte officiel de France Judo).
+
+## Réalisation
+
+- Migration `0012_contenus.sql` (générée depuis `content/contenu-initial.ts`, identité vérifiée
+  par test) ; tables dans les listes de purge et classées (008).
+- API `/api/contenu` (public, ETag) et `/api/contenu/gestion` (rôles contenu, admin).
+- Pages publiques branchées sur `useContenu()` : accueil, disciplines, le club, règlement,
+  contact, mentions légales, données personnelles, horaires, en-tête, pied de page.
+- Écrans « Contenu du site » (liste, formulaire, statut, historique) ; aide (profil contenu) ;
+  registre ; doc technique `contenu-site.md`.
+
 ## Notes
 
 - **Dépend de** : 004 (rôle `contenu`), 005 (connexion). Se combine avec 003 (même espace

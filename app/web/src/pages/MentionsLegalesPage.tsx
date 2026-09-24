@@ -1,11 +1,14 @@
 import type { ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
-import { ASSOCIATION, CLUB, EQUIPE } from '../content/club'
+import { CLUB } from '../content/club'
+import { useContenu } from '../lib/contenu'
 import { Container, PageHeader } from '../components/ui'
 import { usePageMeta } from '../lib/usePageMeta'
 
 export function MentionsLegalesPage() {
   usePageMeta('Mentions légales', 'Mentions légales et données personnelles du site du club Judo Condat-sur-Vienne.')
+  const { association: ASSOCIATION, club, equipe } = useContenu()
+  const directeur = equipe.bureau[0]
 
   return (
     <div className="animate-apparition">
@@ -21,13 +24,17 @@ export function MentionsLegalesPage() {
             <li>N° RNA : {ASSOCIATION.rna}</li>
             <li>SIREN : {ASSOCIATION.siren}</li>
             <li>
-              Lieu de pratique : {CLUB.dojo.nom}, {CLUB.dojo.adresse}, {CLUB.dojo.codePostal} {CLUB.dojo.ville}
+              Lieu de pratique : {club.nomDojo}, {club.adresse}, {club.codePostal} {club.ville}
             </li>
           </ul>
-          <p>Directeur de la publication : {EQUIPE.bureau[0]?.nom}, président de l’association.</p>
+          {directeur && (
+            <p>
+              Directeur de la publication : {directeur.nom}, {directeur.role.toLocaleLowerCase('fr-FR')} de l’association.
+            </p>
+          )}
           <p>
             Contact : via la{' '}
-            <a href={CLUB.facebook} target="_blank" rel="noopener noreferrer" className="text-brand underline">
+            <a href={club.facebook} target="_blank" rel="noopener noreferrer" className="text-brand underline">
               page Facebook du club
             </a>
             .

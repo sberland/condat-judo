@@ -4,7 +4,7 @@
 import type { Role } from '../lib/api'
 
 /** Profil minimal pour voir une rubrique : famille = tout compte connecté. */
-export type ProfilAide = 'famille' | 'encadrant' | 'bureau' | 'tresorier' | 'admin'
+export type ProfilAide = 'famille' | 'encadrant' | 'bureau' | 'tresorier' | 'contenu' | 'admin'
 
 export type IdRubrique =
   | 'connexion'
@@ -18,6 +18,7 @@ export type IdRubrique =
   | 'garderie-bureau'
   | 'garderie-jour'
   | 'tresorerie'
+  | 'contenu'
   | 'adherents'
   | 'adhesions'
   | 'responsables'
@@ -38,10 +39,11 @@ const ROLES_DU_PROFIL: Record<Exclude<ProfilAide, 'famille'>, Role[]> = {
   encadrant: ['encadrant', 'bureau', 'admin'],
   bureau: ['bureau', 'admin'],
   tresorier: ['tresorier', 'admin'],
+  contenu: ['contenu', 'admin'],
   admin: ['admin'],
 }
 
-export const LIBELLES_PROFIL: Record<ProfilAide, string> = { famille: 'Tous', encadrant: 'Encadrant', bureau: 'Bureau', tresorier: 'Trésorier', admin: 'Administrateur' }
+export const LIBELLES_PROFIL: Record<ProfilAide, string> = { famille: 'Tous', encadrant: 'Encadrant', bureau: 'Bureau', tresorier: 'Trésorier', contenu: 'Contenu du site', admin: 'Administrateur' }
 
 export const RUBRIQUES_AIDE: RubriqueAide[] = [
   // --- Famille : tout compte connecté ---
@@ -608,6 +610,41 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
       {
         q: 'Une erreur de saisie',
         r: ['Sur la fiche de la famille, « Supprimer » le paiement, puis enregistrez-le à nouveau. Un dossier d’adhésion qui porte des paiements ne peut plus être supprimé.'],
+      },
+    ],
+  },
+
+  // --- Contenu du site ---
+  {
+    id: 'contenu',
+    titre: 'Contenu du site',
+    profil: 'contenu',
+    questions: [
+      {
+        q: 'Modifier une information du site',
+        r: [
+          'Mon espace → « Contenu du site » → choisissez le contenu (coordonnées, dojo, équipe, disciplines, partenaires, règlement, liens…), modifiez, puis « Enregistrer et publier » : c’est en ligne aussitôt, sans mise à jour du site.',
+          'Dans une liste (membres du bureau, articles, partenaires…), touchez un élément pour le modifier ; « Monter » / « Descendre » changent l’ordre, « Ajouter » en crée un nouveau.',
+          '« Voir sur le site » ouvre la page publique concernée.',
+        ],
+      },
+      {
+        q: 'Préparer un contenu sans le montrer tout de suite',
+        r: [
+          'Statut « À compléter » : le contenu disparaît du site public, et reste visible avec un badge sur le site de test du club, pour le relire. Repassez-le « Publié » quand il est prêt.',
+          'Pour une discipline ou un partenaire, cochez « À compléter » sur l’élément lui-même.',
+        ],
+      },
+      {
+        q: 'Revenir en arrière après une erreur',
+        r: ['En bas de la page du contenu, « Historique » : « Revenir à cette version » puis « Confirmer » republie la version choisie. Les 30 dernières versions sont gardées, avec leur date et leur auteur.'],
+      },
+      {
+        q: 'Ce qui ne se modifie pas ici',
+        r: [
+          'Horaires, tarifs et catégories d’âge : Mon espace → « Saisons et tarifs » (bureau).',
+          'Le code moral du judo (texte officiel de France Judo), le nom et le logo du club.',
+        ],
       },
     ],
   },

@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import indexHtml from '../../index.html?raw'
-import { DISCIPLINES_PUBLIQUES, enLettres, enumerer, LISTE_DISCIPLINES } from './club'
+import { enLettres, enumerer } from './club'
+import { disciplinesPubliques, listeDisciplines } from './contenu'
+import { CONTENU_INITIAL } from './contenu-initial'
 import { REFERENTIEL_2026_2027 } from './referentiel-initial'
 import { euros, totalFormule } from '../lib/tarifs'
+
+const DISCIPLINES_PUBLIQUES = disciplinesPubliques(CONTENU_INITIAL.disciplines.disciplines)
 
 describe('disciplines : énumérations déduites de la liste', () => {
   it('énumère à la française', () => {
@@ -19,7 +23,7 @@ describe('disciplines : énumérations déduites de la liste', () => {
   })
 
   it('cite toutes les disciplines publiques, yoga compris', () => {
-    expect(LISTE_DISCIPLINES).toBe('judo, jujitsu, taïso et yoga')
+    expect(listeDisciplines(CONTENU_INITIAL.disciplines.disciplines)).toBe('judo, jujitsu, taïso et yoga')
   })
 
   // index.html est lu avant le JavaScript (moteurs de recherche, aperçus de liens WhatsApp) :
