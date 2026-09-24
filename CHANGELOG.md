@@ -6,6 +6,24 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.1] — 2026-09-24
+
+### Sauvegarde de la base hors Cloudflare
+
+#### Notes client
+
+Les données du site sont désormais sauvegardées chaque nuit en dehors de l'hébergeur, et
+systématiquement avant chaque évolution de la base. Les sauvegardes sont chiffrées : seul le
+responsable du site détient la clé qui permet de les relire. Elles sont conservées un mois au
+jour le jour, puis une par mois pendant un an, et leur restauration a une procédure testée.
+
+#### Ajouts
+
+- Sauvegarde chiffrée quotidienne de la base, conservée dans un espace privé distinct du site
+- Sauvegarde automatique avant toute évolution de la base ; en cas d'échec, la mise à jour du
+  site est bloquée
+- Procédure de restauration vers le site de qualification (où les données sont anonymisées)
+
 ## [0.7.0] — 2026-09-24
 
 ### Dossiers d'adhésion de la saison

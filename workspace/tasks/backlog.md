@@ -64,7 +64,6 @@
 | [003-referentiels-saison.md](pending/003-referentiels-saison.md) | Référentiels | feature | Élevé — socle de toutes les fonctionnalités | M | P1 | — | Catégories calculées par date de naissance, cours, grades, grille tarifaire ; copie de saison |
 | [005-CHT-authentification.md](pending/005-CHT-authentification.md) | Auth | technique | Élevé — « connexion simple = clé du succès » | L | P1 | — | Chantier (a=lien remis par le bureau + session 6 mois, b=code e-mail — attend le domaine, c=passkey) ; arbitrages rendus le 2026-09-24 |
 | [006-rgpd-socle.md](pending/006-rgpd-socle.md) | RGPD | feature | Élevé — obligatoire avant les données des familles | M | P1 | — | Registre, mentions, consentements opt-in, durées, droits, pas de donnée de santé |
-| [007-sauvegarde-d1.md](pending/007-sauvegarde-d1.md) | Données | technique | Moyen — sécurité des données | S | P1 | — | Avant données réelles ; lieu de stockage chiffré à arbitrer (dépôt public exclu) |
 | [009-competitions.md](pending/009-competitions.md) | Compétitions | feature | Élevé — **besoin d'origine** | M | P1 | — | Lien WhatsApp → inscription en 3 gestes ; liste à ressaisir sur le site fédéral |
 | [010-CHT-adhesion.md](pending/010-CHT-adhesion.md) | Adhésions | feature | Élevé — toutes les infos adhérents et parents | L | P1 | 010a : saison en cours · 010b : 2027-06 | Chantier (a=ressaisie des dossiers papier 2026/2027 par le bureau — livrée en v0.7.0, b=dossier en ligne pour les familles) ; revue du 2026-09-24 ; arbitrages A1-A13 rendus (A3, A11 à voir avec le club) |
 | [011-cotisations-paiements.md](pending/011-cotisations-paiements.md) | Paiements | feature | Moyen — travail du trésorier | M | P2 | — | Dû / encaissé / restant, paiement en 3 fois, modes, export ; pas de paiement en ligne |
@@ -86,7 +85,7 @@
 | --- | --- | --- |
 | 0 — Tout de suite | ~~002~~ (livrée en v0.3.0) | Gain rapide, sans dépendance |
 | 1 — Fondations (bureau d'abord) | ~~004~~ (v0.4.0) → **005-CHT** (005a livrée en v0.5.0 ; 005b attend le domaine) | On ne peut inviter que des personnes connues (004) ; les écrans exigent la connexion (005) |
-| 2 — Ressaisie des dossiers 2026/2027 | ~~010a~~ (v0.7.0, en qualif) en parallèle de **006** (socle minimal), **007**, ~~008~~ (v0.6.1) | Priorité du 2026-09-24 : les formulaires papier sont remis ; la ressaisie réelle en prod attend les trois garde-fous (données de mineurs) |
+| 2 — Ressaisie des dossiers 2026/2027 | ~~010a~~ (v0.7.0, en qualif) en parallèle de **006** (socle minimal), ~~007~~ (v0.7.1), ~~008~~ (v0.6.1) | Priorité du 2026-09-24 : les formulaires papier sont remis ; la ressaisie réelle en prod attend les trois garde-fous (données de mineurs) |
 | 3 — Le club autonome | **003** → **014** | Référentiels en base (saison 2027/2028) et contenu du site administrés par le club |
 | 4 — Valeur pour les familles | **009** puis **012-CHT** | Besoin d'origine d'abord ; la garderie ensuite (hebdomadaire) |
 | 5 — Gestion du club | **011** puis **010b** | Le trésorier dès que les dossiers existent ; le dossier en ligne pour les inscriptions 2027/2028 |
@@ -101,7 +100,6 @@
 - **#003** — [Saisons et référentiels](pending/003-referentiels-saison.md)
 - **#005-CHT** — [Authentification applicative](pending/005-CHT-authentification.md)
 - **#006** — [Conformité RGPD : socle](pending/006-rgpd-socle.md)
-- **#007** — [Sauvegarde de la base hors Cloudflare](pending/007-sauvegarde-d1.md)
 - **#009** — [Compétitions : publication et inscription des enfants](pending/009-competitions.md)
 - **#010-CHT** — [Dossier d'adhésion (inscription)](pending/010-CHT-adhesion.md)
 

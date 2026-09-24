@@ -1,0 +1,57 @@
+# Sauvegarde quotidienne de la D1 de PRODUCTION (spec 007), hors Cloudflare.
+# Export en LECTURE SEULE, chiffré avec age (clé publique), déposé en Release d'un dépôt GitHub
+# PRIVÉ ; rétention : 30 quotidiennes + une par mois sur un an (app/src/outils/retention.ts).
+#
+# Prérequis (cf. workspace/docs/install/installation.md § Sauvegarde) :
+#  - dépôt privé sberland/condat-judo-sauvegardes ;
+#  - variable SAUVEGARDE_CLE_PUBLIQUE (clé publique age) ; clé privée gardée hors ligne ;
+#  - secret SAUVEGARDE_TOKEN (jeton limité au dépôt privé, Contents : lecture/écriture) ;
+#  - secrets CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID (déjà présents).
+# ⚠️ Dépôt public : les journaux sont publics — les scripts n'affichent jamais le contenu.
+# Les workflows planifiés ne tournent que depuis la branche par défaut (main).
+name: Sauvegarde
+
+on:
+  schedule:
+    - cron: '30 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sauvegarde
+  cancel-in-progress: false
+
+jobs:
+  sauvegarder:
+    name: Sauvegarde chiffrée de la prod
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      SAUVEGARDE_CLE_PUBLIQUE: ${{ vars.SAUVEGARDE_CLE_PUBLIQUE }}
+      GH_TOKEN: ${{ secrets.SAUVEGARDE_TOKEN }}
+      SAUVEGARDE_DEPOT: sberland/condat-judo-sauvegardes
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+        working-directory: app
+      - run: sudo apt-get install -y age
+
+      - name: Sauvegarde du jour
+        run: bash deploy/sauvegarde-d1.sh "quotidienne-$(date -u +%F)"
+
+      - name: Rétention (30 quotidiennes + une par mois sur un an)
+        run: |
+          gh release list --repo "$SAUVEGARDE_DEPOT" --limit 1000 --json tagName,createdAt \
+            | node app/src/outils/retention-cli.ts \
+            | while read -r nom; do
+                echo "Suppression de $nom"
+                gh release delete "$nom" --repo "$SAUVEGARDE_DEPOT" --cleanup-tag --yes
+              done

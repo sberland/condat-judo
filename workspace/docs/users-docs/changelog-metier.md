@@ -4,6 +4,15 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.7.1 — 24 septembre 2026
+
+Les données du site sont désormais sauvegardées chaque nuit en dehors de l'hébergeur, et
+systématiquement avant chaque évolution de la base. Les sauvegardes sont chiffrées : seul le
+responsable du site détient la clé qui permet de les relire. Elles sont conservées un mois au
+jour le jour, puis une par mois pendant un an, et leur restauration a une procédure testée.
+
+---
+
 ## v0.7.0 — 24 septembre 2026
 
 Le bureau peut désormais ressaisir sur le site les formulaires d'inscription papier de la saison

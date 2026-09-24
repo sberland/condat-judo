@@ -4,7 +4,9 @@
 #
 # Prérequis : secrets CLOUDFLARE_API_TOKEN (jeton de compte : Workers Scripts:Edit + D1:Edit)
 # et CLOUDFLARE_ACCOUNT_ID ; D1 `condat-judo` créée, database_id renseigné dans app/wrangler.toml.
-# Sauvegarde : D1 Time Travel (30 jours). Snapshot hors-Cloudflare avant migration : au backlog.
+# Sauvegarde : si des migrations sont en attente, sauvegarde chiffrée hors Cloudflare AVANT de les
+# appliquer (spec 007, deploy/sauvegarde-d1.sh) — tout échec bloque le déploiement. En plus : D1
+# Time Travel (30 jours) et la sauvegarde quotidienne (sauvegarde.yml).
 name: Deploy
 
 on:
@@ -48,6 +50,22 @@ jobs:
           fi
 
       - run: npm ci
+
+      # Sauvegarde avant migration (spec 007) : seulement s'il y a des migrations en attente.
+      # Un échec (secrets absents, dépôt de sauvegarde injoignable…) arrête le déploiement.
+      - name: Sauvegarde avant migration
+        env:
+          SAUVEGARDE_CLE_PUBLIQUE: ${{ vars.SAUVEGARDE_CLE_PUBLIQUE }}
+          GH_TOKEN: ${{ secrets.SAUVEGARDE_TOKEN }}
+          SAUVEGARDE_DEPOT: sberland/condat-judo-sauvegardes
+        run: |
+          if npx wrangler d1 migrations list condat-judo --remote | grep -qE '[0-9]{4}_[a-z0-9_]+\.sql'; then
+            sudo apt-get install -y age
+            bash ../deploy/sauvegarde-d1.sh "avant-migration-$GITHUB_REF_NAME"
+          else
+            echo "Aucune migration en attente : pas de sauvegarde préalable."
+          fi
+
       - run: npx wrangler d1 migrations apply condat-judo --remote
       - run: npm run build:web
       - run: npx wrangler deploy
