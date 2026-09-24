@@ -25,10 +25,10 @@ confondre les deux sites.
 
 ## Critères d'acceptation
 
-- [ ] Le yoga apparaît en production : accueil (accroche, cartes), page Disciplines, pied de page
-- [ ] Plus aucune mention « trois disciplines » ni énumération sans le yoga (site, référencement)
-- [ ] En qualification, l'onglet affiche « Qualif · … » ; en production, aucun préfixe
-- [ ] Mise en page correcte à 360 px (titre de l'accueil plus long)
+- [x] Le yoga apparaît en production : accueil (accroche, cartes), page Disciplines, pied de page
+- [x] Plus aucune mention « trois disciplines » ni énumération sans le yoga (site, référencement)
+- [x] En qualification, l'onglet affiche « Qualif · … » ; en production, aucun préfixe
+- [x] Mise en page correcte à 360 px (titre de l'accueil plus long)
 
 ## Hors périmètre
 

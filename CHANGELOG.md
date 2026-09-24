@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.5.1] — 2026-09-24
+
 ### Le yoga sur tout le site, qualification repérable
 
 #### Notes client
