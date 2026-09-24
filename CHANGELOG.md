@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.10.0] — 2026-09-24
+
 ### Cotisations : suivi des paiements par le trésorier
 
 #### Notes client

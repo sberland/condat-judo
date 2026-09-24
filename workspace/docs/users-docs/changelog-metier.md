@@ -4,6 +4,18 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.10.0 — 24 septembre 2026
+
+Le trésorier suit les cotisations de la saison sur le site : ce que chaque famille doit, ce
+qu'elle a payé, ce qui reste et les versements en retard. Il enregistre un chèque en quelques
+secondes depuis son téléphone ; un chèque pour deux enfants est réparti automatiquement entre
+eux, et les trois chèques d'un paiement en 3 fois s'enregistrent d'un coup avec leurs dates
+d'encaissement. Le site liste les chèques à remettre en banque chaque mois et fournit les exports
+pour la comptabilité. Chaque famille voit, dans son espace, ce qu'elle a payé et ce qui reste ;
+seuls le trésorier et l'administrateur voient l'ensemble des paiements.
+
+---
+
 ## v0.9.0 — 24 septembre 2026
 
 Le bureau publie chaque compétition sur le site (date, lieu, catégories, date limite, informations

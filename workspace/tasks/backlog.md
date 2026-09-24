@@ -64,7 +64,6 @@
 | [003-referentiels-saison.md](pending/003-referentiels-saison.md) | Référentiels | feature | Élevé — socle de toutes les fonctionnalités | M | P1 | — | Catégories calculées par date de naissance, cours, grades, grille tarifaire ; copie de saison |
 | [005-CHT-authentification.md](pending/005-CHT-authentification.md) | Auth | technique | Élevé — « connexion simple = clé du succès » | L | P1 | — | Chantier (a=lien remis par le bureau + session 6 mois, b=code e-mail — attend le domaine, c=passkey) ; arbitrages rendus le 2026-09-24 |
 | [010-CHT-adhesion.md](pending/010-CHT-adhesion.md) | Adhésions | feature | Élevé — toutes les infos adhérents et parents | L | P1 | 010a : saison en cours · 010b : 2027-06 | Chantier (a=ressaisie des dossiers papier 2026/2027 par le bureau — livrée en v0.7.0, b=dossier en ligne pour les familles) ; revue du 2026-09-24 ; arbitrages A1-A13 rendus (A3, A11 à voir avec le club) |
-| [011-cotisations-paiements.md](pending/011-cotisations-paiements.md) | Paiements | feature | Moyen — travail du trésorier | M | P2 | — | Dû / encaissé / restant, paiement en 3 fois, modes, export ; pas de paiement en ligne |
 | [012-CHT-garderie-mercredi.md](pending/012-CHT-garderie-mercredi.md) | Garderie | feature | Élevé — remplace un fil WhatsApp confus | M | P2 | — | Chantier (a=demande, b=liste du jour + photo, c=pointage) |
 | [013-communication.md](pending/013-communication.md) | Communication | feature | Moyen — actualités et calendrier | M | P3 | — | WhatsApp / Facebook relaient des liens ; abonnement agenda |
 | [014-administration-contenu.md](pending/014-administration-contenu.md) | Contenu | feature | Élevé — le club tient son site à jour sans développeur | M | P2 | — | Rôle `contenu` ; coordonnées, équipe, disciplines, partenaires, règlement, mentions ; historique ; horaires / tarifs dans 003 |
@@ -87,7 +86,7 @@
 | 2 — Ressaisie des dossiers 2026/2027 | ~~010a~~ (v0.7.0, en qualif) en parallèle de ~~006~~ (v0.8.0, en qualif — réponses du club à reporter avant la prod), ~~007~~ (v0.7.1), ~~008~~ (v0.6.1) | Priorité du 2026-09-24 : les formulaires papier sont remis ; la ressaisie réelle en prod attend les trois garde-fous (données de mineurs) |
 | 3 — Le club autonome | **003** → **014** | Référentiels en base (saison 2027/2028) et contenu du site administrés par le club |
 | 4 — Valeur pour les familles | ~~009~~ (v0.9.0, en qualif) puis **012-CHT** | Besoin d'origine d'abord ; la garderie ensuite (hebdomadaire) |
-| 5 — Gestion du club | **011** puis **010b** | Le trésorier dès que les dossiers existent ; le dossier en ligne pour les inscriptions 2027/2028 |
+| 5 — Gestion du club | ~~011~~ (v0.10.0, en qualif) puis **010b** | Le trésorier dès que les dossiers existent ; le dossier en ligne pour les inscriptions 2027/2028 |
 | 6 — Communication | **013** (et idées **017**) | Relais du site vers WhatsApp / Facebook |
 
 ---
@@ -104,7 +103,6 @@
 
 ### P2 — Important
 
-- **#011** — [Cotisations : suivi des paiements](pending/011-cotisations-paiements.md)
 - **#012-CHT** — [Garderie du mercredi](pending/012-CHT-garderie-mercredi.md)
 - **#014** — [Administration du contenu du site](pending/014-administration-contenu.md)
 - **#019** — [RGPD : exercice des droits outillé et purge automatique](pending/019-rgpd-droits-purge.md)
