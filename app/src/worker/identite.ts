@@ -9,12 +9,14 @@
 // verrou d'accès au site de qualification, sans aucun lien avec l'authentification de l'app
 // (décision du 2026-09-23). Aucune information d'Access n'est lue ici.
 //
-// Fournisseurs : `dev` (local uniquement) ; demain l'authentification applicative (chantier auth).
+// Fournisseurs : `app` (session ouverte par un lien de connexion — spec 005a, cf. session.ts) ;
+// `dev` (utilisateur simulé, local uniquement).
 // Détail : workspace/docs/technical-docs/identite-auth.md
 
 import type { Env } from './env';
+import { jetonSession, utilisateurDeSession } from './session';
 
-export type Provider = 'dev';
+export type Provider = 'app' | 'dev';
 
 export type Identite = {
   provider: Provider;
@@ -45,14 +47,24 @@ export type Resolution =
 
 // --- Fournisseurs ---
 
+// Session applicative : subject = users.id du compte (la ligne `identites` correspondante est
+// créée à la première connexion par lien, cf. routes/auth.ts).
+async function identiteApp(request: Request, env: Env): Promise<Identite | null> {
+  const jeton = jetonSession(request);
+  if (!jeton) return null;
+  const userId = await utilisateurDeSession(env, jeton);
+  return userId ? { provider: 'app', subject: String(userId), email: null } : null;
+}
+
 function identiteDev(env: Env): Identite | null {
   // Double verrou : ENVIRONMENT=local et DEV_SUBJECT n'existent que dans .dev.vars.
   if (env.ENVIRONMENT !== 'local' || !env.DEV_SUBJECT) return null;
   return { provider: 'dev', subject: env.DEV_SUBJECT, email: null };
 }
 
-export async function resolveIdentite(_request: Request, env: Env): Promise<Identite | null> {
-  return identiteDev(env);
+export async function resolveIdentite(request: Request, env: Env): Promise<Identite | null> {
+  // Une vraie session (cookie) prime sur l'utilisateur simulé du dev local.
+  return (await identiteApp(request, env)) ?? identiteDev(env);
 }
 
 // --- Identité → utilisateur interne ---

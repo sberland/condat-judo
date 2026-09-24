@@ -147,6 +147,17 @@ const BOUTONS = {
   danger: 'border border-brand/30 bg-white text-brand hover:bg-brand-soft',
 } as const
 
+const BOUTON = 'inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-5 font-semibold transition-colors'
+
+/** Lien externe à l'allure d'un bouton (ex. « Envoyer sur WhatsApp »). */
+export function LienBouton({ href, children, variante = 'primaire' }: { href: string; children: ReactNode; variante?: keyof typeof BOUTONS }) {
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" className={`${BOUTON} ${BOUTONS[variante]}`}>
+      {children}
+    </a>
+  )
+}
+
 export function Bouton({
   children,
   variante = 'primaire',
@@ -167,7 +178,7 @@ export function Bouton({
       type={type}
       onClick={onClick}
       disabled={enCours || desactive}
-      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-5 font-semibold transition-colors disabled:opacity-60 ${BOUTONS[variante]}`}
+      className={`${BOUTON} disabled:opacity-60 ${BOUTONS[variante]}`}
     >
       {enCours && <LoaderCircle className="size-4 animate-spin" aria-hidden />}
       {children}

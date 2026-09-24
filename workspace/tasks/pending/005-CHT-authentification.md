@@ -9,17 +9,13 @@ Cloudflare Access n'est qu'un verrou de la qualification, jamais l'authentificat
 
 ## Sous-specs (dans l'ordre)
 
-Proposition, **à trancher en revue au démarrage du chantier** (cf. décision du 2026-09-23 : « on
-verra pour l'auth au moment où on démarre le chantier ») :
-
-- [ ] `005a-auth-invitation-session.md` — invitation par lien personnel (usage unique, expiration
-  courte) envoyé par le bureau ; session longue et glissante (plusieurs mois) ; déconnexion
-- [ ] `005b-auth-code-email.md` — reconnexion par code à 6 chiffres envoyé par e-mail (nouveau
-  téléphone, cookies effacés) ; envoi d'e-mails transactionnels
-- [ ] `005c-auth-passkey.md` — passkey (Face ID / empreinte) proposée après la 1ʳᵉ connexion
-  (optionnel)
-
-Les fichiers de sous-specs sont rédigés au démarrage du chantier, après les arbitrages ci-dessous.
+- [x] [`005a-auth-lien-session.md`](../done/005a-auth-lien-session.md) — lien de connexion personnel
+  remis par le bureau (WhatsApp), session de 6 mois glissants, déconnexion. **Sans e-mail** :
+  livrable sans attendre le nom de domaine
+- [ ] [`005b-auth-code-email.md`](005b-auth-code-email.md) — reconnexion autonome par code à 6
+  chiffres reçu par e-mail ; envoi d'e-mails. **Attend la décision du club** sur le domaine (A3)
+- [ ] [`005c-auth-passkey.md`](005c-auth-passkey.md) — passkey (Face ID / empreinte) proposée
+  après la première connexion (optionnelle)
 
 ## Ordre et dépendances
 
@@ -28,15 +24,26 @@ Les fichiers de sous-specs sont rédigés au démarrage du chantier, après les 
 - S'intègre au seam `resolveUser` : nouveau fournisseur `app` dans `identite.ts`, table
   `identites` existante (cf. [`identite-auth.md`](../../docs/technical-docs/identite-auth.md)).
 
-## Arbitrages à rendre au démarrage
+## Arbitrages (revue du 2026-09-24)
 
-| # | Question | Piste (cf. [réflexion auth](../../notes/2026-09-23-reflexion-auth.md)) |
+Pistes de départ : [réflexion auth](../../notes/2026-09-23-reflexion-auth.md).
+
+| # | Question | Décision |
 | --- | --- | --- |
-| A1 | Méthode de connexion principale | Invitation + session longue + code e-mail ; pas de mot de passe ; pas de SMS (coût) |
-| A2 | Réalisation | Better Auth (plugins OTP e-mail, passkey) ou module maison |
-| A3 | Envoi d'e-mails | Brevo (gratuit jusqu'à 300 e-mails / jour) ou autre ; domaine d'envoi (lié au nom de domaine du club ?) |
-| A4 | Connexion Google en option | Oui / non |
-| A5 | Durée de session | 6 mois glissants ? |
+| A1 | Méthode de connexion | **Lien personnel remis par le bureau** (usage unique, 7 jours) + **session longue** ; reconnexion autonome par **code à 6 chiffres par e-mail** ; passkey en option. Ni mot de passe, ni SMS (coût), ni lien magique par e-mail (session ouverte dans le navigateur de l'appli mail) |
+| A2 | Réalisation | **Module maison** : sans mot de passe, les briques sont simples (jeton aléatoire haché, cookie `HttpOnly`, code à essais limités) et s'intègrent directement à `users` / `identites` / `user_roles`. Better Auth écarté : ses propres tables d'utilisateurs doubleraient les nôtres |
+| A3 | Envoi d'e-mails | **En attente du club** (nom de domaine). Constat : une authentification SPF/DKIM/DMARC du domaine d'envoi est indispensable ; Brevo gratuit (300 e-mails/jour) ; Cloudflare Email Service en bêta publique depuis 04/2026, plan Workers payant + DNS chez Cloudflare. La 005a n'envoie aucun e-mail |
+| A4 | Connexion Google | **Non** pour l'instant (projet Google Cloud, écran de consentement, second chemin de connexion) ; ajoutable plus tard comme fournisseur derrière le seam |
+| A5 | Durée de session | **6 mois glissants** ; le bureau peut déconnecter un compte à distance |
+
+Points relevés en revue (appliqués dans la 005a) :
+
+- **Aperçus de liens** : WhatsApp ouvre les liens pour en faire un aperçu → le jeton est placé
+  dans le fragment de l'URL (jamais envoyé au serveur) et n'est consommé qu'au clic sur un bouton.
+- **Qualification** : elle contient une copie des vrais comptes → aucun e-mail réel n'en part
+  (005b) ; les sessions et liens copiés de la prod y sont supprimés à chaque recopie.
+- **Usurpation** : un lien connecte *à la place* de la personne → le bureau crée des liens pour
+  les comptes famille, **seul un administrateur** pour un compte qui a un rôle ; créateur tracé.
 
 ## Clôture (à remplir avant le dernier merge)
 

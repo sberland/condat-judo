@@ -1,5 +1,5 @@
 ---
-doc-version: "0.2"
+doc-version: "0.3"
 doc-date: "2026-09-24"
 ---
 
@@ -47,18 +47,32 @@ npm run dev:web    # front :5173 (autre terminal)
 
 ### Premier administrateur
 
-Aucun compte n'est créé ni promu automatiquement. Une fois l'authentification applicative en place
-(chantier auth), créer le premier administrateur en prod (email **en minuscules**, identique à
-celui utilisé pour se connecter à l'app) :
+Aucun compte n'est créé ni promu automatiquement, et personne ne peut encore créer de lien de
+connexion depuis l'application. Deux commandes, lancées depuis un poste authentifié sur
+Cloudflare (`npx wrangler login`) :
 
-```bash
-cd app
-npx wrangler d1 execute condat-judo --remote --command "INSERT INTO users (prenom, nom, email) VALUES ('Prénom', 'Nom', 'adresse@exemple.fr'); INSERT INTO user_roles (user_id, role) SELECT id, 'admin' FROM users WHERE email = 'adresse@exemple.fr';"
-```
+1. Créer le compte administrateur en prod (e-mail **en minuscules**) :
 
-À sa première connexion, son identité est reliée à ce compte (table `identites`). La preview le
-récupère ensuite à chaque recopie des données de prod. Les autres comptes et leurs rôles se gèrent
-ensuite depuis l'application (**Mon espace → Comptes**).
+   ```bash
+   cd app
+   npx wrangler d1 execute condat-judo --remote --command "INSERT INTO users (prenom, nom, email) VALUES ('Prénom', 'Nom', 'adresse@exemple.fr'); INSERT INTO user_roles (user_id, role) SELECT id, 'admin' FROM users WHERE email = 'adresse@exemple.fr';"
+   ```
+
+2. Créer son lien de connexion (usage unique, 7 jours) et l'ouvrir **sur le téléphone** de
+   l'administrateur :
+
+   ```powershell
+   .\deploy\lien-connexion.ps1 -Email adresse@exemple.fr -Cible production
+   ```
+
+À sa première connexion, le compte est « activé » (table `identites`) et reste connecté 6 mois
+glissants. Les autres comptes, leurs rôles et leurs liens de connexion se gèrent ensuite depuis
+l'application (**Mon espace → Comptes**). La preview récupère les comptes à chaque recopie des
+données de prod, mais **pas les sessions ni les liens** : un testeur de la qualif obtient son lien
+par `.\deploy\lien-connexion.ps1 -Email … -Cible preview`.
+
+Administrateur qui a perdu son téléphone : un autre administrateur lui crée un lien ; à défaut,
+relancer l'étape 2.
 
 ## Désinstallation
 

@@ -1,10 +1,14 @@
 import type { ReactNode } from 'react'
-import { Link } from '@tanstack/react-router'
-import { ChevronRight, Contact, Users, UsersRound } from 'lucide-react'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { useQueryClient } from '@tanstack/react-query'
+import { ChevronRight, Contact, LogOut, Users, UsersRound } from 'lucide-react'
 import { Espace } from '../../components/espace/Garde'
-import { aUnRole, ROLES } from '../../lib/api'
+import { Bouton } from '../../components/formulaire'
+import { aUnRole, ROLES, seDeconnecter } from '../../lib/api'
 
 export function EspaceAccueilPage() {
+  const client = useQueryClient()
+  const navigate = useNavigate()
   return (
     <Espace titre="Mon espace">
       {(me) => (
@@ -30,6 +34,20 @@ export function EspaceAccueilPage() {
               </>
             )}
           </div>
+          {/* L'utilisateur simulé du dev local n'a pas de session à fermer. */}
+          {me.provider === 'app' && (
+            <div>
+              <Bouton
+                variante="secondaire"
+                onClick={async () => {
+                  await seDeconnecter(client)
+                  navigate({ to: '/' })
+                }}
+              >
+                <LogOut className="size-4" aria-hidden /> Se déconnecter
+              </Bouton>
+            </div>
+          )}
         </div>
       )}
     </Espace>

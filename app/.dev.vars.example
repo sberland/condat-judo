@@ -6,5 +6,8 @@ ENVIRONMENT=local
 
 # Utilisateur simulé : subject de la table `identites` (provider 'dev') — cf. src/db/seed.sql.
 #   dev-admin  → Admin Dev (rôle admin)
-#   dev-parent → Parent Dev (rôle membre)
+#   dev-bureau → Bureau Dev (rôles bureau + contenu)
+#   dev-parent → Parent Dev (famille : deux enfants)
+# Une vraie session (lien de connexion, spec 005a) prime sur l'utilisateur simulé. Pour tester la
+# connexion par lien en partant d'un visiteur anonyme, vider DEV_SUBJECT (cf. workflow-dev-spe.md).
 DEV_SUBJECT=dev-admin
