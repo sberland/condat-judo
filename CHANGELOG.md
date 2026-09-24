@@ -6,6 +6,33 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+### Événements du club : compétitions, stages, rencontres, repas…
+
+#### Notes client
+
+« Compétitions » devient « Événements » : le bureau y annonce toute la vie du club — compétitions,
+stages, rencontres, repas, fêtes… —, avec l'heure si besoin, et choisit pour chacun l'inscription
+qui convient : aucune (simple information), inscription des enfants (toutes catégories ou
+certaines), ou inscription de la famille avec le nombre d'adultes et d'enfants, pratique pour un
+repas. Les familles s'inscrivent depuis le lien posté dans le groupe WhatsApp, et peuvent modifier
+ou annuler jusqu'à la date limite. Pour les compétitions, rien ne change : catégories, liste à
+ressaisir sur le site fédéral et alertes. Les anciens liens de compétitions continuent de
+fonctionner.
+
+#### Ajouts
+
+- Types d'événement (compétition, stage, rencontre, repas, fête du club, autre), avec pictogramme,
+  et filtre par type sur la page Événements
+- Inscription des familles avec le nombre de participants ; côté bureau, liste des familles,
+  total et fichier CSV
+- Heure de l'événement (facultative)
+
+#### Modifications
+
+- Menu, pages, espace et aide : « Événements » au lieu de « Compétitions » ; adresses
+  `/evenements`
+- Événements hors compétition : inscription des enfants ouverte à tous par défaut
+
 ### Vitrine : disciplines illustrées, valeurs, esprit du club
 
 #### Notes client

@@ -144,7 +144,7 @@ admin.get('/adherents/:id', async (c) => {
       `SELECT id, prenom, nom, lien, telephone FROM personnes_autorisees WHERE adherent_id = ? ORDER BY nom, prenom`,
     ).bind(adherentId),
     c.env.DB.prepare(
-      `SELECT co.id, co.nom, co.date, co.statut FROM inscriptions_competition i JOIN competitions co ON co.id = i.competition_id
+      `SELECT co.id, co.nom, co.date, co.statut, co.type FROM inscriptions_competition i JOIN competitions co ON co.id = i.competition_id
        WHERE i.adherent_id = ? ORDER BY co.date DESC`,
     ).bind(adherentId),
     // Photo pour la garderie (012b) : date de dépôt, accord du dossier de la saison.
@@ -597,20 +597,24 @@ admin.get('/adhesions', async (c) => {
   return c.json({ saison: { id: saison.id, libelle: saison.libelle }, lignes });
 });
 
-// --- Compétitions (spec 009) ---
+// --- Événements (specs 009, 021) : compétitions, stages, rencontres, repas… ---
 
 admin.get('/competitions', async (c) => {
   const { results } = await c.env.DB.prepare(
     `SELECT ${COLONNES_COMPETITION},
             (SELECT count(*) FROM inscriptions_competition i WHERE i.competition_id = co.id) AS inscrits,
-            (SELECT count(*) FROM inscriptions_competition i WHERE i.competition_id = co.id AND i.ressaisi_le IS NOT NULL) AS ressaisis
+            (SELECT count(*) FROM inscriptions_competition i WHERE i.competition_id = co.id AND i.ressaisi_le IS NOT NULL) AS ressaisis,
+            (SELECT count(*) FROM inscriptions_famille f WHERE f.competition_id = co.id) AS familles,
+            (SELECT COALESCE(sum(f.adultes + f.enfants), 0) FROM inscriptions_famille f WHERE f.competition_id = co.id) AS participants
      FROM competitions co ORDER BY date DESC, id DESC`,
-  ).all<Parameters<typeof versCompetition>[0] & { inscrits: number; ressaisis: number }>();
-  return c.json(results.map((l) => ({ ...versCompetition(l), inscrits: l.inscrits, ressaisis: l.ressaisis })));
+  ).all<Parameters<typeof versCompetition>[0] & { inscrits: number; ressaisis: number; familles: number; participants: number }>();
+  return c.json(
+    results.map((l) => ({ ...versCompetition(l), inscrits: l.inscrits, ressaisis: l.ressaisis, familles: l.familles, participants: l.participants })),
+  );
 });
 
 const lierCompetition = (s: CompetitionSaisie) =>
-  [s.nom, s.date, s.lieu, s.adresse, s.lien_officiel, s.infos, JSON.stringify(s.categories), s.sexe, s.date_limite, s.statut] as const;
+  [s.type, s.inscription, s.nom, s.date, s.heure, s.lieu, s.adresse, s.lien_officiel, s.infos, JSON.stringify(s.categories), s.sexe, s.date_limite, s.statut] as const;
 
 /** Catégories de la saison d'une compétition : celle de sa date (saisie), sinon la saison courante. */
 async function categoriesPour(c: Context<AppEnv>, b: Record<string, unknown>) {
@@ -623,8 +627,8 @@ admin.post('/competitions', async (c) => {
   const r = validerCompetition(b, await categoriesPour(c, b));
   if (!r.ok) return invalide(c, r);
   const cree = await c.env.DB.prepare(
-    `INSERT INTO competitions (nom, date, lieu, adresse, lien_officiel, infos, categories, sexe, date_limite, statut, cree_par)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id`,
+    `INSERT INTO competitions (type, inscription, nom, date, heure, lieu, adresse, lien_officiel, infos, categories, sexe, date_limite, statut, cree_par)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id`,
   )
     .bind(...lierCompetition(r.valeur), c.get('utilisateur').id)
     .first<{ id: number }>();
@@ -636,22 +640,26 @@ admin.put('/competitions/:id', async (c) => {
   const r = validerCompetition(b, await categoriesPour(c, b));
   if (!r.ok) return invalide(c, r);
   const res = await c.env.DB.prepare(
-    `UPDATE competitions SET nom = ?, date = ?, lieu = ?, adresse = ?, lien_officiel = ?, infos = ?, categories = ?, sexe = ?,
-       date_limite = ?, statut = ?, updated_at = datetime('now') WHERE id = ?`,
+    `UPDATE competitions SET type = ?, inscription = ?, nom = ?, date = ?, heure = ?, lieu = ?, adresse = ?, lien_officiel = ?, infos = ?,
+       categories = ?, sexe = ?, date_limite = ?, statut = ?, updated_at = datetime('now') WHERE id = ?`,
   )
     .bind(...lierCompetition(r.valeur), id(c, 'id'))
     .run();
-  if (!res.meta.changes) return c.json({ error: 'Compétition introuvable' }, 404);
+  if (!res.meta.changes) return c.json({ error: 'Événement introuvable' }, 404);
   return c.json({ ok: true });
 });
 
 // Suppression réservée à une compétition sans inscrit (sinon : l'annuler, pour garder la trace).
 admin.delete('/competitions/:id', async (c) => {
   const compId = id(c, 'id');
-  const n = await c.env.DB.prepare('SELECT count(*) AS n FROM inscriptions_competition WHERE competition_id = ?').bind(compId).first<{ n: number }>();
-  if (n?.n) return c.json({ error: 'Des enfants sont inscrits : annulez la compétition plutôt que de la supprimer' }, 409);
+  const n = await c.env.DB.prepare(
+    'SELECT (SELECT count(*) FROM inscriptions_competition WHERE competition_id = ?1) + (SELECT count(*) FROM inscriptions_famille WHERE competition_id = ?1) AS n',
+  )
+    .bind(compId)
+    .first<{ n: number }>();
+  if (n?.n) return c.json({ error: 'Des inscriptions sont enregistrées : annulez l’événement plutôt que de le supprimer' }, 409);
   const res = await c.env.DB.prepare('DELETE FROM competitions WHERE id = ?').bind(compId).run();
-  if (!res.meta.changes) return c.json({ error: 'Compétition introuvable' }, 404);
+  if (!res.meta.changes) return c.json({ error: 'Événement introuvable' }, 404);
   return c.json({ ok: true });
 });
 
@@ -671,10 +679,22 @@ type LigneInscrit = {
   formalite_recue_le: string | null;
 };
 
-// Inscrits (avec alertes licence / dossier / formalité) et adhérents éligibles non inscrits.
+// Inscrits (avec alertes licence / dossier / formalité pour une compétition) et adhérents éligibles
+// non inscrits ; pour une inscription des familles, les familles et le nombre de participants.
 admin.get('/competitions/:id/inscriptions', async (c) => {
   const comp = await lireCompetition(c, id(c, 'id') ?? 0);
-  if (!comp) return c.json({ error: 'Compétition introuvable' }, 404);
+  if (!comp) return c.json({ error: 'Événement introuvable' }, 404);
+  const evenement = { ...comp, inscriptionsOuvertes: inscriptionsOuvertes(comp) };
+  if (comp.inscription !== 'enfants') {
+    const { results: familles } = await c.env.DB.prepare(
+      `SELECT f.user_id, u.prenom || ' ' || u.nom AS nom, f.adultes, f.enfants, f.inscrit_le, f.modifie_le
+       FROM inscriptions_famille f JOIN users u ON u.id = f.user_id
+       WHERE f.competition_id = ? ORDER BY u.nom, u.prenom`,
+    )
+      .bind(comp.id)
+      .all<{ user_id: number; nom: string; adultes: number; enfants: number; inscrit_le: string; modifie_le: string | null }>();
+    return c.json({ competition: evenement, inscrits: [], candidats: [], familles });
+  }
   // Catégories et dossiers d'adhésion : ceux de la saison de la compétition.
   const saison = await saisonPourDate(c, comp.date);
   const cats = saison.referentiel.categories;
@@ -703,14 +723,15 @@ admin.get('/competitions/:id/inscriptions', async (c) => {
     inscrit_le: l.inscrit_le,
     inscrit_par: l.inscrit_par,
     ressaisi_le: l.ressaisi_le,
-    // Alertes pour le bureau, sans bloquer l'inscription (décision de la revue 009).
-    alertes: [
+    // Alertes pour le bureau, sans bloquer l'inscription (décision de la revue 009) ; compétitions seulement.
+    alertes: comp.type !== 'competition' ? [] : [
       ...(l.numero_licence ? [] : ['n° de licence manquant']),
       ...(!l.dossier ? ['pas de dossier d’adhésion'] : l.formalite_recue_le ? [] : ['formalité médicale non reçue']),
     ],
   });
   return c.json({
-    competition: { ...comp, inscriptionsOuvertes: inscriptionsOuvertes(comp) },
+    competition: evenement,
+    familles: [],
     inscrits: results.filter((l) => l.inscrit).map(vers),
     candidats: results.filter((l) => !l.inscrit && eligible(cats, l, comp)).map(vers),
   });
@@ -719,14 +740,15 @@ admin.get('/competitions/:id/inscriptions', async (c) => {
 // Le bureau inscrit un enfant à la place de ses parents (y compris après la date limite).
 admin.put('/competitions/:id/inscriptions/:adherentId', async (c) => {
   const comp = await lireCompetition(c, id(c, 'id') ?? 0);
-  if (!comp) return c.json({ error: 'Compétition introuvable' }, 404);
-  if (comp.statut === 'annulee') return c.json({ error: 'Compétition annulée' }, 409);
+  if (!comp) return c.json({ error: 'Événement introuvable' }, 404);
+  if (comp.statut === 'annulee') return c.json({ error: 'Événement annulé' }, 409);
+  if (comp.inscription !== 'enfants') return c.json({ error: 'Pas d’inscription d’enfants pour cet événement' }, 409);
   const a = await c.env.DB.prepare('SELECT date_naissance, sexe FROM adherents WHERE id = ? AND supprime_le IS NULL')
     .bind(id(c, 'adherentId'))
     .first<{ date_naissance: string; sexe: 'F' | 'M' }>();
   if (!a) return c.json({ error: 'Adhérent introuvable' }, 404);
   if (!eligible((await saisonPourDate(c, comp.date)).referentiel.categories, a, comp))
-    return c.json({ error: 'Cet adhérent n’est pas dans les catégories de la compétition' }, 409);
+    return c.json({ error: 'Cet adhérent n’est pas dans les catégories de l’événement' }, 409);
   await c.env.DB.prepare('INSERT OR IGNORE INTO inscriptions_competition (competition_id, adherent_id, inscrit_par) VALUES (?, ?, ?)')
     .bind(comp.id, id(c, 'adherentId'), c.get('utilisateur').id)
     .run();
@@ -736,6 +758,15 @@ admin.put('/competitions/:id/inscriptions/:adherentId', async (c) => {
 admin.delete('/competitions/:id/inscriptions/:adherentId', async (c) => {
   const res = await c.env.DB.prepare('DELETE FROM inscriptions_competition WHERE competition_id = ? AND adherent_id = ?')
     .bind(id(c, 'id'), id(c, 'adherentId'))
+    .run();
+  if (!res.meta.changes) return c.json({ error: 'Inscription introuvable' }, 404);
+  return c.json({ ok: true });
+});
+
+// Le bureau retire une famille inscrite (mode « famille »).
+admin.delete('/competitions/:id/familles/:userId', async (c) => {
+  const res = await c.env.DB.prepare('DELETE FROM inscriptions_famille WHERE competition_id = ? AND user_id = ?')
+    .bind(id(c, 'id'), id(c, 'userId'))
     .run();
   if (!res.meta.changes) return c.json({ error: 'Inscription introuvable' }, 404);
   return c.json({ ok: true });

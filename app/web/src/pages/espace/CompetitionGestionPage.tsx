@@ -8,13 +8,18 @@ import { Alerte, Bouton, Champ, LienBouton } from '../../components/formulaire'
 import { Pastille } from '../../components/ui'
 import { appel, dateFr, dateHeureFr, ErreurApi, urlWhatsApp } from '../../lib/api'
 import { useReferentiel } from '../../lib/saison'
+import { MODES_INSCRIPTION } from '../../content/evenements'
 import {
   dateLongue,
   etatInscriptions,
+  heureFr,
   libelleCriteres,
+  libelleParticipants,
+  libelleType,
   LIBELLES_STATUT_COMPETITION,
   messageWhatsApp,
   telechargerCsv,
+  telechargerFamilles,
   urlCompetition,
   versTexte,
   type InscriptionsBureau,
@@ -22,7 +27,7 @@ import {
 } from '../../lib/competitions'
 
 export function CompetitionGestionPage() {
-  const { id } = useParams({ from: '/espace/competitions/$id' })
+  const { id } = useParams({ from: '/espace/evenements/$id' })
   const client = useQueryClient()
   const { data, isPending, isError } = useQuery({
     queryKey: ['admin', 'competitions', id],
@@ -35,20 +40,21 @@ export function CompetitionGestionPage() {
 
   return (
     <Espace
-      titre={data?.competition.nom ?? 'Compétition'}
-      retour={{ to: '/espace/competitions', libelle: 'Compétitions' }}
+      titre={data?.competition.nom ?? 'Événement'}
+      retour={{ to: '/espace/evenements', libelle: 'Événements' }}
       roles={['bureau', 'admin']}
       aide="competitions-bureau"
     >
       {() => {
         if (isPending) return <p className="text-muted-foreground">Chargement…</p>
-        if (isError) return <Alerte>Compétition introuvable.</Alerte>
+        if (isError) return <Alerte>Événement introuvable.</Alerte>
         return (
           <div className="grid gap-6">
             <Informations donnees={data} rafraichir={rafraichir} />
             {data.competition.statut !== 'annulee' && <Partage donnees={data} />}
-            <Inscrits donnees={data} rafraichir={rafraichir} />
-            {data.competition.statut !== 'annulee' && <Candidats donnees={data} rafraichir={rafraichir} />}
+            {data.competition.inscription === 'enfants' && <Inscrits donnees={data} rafraichir={rafraichir} />}
+            {data.competition.inscription === 'enfants' && data.competition.statut !== 'annulee' && <Candidats donnees={data} rafraichir={rafraichir} />}
+            {data.competition.inscription === 'famille' && <Familles donnees={data} rafraichir={rafraichir} />}
           </div>
         )
       }}
@@ -70,7 +76,7 @@ function Informations({ donnees, rafraichir }: PropsBloc) {
 
   if (edition) {
     return (
-      <Bloc titre="Modifier la compétition">
+      <Bloc titre="Modifier l’événement">
         <FormulaireCompetition
           competition={c}
           onEnregistre={async () => {
@@ -85,10 +91,12 @@ function Informations({ donnees, rafraichir }: PropsBloc) {
 
   const etat = etatInscriptions(c)
   const lignes: [string, string][] = [
-    ['Date', dateLongue(c.date)],
+    ['Type', libelleType(c.type)],
+    ['Date', `${dateLongue(c.date)}${c.heure ? ` à ${heureFr(c.heure)}` : ''}`],
     ['Lieu', [c.lieu, c.adresse].filter(Boolean).join(' — ')],
-    ['Pour', libelleCriteres(c, categories)],
-    ['Date limite', dateLongue(c.date_limite)],
+    ['Inscription', MODES_INSCRIPTION[c.inscription]],
+    ...(c.inscription === 'enfants' ? [['Pour', libelleCriteres(c, categories)] as [string, string]] : []),
+    ...(c.inscription !== 'aucune' ? [['Date limite', dateLongue(c.date_limite)] as [string, string]] : []),
   ]
   return (
     <Bloc
@@ -113,7 +121,7 @@ function Informations({ donnees, rafraichir }: PropsBloc) {
       </dl>
       {c.infos && <p className="mt-4 rounded-xl bg-surface p-4 whitespace-pre-line">{c.infos}</p>}
       <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold">
-        <Link to="/competitions/$id" params={{ id: String(c.id) }} className="inline-flex items-center gap-1.5 text-brand">
+        <Link to="/evenements/$id" params={{ id: String(c.id) }} className="inline-flex items-center gap-1.5 text-brand">
           <ExternalLink className="size-4" aria-hidden /> Voir la page publique
         </Link>
         {c.lien_officiel && (
@@ -124,14 +132,14 @@ function Informations({ donnees, rafraichir }: PropsBloc) {
       </div>
 
       <div className="mt-6 border-t pt-4">
-        {donnees.inscrits.length > 0 ? (
+        {donnees.inscrits.length + donnees.familles.length > 0 ? (
           <p className="text-sm text-muted-foreground">
-            Pour renoncer à une compétition qui a des inscrits : « Modifier » → statut « Annulée » (les inscriptions restent visibles).
+            Pour renoncer à un événement qui a des inscrits : « Modifier » → statut « Annulée » (les inscriptions restent visibles).
           </p>
         ) : confirmer ? (
           <div className="grid gap-3">
             <p className="text-sm">
-              Supprimer <strong>{c.nom}</strong> ? Aucun enfant n’y est inscrit.
+              Supprimer <strong>{c.nom}</strong> ? Aucune inscription n’est enregistrée.
             </p>
             <Alerte>{erreur}</Alerte>
             <div className="flex flex-col gap-3 sm:flex-row">
@@ -141,7 +149,7 @@ function Informations({ donnees, rafraichir }: PropsBloc) {
                   try {
                     await appel('DELETE', `/api/admin/competitions/${c.id}`)
                     await rafraichir()
-                    navigate({ to: '/espace/competitions' })
+                    navigate({ to: '/espace/evenements' })
                   } catch (err) {
                     setErreur(err instanceof ErreurApi ? err.message : 'Suppression impossible.')
                   }
@@ -156,7 +164,7 @@ function Informations({ donnees, rafraichir }: PropsBloc) {
           </div>
         ) : (
           <button type="button" onClick={() => setConfirmer(true)} className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand">
-            <Trash2 className="size-4" aria-hidden /> Supprimer la compétition
+            <Trash2 className="size-4" aria-hidden /> Supprimer l’événement
           </button>
         )}
       </div>
@@ -173,8 +181,8 @@ function Partage({ donnees: { competition: c } }: { donnees: InscriptionsBureau 
   return (
     <Bloc titre="Partager">
       <p className="mb-3 text-sm text-muted-foreground">
-        Postez ce lien dans le groupe WhatsApp du club : la page est publique (sans aucune information sur les enfants), les parents s’y
-        connectent pour inscrire les leurs.
+        Postez ce lien dans le groupe WhatsApp du club : la page est publique (sans aucune information sur les inscrits)
+        {c.inscription === 'aucune' ? '.' : ', les familles s’y connectent pour s’inscrire.'}
       </p>
       <div className="flex flex-col gap-3 sm:flex-row">
         <LienBouton href={urlWhatsApp(messageWhatsApp(c, url, categories), null)}>
@@ -245,9 +253,11 @@ function Inscrits({ donnees, rafraichir }: PropsBloc) {
         <p className="text-muted-foreground">Aucun enfant inscrit pour l’instant.</p>
       ) : (
         <>
-          <p className="mb-3 text-sm text-muted-foreground">
-            {aRessaisir === 0 ? 'Toutes les inscriptions sont ressaisies sur le site fédéral.' : `${aRessaisir} à ressaisir sur le site fédéral.`}
-          </p>
+          {c.type === 'competition' && (
+            <p className="mb-3 text-sm text-muted-foreground">
+              {aRessaisir === 0 ? 'Toutes les inscriptions sont ressaisies sur le site fédéral.' : `${aRessaisir} à ressaisir sur le site fédéral.`}
+            </p>
+          )}
           <ul className="divide-y rounded-xl border">
             {lignes.map((l) => (
               <li key={l.id} className="grid gap-2 px-4 py-3.5">
@@ -257,19 +267,21 @@ function Inscrits({ donnees, rafraichir }: PropsBloc) {
                   {l.inscrit_le ? `, le ${dateHeureFr(l.inscrit_le)}` : ''}
                 </p>
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-                  <label htmlFor={`ressaisi-${l.id}`} className="flex min-h-11 cursor-pointer items-center gap-2.5 text-sm font-medium">
-                    <input
-                      id={`ressaisi-${l.id}`}
-                      type="checkbox"
-                      checked={!!l.ressaisi_le}
-                      disabled={enCours === l.id}
-                      onChange={(e) =>
-                        agir(l.id, () => appel('PUT', `/api/admin/competitions/${c.id}/inscriptions/${l.id}/ressaisi`, { ressaisi: e.target.checked }))
-                      }
-                      className="size-5 accent-brand"
-                    />
-                    Ressaisi sur le site fédéral
-                  </label>
+                  {c.type === 'competition' && (
+                    <label htmlFor={`ressaisi-${l.id}`} className="flex min-h-11 cursor-pointer items-center gap-2.5 text-sm font-medium">
+                      <input
+                        id={`ressaisi-${l.id}`}
+                        type="checkbox"
+                        checked={!!l.ressaisi_le}
+                        disabled={enCours === l.id}
+                        onChange={(e) =>
+                          agir(l.id, () => appel('PUT', `/api/admin/competitions/${c.id}/inscriptions/${l.id}/ressaisi`, { ressaisi: e.target.checked }))
+                        }
+                        className="size-5 accent-brand"
+                      />
+                      Ressaisi sur le site fédéral
+                    </label>
+                  )}
                   <button
                     type="button"
                     disabled={enCours === l.id}
@@ -337,7 +349,7 @@ function Candidats({ donnees, rafraichir }: PropsBloc) {
   return (
     <Bloc titre="Inscrire un enfant">
       <p className="mb-3 text-sm text-muted-foreground">
-        Adhérents des catégories de la compétition, pas encore inscrits. Le bureau peut inscrire à la place des parents, même après la date
+        Adhérents concernés par l’événement, pas encore inscrits. Le bureau peut inscrire à la place des parents, même après la date
         limite.
       </p>
       {donnees.candidats.length > 6 && (
@@ -359,6 +371,76 @@ function Candidats({ donnees, rafraichir }: PropsBloc) {
           ))}
           {visibles.length === 0 && <li className="px-4 py-4 text-center text-muted-foreground">Aucun adhérent ne correspond.</li>}
         </ul>
+      )}
+      <div className="mt-3">
+        <Alerte>{erreur}</Alerte>
+      </div>
+    </Bloc>
+  )
+}
+
+// --- Familles inscrites (mode « famille », spec 021) ---
+
+function Familles({ donnees, rafraichir }: PropsBloc) {
+  const c = donnees.competition
+  const [erreur, setErreur] = useState('')
+  const [enCours, setEnCours] = useState<number | null>(null)
+  const familles = donnees.familles
+  const adultes = familles.reduce((s, f) => s + f.adultes, 0)
+  const enfants = familles.reduce((s, f) => s + f.enfants, 0)
+
+  async function retirer(userId: number) {
+    setEnCours(userId)
+    setErreur('')
+    try {
+      await appel('DELETE', `/api/admin/competitions/${c.id}/familles/${userId}`)
+      await rafraichir()
+    } catch (err) {
+      setErreur(err instanceof ErreurApi ? err.message : 'Action impossible.')
+    } finally {
+      setEnCours(null)
+    }
+  }
+
+  return (
+    <Bloc
+      titre={`Familles inscrites (${familles.length})`}
+      action={
+        familles.length > 0 && (
+          <Bouton variante="secondaire" onClick={() => telechargerFamilles(c, familles)}>
+            <Download className="size-4" aria-hidden /> CSV
+          </Bouton>
+        )
+      }
+    >
+      {familles.length === 0 ? (
+        <p className="text-muted-foreground">Aucune famille inscrite pour l’instant.</p>
+      ) : (
+        <>
+          <p className="mb-3 font-semibold">
+            {adultes + enfants} participant{adultes + enfants > 1 ? 's' : ''} : {libelleParticipants({ adultes, enfants })}
+          </p>
+          <ul className="divide-y rounded-xl border">
+            {familles.map((f) => (
+              <li key={f.user_id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
+                <span className="min-w-0">
+                  <span className="block font-semibold">{f.nom}</span>
+                  <span className="block text-sm text-muted-foreground">
+                    {libelleParticipants(f)} · le {dateHeureFr(f.modifie_le ?? f.inscrit_le)}
+                  </span>
+                </span>
+                <button
+                  type="button"
+                  disabled={enCours === f.user_id}
+                  onClick={() => retirer(f.user_id)}
+                  className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-brand disabled:opacity-60"
+                >
+                  <Trash2 className="size-4" aria-hidden /> Retirer
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
       <div className="mt-3">
         <Alerte>{erreur}</Alerte>

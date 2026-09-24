@@ -4,6 +4,7 @@
 import { Hono, type Context } from 'hono';
 import { categorieDe, eligible, type Categorie } from '../../../web/src/content/categories';
 import { exigible, situation } from '../../../web/src/content/paiements';
+import { MAX_PARTICIPANTS } from '../../../web/src/content/evenements';
 import { etatPointage, libelleLimite, maintenantParis, mercredisOuverts, modifiable, type Pointage, type ReglagesGarderie } from '../../../web/src/content/garderie';
 import { connexionRequise, type AppEnv } from '../droits';
 import { aujourdhuiParis, COLONNES_COMPETITION, inscriptionsOuvertes, lireCompetition, versCompetition } from './competitions';
@@ -60,7 +61,7 @@ famille.get('/enfants', async (c) => {
        WHERE adherent_id IN (SELECT adherent_id FROM liens WHERE user_id = ?) ORDER BY nom, prenom`,
     ).bind(moi),
     c.env.DB.prepare(
-      `SELECT i.adherent_id, co.id, co.nom, co.date, co.statut FROM inscriptions_competition i
+      `SELECT i.adherent_id, co.id, co.nom, co.date, co.statut, co.type FROM inscriptions_competition i
        JOIN competitions co ON co.id = i.competition_id
        WHERE i.adherent_id IN (SELECT adherent_id FROM liens WHERE user_id = ?)
        ORDER BY co.date DESC`,
@@ -68,7 +69,7 @@ famille.get('/enfants', async (c) => {
   ]);
   type Co = { adherent_id: number; prenom: string; nom: string; qualite: string };
   type Pa = { id: number; adherent_id: number; prenom: string; nom: string; lien: string };
-  type Ic = { adherent_id: number; id: number; nom: string; date: string; statut: string };
+  type Ic = { adherent_id: number; id: number; nom: string; date: string; statut: string; type: string };
   const co = (coResponsables?.results ?? []) as Co[];
   const pa = (personnes?.results ?? []) as Pa[];
   const ic = (competitions?.results ?? []) as Ic[];
@@ -81,7 +82,7 @@ famille.get('/enfants', async (c) => {
       photo: { deposeeLe: photo_le, accord: accord_photo },
       coResponsables: co.filter((r) => r.adherent_id === e.id).map(({ prenom, nom, qualite }) => ({ prenom, nom, qualite })),
       personnesAutorisees: pa.filter((p) => p.adherent_id === e.id).map(({ id, prenom, nom, lien }) => ({ id, prenom, nom, lien })),
-      competitions: ic.filter((i) => i.adherent_id === e.id).map(({ id, nom, date, statut }) => ({ id, nom, date, statut })),
+      competitions: ic.filter((i) => i.adherent_id === e.id).map(({ id, nom, date, statut, type }) => ({ id, nom, date, statut, type })),
     })),
   );
 });
@@ -163,7 +164,8 @@ famille.delete('/enfants/:id/personnes-autorisees/:pid', async (c) => {
   return c.json({ ok: true });
 });
 
-// --- Compétitions (spec 009) : un responsable inscrit SES enfants, s'il en a le droit ---
+// --- Événements (specs 009, 021) : un responsable inscrit SES enfants, s'il en a le droit, ou sa
+// famille (nombre de participants) selon le mode d'inscription choisi par le bureau ---
 
 type EnfantCompetition = {
   id: number;
@@ -175,10 +177,17 @@ type EnfantCompetition = {
   inscrit: number;
 };
 
-/** Mes enfants face à une compétition : catégorie, éligibilité, droit d'inscrire, inscription. */
+/** Famille inscrite à un événement (mode « famille ») : nombre d'adultes et d'enfants, ou null. */
+const MA_FAMILLE = 'SELECT adultes, enfants FROM inscriptions_famille WHERE competition_id = ? AND user_id = ?';
+
+/** Mes enfants face à un événement : catégorie, éligibilité, droit d'inscrire, inscription ; ou ma famille. */
 famille.get('/competitions/:id', async (c) => {
   const comp = await lireCompetition(c, Number(c.req.param('id')) || 0);
-  if (!comp) return c.json({ error: 'Compétition introuvable' }, 404);
+  if (!comp) return c.json({ error: 'Événement introuvable' }, 404);
+  if (comp.inscription !== 'enfants') {
+    const f = await c.env.DB.prepare(MA_FAMILLE).bind(comp.id, c.get('utilisateur').id).first<{ adultes: number; enfants: number }>();
+    return c.json({ inscriptionsOuvertes: inscriptionsOuvertes(comp), enfants: [], famille: f ?? null });
+  }
   const { results } = await c.env.DB.prepare(
     `SELECT a.id, a.prenom, a.nom, a.date_naissance, a.sexe, l.peut_inscrire,
             EXISTS (SELECT 1 FROM inscriptions_competition i WHERE i.competition_id = ?1 AND i.adherent_id = a.id) AS inscrit
@@ -191,6 +200,7 @@ famille.get('/competitions/:id', async (c) => {
   const cats = (await saisonPourDate(c, comp.date)).referentiel.categories;
   return c.json({
     inscriptionsOuvertes: inscriptionsOuvertes(comp),
+    famille: null,
     enfants: results.map((e) => ({
       id: e.id,
       prenom: e.prenom,
@@ -203,10 +213,10 @@ famille.get('/competitions/:id', async (c) => {
   });
 });
 
-/** Pour chaque compétition à venir : mes enfants concernés (éligibles ou déjà inscrits). */
+/** Pour chaque événement à venir : mes enfants concernés (éligibles ou déjà inscrits), ou ma famille. */
 famille.get('/competitions', async (c) => {
   const moi = c.get('utilisateur').id;
-  const [comps, enfants, inscriptions] = await c.env.DB.batch([
+  const [comps, enfants, inscriptions, mesFamilles] = await c.env.DB.batch([
     c.env.DB.prepare(`SELECT ${COLONNES_COMPETITION} FROM competitions WHERE date >= ?`).bind(aujourdhuiParis()),
     c.env.DB.prepare(
       `SELECT a.id, a.prenom, a.date_naissance, a.sexe FROM liens l JOIN adherents a ON a.id = l.adherent_id
@@ -216,7 +226,9 @@ famille.get('/competitions', async (c) => {
       `SELECT i.competition_id, i.adherent_id FROM inscriptions_competition i
        JOIN liens l ON l.adherent_id = i.adherent_id AND l.user_id = ?`,
     ).bind(moi),
+    c.env.DB.prepare('SELECT competition_id, adultes, enfants FROM inscriptions_famille WHERE user_id = ?').bind(moi),
   ]);
+  const familles = new Map(((mesFamilles?.results ?? []) as { competition_id: number; adultes: number; enfants: number }[]).map((f) => [f.competition_id, f]));
   type E = { id: number; prenom: string; date_naissance: string; sexe: 'F' | 'M' };
   const mesEnfants = (enfants?.results ?? []) as E[];
   const inscrits = new Set(((inscriptions?.results ?? []) as { competition_id: number; adherent_id: number }[]).map((i) => `${i.competition_id}-${i.adherent_id}`));
@@ -226,7 +238,8 @@ famille.get('/competitions', async (c) => {
   return c.json(
     liste.map((comp) => ({
       competition_id: comp.id,
-      enfants: mesEnfants
+      famille: familles.has(comp.id) ? { adultes: familles.get(comp.id)?.adultes ?? 0, enfants: familles.get(comp.id)?.enfants ?? 0 } : null,
+      enfants: (comp.inscription === 'enfants' ? mesEnfants : [])
         .map((e) => ({ prenom: e.prenom, inscrit: inscrits.has(`${comp.id}-${e.id}`), eligible: eligible(categories.get(comp.id) ?? [], e, comp) }))
         .filter((e) => e.inscrit || e.eligible)
         .map(({ prenom, inscrit }) => ({ prenom, inscrit })),
@@ -236,8 +249,9 @@ famille.get('/competitions', async (c) => {
 
 async function controleInscription(c: Context<AppEnv>) {
   const comp = await lireCompetition(c, Number(c.req.param('id')) || 0);
-  if (!comp) return { erreur: c.json({ error: 'Compétition introuvable' }, 404) };
-  if (!inscriptionsOuvertes(comp)) return { erreur: c.json({ error: 'Les inscriptions sont closes pour cette compétition' }, 409) };
+  if (!comp) return { erreur: c.json({ error: 'Événement introuvable' }, 404) };
+  if (comp.inscription !== 'enfants') return { erreur: c.json({ error: 'Pas d’inscription d’enfants pour cet événement' }, 409) };
+  if (!inscriptionsOuvertes(comp)) return { erreur: c.json({ error: 'Les inscriptions sont closes pour cet événement' }, 409) };
   const adherentId = Number(c.req.param('adherentId')) || 0;
   const enfant = await c.env.DB.prepare(
     `SELECT a.date_naissance, a.sexe, l.peut_inscrire FROM liens l JOIN adherents a ON a.id = l.adherent_id
@@ -253,7 +267,7 @@ async function controleInscription(c: Context<AppEnv>) {
 famille.put('/competitions/:id/inscriptions/:adherentId', async (c) => {
   const r = await controleInscription(c);
   if ('erreur' in r) return r.erreur;
-  if (!eligible((await saisonPourDate(c, r.comp.date)).referentiel.categories, r.enfant, r.comp)) return c.json({ error: 'Cet enfant n’est pas dans les catégories de la compétition' }, 409);
+  if (!eligible((await saisonPourDate(c, r.comp.date)).referentiel.categories, r.enfant, r.comp)) return c.json({ error: 'Cet enfant n’est pas dans les catégories de l’événement' }, 409);
   await c.env.DB.prepare('INSERT OR IGNORE INTO inscriptions_competition (competition_id, adherent_id, inscrit_par) VALUES (?, ?, ?)')
     .bind(r.comp.id, r.adherentId, c.get('utilisateur').id)
     .run();
@@ -264,6 +278,42 @@ famille.delete('/competitions/:id/inscriptions/:adherentId', async (c) => {
   const r = await controleInscription(c);
   if ('erreur' in r) return r.erreur;
   await c.env.DB.prepare('DELETE FROM inscriptions_competition WHERE competition_id = ? AND adherent_id = ?').bind(r.comp.id, r.adherentId).run();
+  return c.json({ ok: true });
+});
+
+// Inscription de ma famille (mode « famille ») : nombre d'adultes et d'enfants, modifiable ou annulable
+// jusqu'à la date limite.
+async function controleFamille(c: Context<AppEnv>) {
+  const comp = await lireCompetition(c, Number(c.req.param('id')) || 0);
+  if (!comp) return { erreur: c.json({ error: 'Événement introuvable' }, 404) };
+  if (comp.inscription !== 'famille') return { erreur: c.json({ error: 'Pas d’inscription des familles pour cet événement' }, 409) };
+  if (!inscriptionsOuvertes(comp)) return { erreur: c.json({ error: 'Les inscriptions sont closes pour cet événement' }, 409) };
+  return { comp };
+}
+
+const nombre = (v: unknown) => (Number.isInteger(v) && (v as number) >= 0 && (v as number) <= MAX_PARTICIPANTS ? (v as number) : null);
+
+famille.put('/competitions/:id/famille', async (c) => {
+  const r = await controleFamille(c);
+  if ('erreur' in r) return r.erreur;
+  const corps = (await c.req.json().catch(() => ({}))) as Record<string, unknown>;
+  const adultes = nombre(corps.adultes);
+  const enfants = nombre(corps.enfants);
+  if (adultes === null || enfants === null) return c.json({ error: `Nombre de participants invalide (${MAX_PARTICIPANTS} au plus)` }, 400);
+  if (adultes + enfants === 0) return c.json({ error: 'Indiquez au moins un participant' }, 400);
+  await c.env.DB.prepare(
+    `INSERT INTO inscriptions_famille (competition_id, user_id, adultes, enfants) VALUES (?, ?, ?, ?)
+     ON CONFLICT (competition_id, user_id) DO UPDATE SET adultes = excluded.adultes, enfants = excluded.enfants, modifie_le = datetime('now')`,
+  )
+    .bind(r.comp.id, c.get('utilisateur').id, adultes, enfants)
+    .run();
+  return c.json({ ok: true });
+});
+
+famille.delete('/competitions/:id/famille', async (c) => {
+  const r = await controleFamille(c);
+  if ('erreur' in r) return r.erreur;
+  await c.env.DB.prepare('DELETE FROM inscriptions_famille WHERE competition_id = ? AND user_id = ?').bind(r.comp.id, c.get('utilisateur').id).run();
   return c.json({ ok: true });
 });
 

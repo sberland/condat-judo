@@ -52,7 +52,7 @@ export function AdherentFichePage() {
             {!data.adherent.supprime_le && <BlocAdhesion adherentId={data.adherent.id} />}
             <BlocPersonnesAutorisees fiche={data} rafraichir={rafraichir} />
             {!data.adherent.supprime_le && <BlocPhoto fiche={data} rafraichir={rafraichir} />}
-            <Bloc titre="Compétitions">
+            <Bloc titre="Événements">
               <HistoriqueCompetitions competitions={data.competitions} vers="bureau" />
             </Bloc>
           </div>
@@ -198,7 +198,7 @@ function ChoixCapacites({
       <Case
         id={`${prefixe}-peut_inscrire`}
         libelle="Peut inscrire l’enfant"
-        aide="Compétitions, garderie du mercredi"
+        aide="Événements (compétitions, stages…), garderie du mercredi"
         coche={valeur.peut_inscrire}
         onChange={(v) => onChange({ ...valeur, peut_inscrire: v })}
       />

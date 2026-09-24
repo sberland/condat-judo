@@ -18,8 +18,10 @@ export const libelleCategorie = (c: Categorie) => `${c.nom} (${c.de === 1900 ? `
 
 export type CriteresCompetition = { categories: string[]; sexe: 'F' | 'M' | null }
 
-/** Éligibilité d'un adhérent : catégorie retenue et, si la compétition l'impose, même sexe. */
+/** Éligibilité d'un adhérent : catégorie retenue (aucune retenue = toutes, hors compétition, spec 021)
+ * et, si l'événement l'impose, même sexe. */
 export function eligible(categories: Categorie[], adherent: { date_naissance: string; sexe: 'F' | 'M' }, c: CriteresCompetition): boolean {
   const cat = categorieDe(categories, adherent.date_naissance)
-  return !!cat && c.categories.includes(cat.id) && (c.sexe === null || c.sexe === adherent.sexe)
+  const categorieOk = c.categories.length === 0 || (!!cat && c.categories.includes(cat.id))
+  return categorieOk && (c.sexe === null || c.sexe === adherent.sexe)
 }

@@ -10,7 +10,7 @@ Le site est accessible à tous, sans compte : <https://condat-judo.sebastien-ber
 | **Disciplines** | Judo (et éveil judo pour les 4-5 ans), jujitsu, taïso, yoga — accès direct à chaque discipline par les boutons en haut de page |
 | **Le club** | Le professeur et le bureau, le dojo et l'itinéraire, le code moral complet, les partenaires, les liens utiles |
 | **Règlement** | Le règlement intérieur, article par article : touchez un titre pour l'ouvrir |
-| **Compétitions** | Les prochaines compétitions : date, lieu (avec itinéraire), catégories, informations pratiques, date limite d'inscription. L'inscription des enfants demande d'être connecté |
+| **Événements** | Les prochains événements du club (compétitions, stages, rencontres, repas, fêtes…), filtrables par type : date et heure, lieu (avec itinéraire), informations pratiques et, s'il y a lieu, inscription (enfants, ou famille avec le nombre de participants). S'inscrire demande d'être connecté |
 | **Contact** | Écrire au club via Facebook, venir au dojo, prendre sa licence |
 
 Sur téléphone, le menu s'ouvre avec le bouton en haut à droite (trois traits).
@@ -45,9 +45,10 @@ responsables et les personnes autorisées à le récupérer. Vous pouvez y mettr
 téléphone ; pour toute autre correction, adressez-vous au bureau. En bas de chaque fiche : les
 compétitions auxquelles l'enfant a été inscrit.
 
-**Pour les parents — Compétitions** : touchez le lien posté dans le groupe WhatsApp du club (ou
-menu « Compétitions »), puis **« Inscrire »** à côté du prénom de votre enfant. Jusqu'à la date
-limite, « Annuler l'inscription » revient en arrière ; ensuite, prévenez le bureau. Seuls les
+**Pour les parents — Événements** : touchez le lien posté dans le groupe WhatsApp du club (ou
+menu « Événements »), puis **« Inscrire »** à côté du prénom de votre enfant — ou, pour un repas
+ou une fête, indiquez le nombre d'adultes et d'enfants et **« Inscrire ma famille »**. Jusqu'à la
+date limite, « Annuler l'inscription » revient en arrière ; ensuite, prévenez le bureau. Seuls les
 enfants des catégories concernées peuvent être inscrits, et seulement par un responsable qui en a
 le droit.
 
@@ -104,7 +105,7 @@ et des familles pour la comptabilité. Le rôle « bureau » seul ne voit pas le
 | --- | --- |
 | **Garderie : liste du mercredi** | Les enfants à récupérer chaque mercredi, par lieu, avec qui a fait la demande ; ajouter ou retirer un enfant (sans délai). Lieux, calendrier et délai se règlent dans Saisons et tarifs |
 | **Saisons et tarifs** | Catégories d’âge, grille tarifaire, dates du paiement en 3 fois et horaires des cours, saison par saison. « Préparer la saison … » copie la dernière (années et dates décalées d’un an) ; « Rendre cette saison courante » bascule dossiers, trésorerie, compétitions et page publique. « À confirmer » masque tarifs ou horaires sur le site public |
-| **Compétitions** | Créer une compétition (date, lieu, catégories, date limite, infos pratiques), « Envoyer sur WhatsApp » (message prêt avec le lien), suivre les inscrits avec leurs alertes (licence, dossier, formalité médicale), « Copier » ou « CSV » pour la ressaisie sur le site fédéral, case « Ressaisi », inscrire un enfant à la place de ses parents (même après la date limite), clôturer ou annuler |
+| **Événements** | Créer un événement (type, date et heure, lieu, inscription : aucune, enfants ou famille ; catégories et date limite, infos pratiques), suivre les familles inscrites et le nombre de participants (repas…) ; pour une compétition : « Envoyer sur WhatsApp » (message prêt avec le lien), suivre les inscrits avec leurs alertes (licence, dossier, formalité médicale), « Copier » ou « CSV » pour la ressaisie sur le site fédéral, case « Ressaisi », inscrire un enfant à la place de ses parents (même après la date limite), clôturer ou annuler |
 | **Dossiers 2026/2027** | Dossiers d'adhésion de la saison : filtres (sans dossier, à compléter, complets, validés), ce qui manque pour chacun, total des montants ; « Saisir un nouvel adhérent » pour ressaisir un formulaire papier |
 | **Adhérents** | Liste des pratiquants avec recherche ; « aucun responsable » signale une fiche à compléter |
 | **Fiche d'un adhérent** | Identité (modifier, supprimer — une fiche supprimée reste restaurable ; ceinture dans la liste officielle), responsables légaux, **dossier d'adhésion de la saison** (formule, montant calculé, paiement, formalité médicale, autorisations et consentements, validation), personnes autorisées à récupérer l'enfant, **photo pour la garderie** (si l'accord figure au dossier) |

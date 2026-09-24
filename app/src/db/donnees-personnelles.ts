@@ -129,7 +129,7 @@ export const TABLES: Record<string, Table> = {
   // Compétitions (009) : informations publiques ; `infos` = texte pratique du bureau (pesée…).
   competitions: {
     colonnes: Object.fromEntries(
-      ['id', 'nom', 'date', 'lieu', 'adresse', 'lien_officiel', 'infos', 'categories', 'sexe', 'date_limite', 'statut', 'cree_par', 'created_at', 'updated_at'].map(
+      ['id', 'nom', 'date', 'lieu', 'adresse', 'lien_officiel', 'infos', 'categories', 'sexe', 'date_limite', 'statut', 'cree_par', 'created_at', 'updated_at', 'type', 'inscription', 'heure'].map(
         (c) => [c, 'conservee' as const],
       ),
     ),
@@ -137,6 +137,10 @@ export const TABLES: Record<string, Table> = {
   // Inscriptions (009) : identifiants et dates seulement (l'adhérent est pseudonymisé).
   inscriptions_competition: {
     colonnes: { competition_id: 'conservee', adherent_id: 'conservee', inscrit_par: 'conservee', inscrit_le: 'conservee', ressaisi_le: 'conservee' },
+  },
+  // Événements (021) : famille inscrite (compte pseudonymisé) et nombre de participants.
+  inscriptions_famille: {
+    colonnes: { competition_id: 'conservee', user_id: 'conservee', adultes: 'conservee', enfants: 'conservee', inscrit_le: 'conservee', modifie_le: 'conservee' },
   },
   // Garderie (012a) : enfant, mercredi, lieu, auteur — pas de donnée identifiante (adhérent pseudonymisé).
   // Pointage (012c) : heures et auteurs conservés ; `parti_avec` (nom de la personne) pseudonymisé.

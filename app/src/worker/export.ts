@@ -1,6 +1,6 @@
 // Export des données d'un compte (spec 019, droits d'accès et à la portabilité) : le compte, et
 // pour chaque adhérent lié (ses enfants, ou lui-même s'il est adhérent) : fiche, responsables,
-// personnes autorisées, dossiers et versements, compétitions, garderie (demandes, photo). Fichier
+// personnes autorisées, dossiers et versements, événements, garderie (demandes, photo). Fichier
 // JSON aux clés lisibles. Pas d'identifiant technique inutile, jamais la référence d'un chèque
 // (elle peut être celle d'un autre responsable) ni les coordonnées des autres responsables.
 import type { Env } from './env';
@@ -13,7 +13,7 @@ export async function donneesDuCompte(env: Env, userId: number): Promise<Ligne |
     .first<Ligne>();
   if (!compte) return null;
 
-  const [roles, identites, sessions, adherents] = await env.DB.batch([
+  const [roles, identites, sessions, adherents, evenements] = await env.DB.batch([
     env.DB.prepare('SELECT role FROM user_roles WHERE user_id = ?').bind(userId),
     env.DB.prepare('SELECT provider, created_at, last_seen FROM identites WHERE user_id = ?').bind(userId),
     env.DB.prepare('SELECT created_at, expire_le FROM sessions WHERE user_id = ?').bind(userId),
@@ -22,6 +22,10 @@ export async function donneesDuCompte(env: Env, userId: number): Promise<Ligne |
               a.created_at, l.qualite, l.peut_inscrire, l.peut_recuperer, l.est_contact
        FROM adherents a LEFT JOIN liens l ON l.adherent_id = a.id AND l.user_id = ?1
        WHERE a.anonymise_le IS NULL AND (l.user_id IS NOT NULL OR a.user_id = ?1)`,
+    ).bind(userId),
+    env.DB.prepare(
+      `SELECT co.nom, co.date, f.adultes, f.enfants, f.inscrit_le FROM inscriptions_famille f JOIN competitions co ON co.id = f.competition_id
+       WHERE f.user_id = ? ORDER BY co.date`,
     ).bind(userId),
   ]);
 
@@ -63,7 +67,7 @@ export async function donneesDuCompte(env: Env, userId: number): Promise<Ligne |
       personnes_autorisees: pa?.results ?? [],
       dossiers_adhesion: dossiers?.results ?? [],
       versements: versements?.results ?? [],
-      competitions: competitions?.results ?? [],
+      evenements: competitions?.results ?? [],
       garderie_demandes: garderie?.results ?? [],
       photo_garderie: p ? { deposee_le: p.deposee_le, image: `data:${p.type};base64,${p.image}` } : null,
     });
@@ -77,6 +81,7 @@ export async function donneesDuCompte(env: Env, userId: number): Promise<Ligne |
       roles: ((roles?.results ?? []) as { role: string }[]).map((r) => r.role),
       connexions: identites?.results ?? [],
       sessions_ouvertes: sessions?.results ?? [],
+      inscriptions_famille_evenements: evenements?.results ?? [],
     },
     adherents: enfants,
   };

@@ -31,3 +31,6 @@ nouvelles), WhatsApp et Facebook servant à relayer des liens.
 - **Dépend de** : 004 et 005 pour la publication (bureau) et les contenus réservés.
 - Droits requis : `bureau` (publier) ; public / familles (lire).
 - Données personnelles : photos → droit à l'image (006).
+- **2026-09-24 (spec 021)** : le calendrier du club, ce sont les **événements** (compétitions,
+  stages, rencontres, repas…, menu « Événements »). La 013 garde les actualités et construit
+  l'abonnement agenda (iCal) à partir des événements.

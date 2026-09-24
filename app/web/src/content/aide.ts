@@ -92,7 +92,7 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
       {
         q: 'Que veulent dire « inscrire », « récupérer » et « prévenu » ?',
         r: [
-          'Inscrire : vous pouvez l’inscrire aux compétitions et à la garderie du mercredi.',
+          'Inscrire : vous pouvez l’inscrire aux événements (compétitions, stages…) et à la garderie du mercredi.',
           'Récupérer : vous pouvez venir le chercher à la fin du cours ou de la garderie.',
           'Prévenu : le club vous contacte pour ce qui le concerne.',
           'Ces droits sont fixés par le bureau, pour chaque responsable.',
@@ -132,34 +132,41 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
   },
   {
     id: 'competitions',
-    titre: 'Inscrire mon enfant à une compétition',
+    titre: 'Événements : compétitions, stages, repas…',
     profil: 'famille',
     questions: [
       {
-        q: 'Comment l’inscrire ?',
+        q: 'Inscrire mon enfant à une compétition ou un stage',
         r: [
-          'Touchez le lien de la compétition posté dans le groupe WhatsApp du club (ou menu « Compétitions » du site), puis « Inscrire » à côté du prénom de votre enfant. C’est tout : le bureau s’occupe de l’inscription auprès de la fédération.',
+          'Touchez le lien de l’événement posté dans le groupe WhatsApp du club (ou menu « Événements » du site), puis « Inscrire » à côté du prénom de votre enfant. Pour une compétition, le bureau s’occupe ensuite de l’inscription auprès de la fédération.',
           'Il faut être connecté : si le site vous le demande, utilisez le lien personnel envoyé par le bureau.',
         ],
       },
       {
         q: 'Je me suis trompé, ou mon enfant ne peut plus venir',
         r: [
-          'Jusqu’à la date limite, « Annuler l’inscription » sur la page de la compétition.',
+          'Jusqu’à la date limite, « Annuler l’inscription » sur la page de l’événement.',
           'Après la date limite, les inscriptions sont transmises : prévenez directement le bureau.',
         ],
       },
       {
         q: 'Le bouton « Inscrire » n’apparaît pas',
         r: [
-          '« Pas dans les catégories » : la compétition ne concerne pas l’âge (ou le sexe) de votre enfant ; la catégorie est calculée d’après son année de naissance.',
+          '« Pas dans les catégories » : l’événement ne concerne pas l’âge (ou le sexe) de votre enfant ; la catégorie est calculée d’après son année de naissance.',
           '« Inscription par un autre responsable » : le bureau ne vous a pas donné le droit d’inscrire cet enfant (voir « Mes enfants »).',
           '« Inscriptions closes » : la date limite est passée.',
         ],
       },
       {
-        q: 'Où voir les compétitions de mon enfant ?',
-        r: ['Dans « Mes enfants », en bas de sa fiche : les compétitions à venir et passées auxquelles il a été inscrit.'],
+        q: 'Inscrire ma famille à un repas, une fête…',
+        r: [
+          'Sur la page de l’événement, bloc « Ma famille » : indiquez le nombre d’adultes et d’enfants avec « + » et « − », puis « Inscrire ma famille ».',
+          'Jusqu’à la date limite, vous pouvez changer le nombre (« Mettre à jour ») ou « Annuler l’inscription ».',
+        ],
+      },
+      {
+        q: 'Où voir les événements de mon enfant ?',
+        r: ['Dans « Mes enfants », en bas de sa fiche : les événements à venir et passés auxquels il a été inscrit.'],
       },
     ],
   },
@@ -325,35 +332,42 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
   },
   {
     id: 'competitions-bureau',
-    titre: 'Compétitions : publier, suivre, ressaisir',
+    titre: 'Événements : publier, suivre, ressaisir',
     profil: 'bureau',
     questions: [
       {
-        q: 'Publier une compétition',
+        q: 'Publier un événement',
         r: [
-          'Compétitions → « Nouvelle compétition » : nom, date, lieu (et adresse, pour l’itinéraire), catégories concernées, date limite d’inscription. Informations pratiques (pesée, horaires, pièces à apporter) et lien vers la page officielle si vous les avez.',
+          'Événements → « Nouvel événement » : type (compétition, stage, rencontre, repas, fête…), nom, date et heure, lieu (et adresse, pour l’itinéraire). Informations pratiques et lien vers la page officielle si vous les avez.',
+          'Inscription : une compétition inscrit des enfants, par catégorie. Pour les autres événements, au choix : pas d’inscription (information seule), inscription des enfants (aucune catégorie cochée = tous les enfants), ou inscription de la famille avec le nombre d’adultes et d’enfants (ex. repas). Avec inscription : date limite.',
           'Puis « Envoyer sur WhatsApp » : le message est prêt, avec le lien de la page. Postez-le dans le groupe du club.',
         ],
       },
       {
         q: 'Que voient les parents ?',
         r: [
-          'La page de la compétition est publique : date, lieu, catégories, informations pratiques. Aucune information sur les enfants.',
+          'La page de l’événement est publique : date, lieu, catégories, informations pratiques. Aucune information sur les inscrits.',
           'Une fois connecté, un parent voit ses enfants et peut inscrire ceux qui sont dans les catégories, jusqu’à la date limite incluse, s’il a le droit « inscrire » sur l’enfant.',
         ],
       },
       {
         q: 'Ressaisir les inscriptions sur le site fédéral',
         r: [
-          'Sur la compétition, bloc « Inscrits » : « Copier » (à coller dans un tableur) ou « CSV » (fichier Excel) : nom, prénom, date de naissance, sexe, catégorie, ceinture, n° de licence.',
-          'Cochez « Ressaisi sur le site fédéral » au fur et à mesure : la liste des compétitions indique combien il en reste.',
+          'Compétitions seulement. Bloc « Inscrits » : « Copier » (à coller dans un tableur) ou « CSV » (fichier Excel) : nom, prénom, date de naissance, sexe, catégorie, ceinture, n° de licence.',
+          'Cochez « Ressaisi sur le site fédéral » au fur et à mesure : la liste des événements indique combien il en reste.',
           'Le fichier contient des données d’enfants : supprimez-le une fois la ressaisie faite.',
         ],
       },
       {
         q: 'Les alertes en orange',
         r: [
-          'N° de licence manquant, pas de dossier d’adhésion pour la saison, formalité médicale non reçue : l’inscription n’est pas bloquée, mais c’est à régler avant la ressaisie.',
+          'N° de licence manquant, pas de dossier d’adhésion pour la saison, formalité médicale non reçue (compétitions) : l’inscription n’est pas bloquée, mais c’est à régler avant la ressaisie.',
+        ],
+      },
+      {
+        q: 'Suivre les familles inscrites (repas, fête…)',
+        r: [
+          'Bloc « Familles inscrites » : chaque famille avec son nombre d’adultes et d’enfants, et le total des participants. « CSV » pour le traiteur ou la salle ; « Retirer » annule une inscription.',
         ],
       },
       {

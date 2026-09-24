@@ -171,7 +171,7 @@ function FicheEnfant({ enfant: e }: { enfant: Enfant }) {
   const client = useQueryClient()
   const rafraichir = () => client.invalidateQueries({ queryKey: ['famille'] })
   const droits = [
-    ['Vous pouvez l’inscrire (compétitions, garderie)', e.peut_inscrire],
+    ['Vous pouvez l’inscrire (événements, garderie)', e.peut_inscrire],
     ['Vous pouvez le récupérer', e.peut_recuperer],
     ['Vous êtes prévenu·e par le club', e.est_contact],
   ] as const
@@ -251,7 +251,7 @@ function FicheEnfant({ enfant: e }: { enfant: Enfant }) {
       </div>
 
       <div className="mt-5 border-t pt-4">
-        <h3 className="mb-1.5 text-sm font-semibold">Compétitions</h3>
+        <h3 className="mb-1.5 text-sm font-semibold">Événements</h3>
         <HistoriqueCompetitions competitions={e.competitions} vers="public" />
       </div>
     </Bloc>
