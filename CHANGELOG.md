@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.11.0] — 2026-09-24
+
 ### Données personnelles : droits des familles et effacement automatique
 
 #### Notes client
@@ -32,6 +34,8 @@ et consultable par l'administrateur pendant un an.
 
 - Page « Données personnelles » : droits exerçables depuis l'espace, effacement automatique,
   journal des accès
+
+## [0.10.0] — 2026-09-24
 
 ### Cotisations : suivi des paiements par le trésorier
 

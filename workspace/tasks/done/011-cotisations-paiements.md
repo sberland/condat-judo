@@ -21,10 +21,10 @@ qui a payé quoi et ce qui reste dû.
 
 ## Critères d'acceptation
 
-- [ ] Le trésorier enregistre un chèque en moins de 30 secondes, depuis son téléphone
-- [ ] Le restant dû d'une famille (plusieurs enfants) est juste, réduction famille comprise
-- [ ] Les échéances du mois à encaisser sont listées
-- [ ] Un parent voit ce qu'il a payé et ce qui reste dû, sans voir les autres familles
+- [x] Le trésorier enregistre un chèque en moins de 30 secondes, depuis son téléphone
+- [x] Le restant dû d'une famille (plusieurs enfants) est juste, réduction famille comprise
+- [x] Les échéances du mois à encaisser sont listées
+- [x] Un parent voit ce qu'il a payé et ce qui reste dû, sans voir les autres familles
 
 ## Hors périmètre
 
