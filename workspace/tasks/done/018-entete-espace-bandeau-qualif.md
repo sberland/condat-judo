@@ -19,9 +19,9 @@
 
 ## Critères d'acceptation
 
-- [ ] Depuis n'importe quelle page, un geste mène à l'espace (connecté) ou à la connexion (visiteur)
-- [ ] Mobile à 360 px : bouton visible sans débordement
-- [ ] En qualif, la version reste lisible (dans le badge et en bas du pied de page)
+- [x] Depuis n'importe quelle page, un geste mène à l'espace (connecté) ou à la connexion (visiteur)
+- [x] Mobile à 360 px : bouton visible sans débordement
+- [x] En qualif, la version reste lisible (dans le badge et en bas du pied de page)
 
 ## Hors périmètre
 

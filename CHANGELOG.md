@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.2] — 2026-09-24
+
 ### Accès direct à l'espace membres, badge de qualification lisible
 
 #### Notes client
