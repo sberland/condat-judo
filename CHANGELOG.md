@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.8.0] — 2026-09-24
+
 ### Données personnelles : information des familles
 
 #### Notes client

@@ -29,12 +29,12 @@ les durées. À livrer **avant** l'ouverture des espaces privés aux familles.
 
 ## Critères d'acceptation (ce lot — la suite est dans la spec 019)
 
-- [ ] La page « Données personnelles » informe : responsable, données, finalités, bases légales,
+- [x] La page « Données personnelles » informe : responsable, données, finalités, bases légales,
   destinataires, durées, droits, contact, cookies, sécurité
-- [ ] L'espace membres, la page de connexion et le message du lien de connexion y renvoient
-- [ ] Chaque consentement est tracé (qui, quand, pour quel enfant) et retirable (porté par 010a)
-- [ ] Le registre des traitements est rédigé (validation par le bureau : réponses du club)
-- [ ] La prod ne peut pas partir tant qu'une information attend la réponse du club
+- [x] L'espace membres, la page de connexion et le message du lien de connexion y renvoient
+- [x] Chaque consentement est tracé (qui, quand, pour quel enfant) et retirable (porté par 010a)
+- [x] Le registre des traitements est rédigé (validation par le bureau : réponses du club à reporter, cf. Réalisation)
+- [x] La prod ne peut pas partir tant qu'une information attend la réponse du club
 
 ## Réalisation (2026-09-24)
 
@@ -44,9 +44,10 @@ les durées. À livrer **avant** l'ouverture des espaces privés aux familles.
 - Registre : [`registre-traitements.md`](../../docs/rgpd/registre-traitements.md).
 - Garde-fou : `deploy.yml` échoue tant qu'une valeur de `RGPD` est `provisoire`.
 - **En attente du club** (questionnaire) : contact pour les droits, durée de conservation des
-  adhérents, destinataires externes.
+  adhérents, destinataires externes. Livrée en qualif (v0.8.0) avec ces valeurs `provisoire` ; leur
+  report (`rgpd.ts` + registre) est un préalable à la mise en production.
 - **Suite** : export des données par le responsable, purge automatisée, journal des accès
-  sensibles → [`019-rgpd-droits-purge.md`](019-rgpd-droits-purge.md).
+  sensibles → [`019-rgpd-droits-purge.md`](../pending/019-rgpd-droits-purge.md).
 
 ## Hors périmètre
 
