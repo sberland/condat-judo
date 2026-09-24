@@ -12,6 +12,7 @@ import { categorieDe, eligible } from '../../../web/src/content/categories';
 import { saisonCourante, saisonPourDate } from '../saison';
 import { saisons } from './saisons';
 import { garderie } from './garderie';
+import { accordPhoto, effacerPhoto, enregistrerPhoto, lirePhoto, PHOTO_RECENTE, reponsePhoto } from '../photos';
 import { aujourdhuiParis, COLONNES_COMPETITION, inscriptionsOuvertes, lireCompetition, versCompetition } from './competitions';
 import {
   calculerMontant,
@@ -29,6 +30,7 @@ import {
   validerCompte,
   validerLien,
   validerPersonneAutorisee,
+  validerPhoto,
   type Resultat,
 } from '../validation';
 
@@ -129,7 +131,8 @@ admin.get('/adherents/:id', async (c) => {
     .first();
   if (!adherent) return c.json({ error: 'Adhérent introuvable' }, 404);
 
-  const [responsables, personnes, competitions] = await c.env.DB.batch([
+  const saison = await saisonCourante(c);
+  const [responsables, personnes, competitions, photo] = await c.env.DB.batch([
     c.env.DB.prepare(
       `SELECT u.id, u.prenom, u.nom, u.email, u.telephone, l.qualite, l.peut_inscrire, l.peut_recuperer, l.est_contact,
               EXISTS (SELECT 1 FROM identites i WHERE i.user_id = u.id) AS compte_active
@@ -144,12 +147,19 @@ admin.get('/adherents/:id', async (c) => {
       `SELECT co.id, co.nom, co.date, co.statut FROM inscriptions_competition i JOIN competitions co ON co.id = i.competition_id
        WHERE i.adherent_id = ? ORDER BY co.date DESC`,
     ).bind(adherentId),
+    // Photo pour la garderie (012b) : date de dépôt, accord du dossier de la saison.
+    c.env.DB.prepare(
+      `SELECT (SELECT p.deposee_le FROM photos_adherents p WHERE p.adherent_id = ?1 AND ${PHOTO_RECENTE}) AS deposee_le,
+              (SELECT d.photo_garderie FROM adhesions d WHERE d.adherent_id = ?1 AND d.saison = ?2) AS accord`,
+    ).bind(adherentId, saison.id),
   ]);
+  const p = photo?.results[0] as { deposee_le: string | null; accord: string | null } | undefined;
   return c.json({
     adherent,
     responsables: responsables?.results ?? [],
     personnesAutorisees: personnes?.results ?? [],
     competitions: competitions?.results ?? [],
+    photo: { deposeeLe: p?.deposee_le ?? null, accord: p?.accord ?? null },
   });
 });
 
@@ -246,6 +256,27 @@ admin.delete('/adherents/:id/personnes-autorisees/:pid', async (c) => {
     .bind(id(c, 'pid'), id(c, 'id'))
     .run();
   if (!res.meta.changes) return c.json({ error: 'Personne introuvable' }, 404);
+  return c.json({ ok: true });
+});
+
+// --- Photo pour la garderie (spec 012b) : déposée par le bureau si l'accord est donné ---
+
+admin.get('/adherents/:id/photo', async (c) => reponsePhoto(c, await lirePhoto(c.env, id(c, 'id') ?? 0)));
+
+admin.put('/adherents/:id/photo', async (c) => {
+  const adherentId = id(c, 'id') ?? 0;
+  const r = validerPhoto((await corps(c)) ?? {});
+  if (!r.ok) return invalide(c, r);
+  if (!(await adherentActif(c, adherentId))) return c.json({ error: 'Adhérent introuvable' }, 404);
+  if ((await accordPhoto(c.env, adherentId, (await saisonCourante(c)).id)) !== 'oui') {
+    return c.json({ error: 'Accord « photo pour la garderie » non donné : à recueillir dans le dossier d’adhésion' }, 409);
+  }
+  await enregistrerPhoto(c.env, adherentId, r.valeur, c.get('utilisateur').id).run();
+  return c.json({ ok: true });
+});
+
+admin.delete('/adherents/:id/photo', async (c) => {
+  await effacerPhoto(c.env, id(c, 'id') ?? 0).run();
   return c.json({ ok: true });
 });
 
@@ -394,6 +425,7 @@ type Dossier = {
   soins_urgence: Recueil;
   droit_image: Recueil;
   whatsapp: Recueil;
+  photo_garderie: Recueil;
   valide_le: string | null;
 } & Record<string, unknown>;
 
@@ -442,26 +474,27 @@ admin.put('/adherents/:id/adhesion', async (c) => {
   if (!r.ok) return invalide(c, r);
   const avant = await contexteDossier(c, adherentId);
   if (!avant) return c.json({ error: 'Adhérent introuvable' }, 404);
-  const s = r.valeur;
+  const s = { ...r.valeur, photo_garderie: r.valeur.photo_garderie ?? avant.adhesion?.photo_garderie ?? 'non_recueilli' };
   const m = calculerMontant(saison.referentiel.tarifs, { formule: s.formule, passeport: !!s.passeport, horsCommune: !!s.hors_commune, reductionFamille: !!s.reduction_famille });
   if (!m) return c.json({ error: 'Saisie invalide', erreurs: { formule: 'Formule inconnue' } }, 400);
   const moi = c.get('utilisateur').id;
   // Consentement / autorisation : date et auteur mis à jour quand la réponse change.
-  const trace = (champ: 'soins_urgence' | 'droit_image' | 'whatsapp'): [unknown, unknown] => {
+  const trace = (champ: 'soins_urgence' | 'droit_image' | 'whatsapp' | 'photo_garderie'): [unknown, unknown] => {
     if (avant.adhesion?.[champ] === s[champ]) return [avant.adhesion[`${champ}_le`] ?? null, avant.adhesion[`${champ}_par`] ?? null];
     return s[champ] === 'non_recueilli' ? [null, null] : [new Date().toISOString().slice(0, 19).replace('T', ' '), moi];
   };
   const [soinsLe, soinsPar] = trace('soins_urgence');
   const [imageLe, imagePar] = trace('droit_image');
   const [whatsappLe, whatsappPar] = trace('whatsapp');
+  const [photoLe, photoPar] = trace('photo_garderie');
   // Toute modification annule la validation : le bureau revalide un dossier modifié.
   await c.env.DB.prepare(
     `INSERT INTO adhesions (adherent_id, saison, formule, passeport, hors_commune, reduction_famille,
        montant_participation, montant_licence, montant_supplements, montant_reduction, montant_total,
        paiement_mode, paiement_3_fois, echeance_1, echeance_2, echeance_3, formalite_type, formalite_recue_le,
        soins_urgence, soins_urgence_le, soins_urgence_par, droit_image, droit_image_le, droit_image_par,
-       whatsapp, whatsapp_le, whatsapp_par, cree_par)
-     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27, ?28)
+       whatsapp, whatsapp_le, whatsapp_par, photo_garderie, photo_garderie_le, photo_garderie_par, cree_par)
+     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27, ?28, ?29, ?30, ?31)
      ON CONFLICT (adherent_id, saison) DO UPDATE SET
        formule = excluded.formule, passeport = excluded.passeport, hors_commune = excluded.hors_commune,
        reduction_famille = excluded.reduction_famille, montant_participation = excluded.montant_participation,
@@ -473,6 +506,7 @@ admin.put('/adherents/:id/adhesion', async (c) => {
        soins_urgence = excluded.soins_urgence, soins_urgence_le = excluded.soins_urgence_le, soins_urgence_par = excluded.soins_urgence_par,
        droit_image = excluded.droit_image, droit_image_le = excluded.droit_image_le, droit_image_par = excluded.droit_image_par,
        whatsapp = excluded.whatsapp, whatsapp_le = excluded.whatsapp_le, whatsapp_par = excluded.whatsapp_par,
+       photo_garderie = excluded.photo_garderie, photo_garderie_le = excluded.photo_garderie_le, photo_garderie_par = excluded.photo_garderie_par,
        valide_le = NULL, valide_par = NULL, updated_at = datetime('now')`,
   )
     .bind(
@@ -480,9 +514,12 @@ admin.put('/adherents/:id/adhesion', async (c) => {
       m.participation, m.licence, m.supplements, m.reduction, m.total,
       s.paiement_mode, s.paiement_3_fois, m.echeancier[0], m.echeancier[1], m.echeancier[2],
       s.formalite_type, s.formalite_recue_le,
-      s.soins_urgence, soinsLe, soinsPar, s.droit_image, imageLe, imagePar, s.whatsapp, whatsappLe, whatsappPar, moi,
+      s.soins_urgence, soinsLe, soinsPar, s.droit_image, imageLe, imagePar, s.whatsapp, whatsappLe, whatsappPar,
+      s.photo_garderie, photoLe, photoPar, moi,
     )
     .run();
+  // Sans accord « photo pour la garderie », la photo d'identification est effacée (spec 012b).
+  if (s.photo_garderie !== 'oui') await c.env.DB.prepare('DELETE FROM photos_adherents WHERE adherent_id = ?').bind(adherentId).run();
   return c.json(await contexteDossier(c, adherentId));
 });
 
@@ -758,7 +795,8 @@ admin.get('/journal', roleRequis('admin'), async (c) => {
   const { results } = await c.env.DB.prepare(
     `SELECT j.id, j.cree_le, j.action, j.cible, j.cible_id, j.detail, u.prenom || ' ' || u.nom AS acteur,
             CASE j.cible
-              WHEN 'adherent' THEN (SELECT a.prenom || ' ' || a.nom FROM adherents a WHERE a.id = j.cible_id)
+              WHEN 'adherent' THEN CASE WHEN j.cible_id IS NULL THEN 'la liste des enfants'
+                ELSE (SELECT a.prenom || ' ' || a.nom FROM adherents a WHERE a.id = j.cible_id) END
               WHEN 'compte' THEN (SELECT x.prenom || ' ' || x.nom FROM users x WHERE x.id = j.cible_id)
               WHEN 'famille' THEN (SELECT 'Famille ' || a.nom FROM adhesions d JOIN adherents a ON a.id = d.adherent_id WHERE d.id = j.cible_id)
               ELSE 'Liste des comptes'
@@ -770,6 +808,7 @@ admin.get('/journal', roleRequis('admin'), async (c) => {
               WHEN 'compte' THEN (SELECT x.prenom || ' ' || x.nom FROM users x WHERE x.id = j.cible_id)
               WHEN 'famille' THEN (SELECT a.nom FROM adhesions d JOIN adherents a ON a.id = d.adherent_id WHERE d.id = j.cible_id)
             END, '')) LIKE ?1
+        OR lower(COALESCE(j.detail, '')) LIKE ?1
      ORDER BY j.id DESC LIMIT 300`,
   )
     .bind(recherche(c.req.query('q')))

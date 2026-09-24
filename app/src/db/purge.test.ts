@@ -3,7 +3,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { critere, debutSaison, instructionsPurge, seuilPurge } from '../worker/purge';
+import { critere, debutSaison, instructionsDurees, instructionsPurge, seuilPurge } from '../worker/purge';
 
 const migrations = fileURLToPath(new URL('./migrations/', import.meta.url));
 const MAINTENANT = '2026-09-28 03:00:00';
@@ -41,6 +41,9 @@ function base(): DatabaseSync {
     INSERT INTO paiements (id, saison, montant, mode, reference, recu_le) VALUES (1, '2021-2022', 14700, 'cheque', 'Chèque 123 Banque Vraie', '2021-09-10');
     INSERT INTO paiement_parts (paiement_id, adhesion_id, montant) VALUES (1, 1, 14700);
     INSERT INTO garderie_demandes (adherent_id, date, lieu) VALUES (1, '2021-10-06', 'École'), (3, '2025-06-25', 'École'), (3, '2026-09-30', 'École');
+    -- Photos : Tom (anonymisé), Zoé récente (gardée), Sam de plus d'un an (effacée).
+    INSERT INTO photos_adherents (adherent_id, image, type, deposee_le) VALUES
+      (1, 'AAAA', 'image/jpeg', '2026-09-01 10:00:00'), (3, 'BBBB', 'image/jpeg', '2026-09-01 10:00:00'), (6, 'CCCC', 'image/jpeg', '2025-09-01 10:00:00');
     INSERT INTO journal_acces (cree_le, user_id, action, cible, cible_id) VALUES ('2025-01-01 10:00:00', 1, 'consultation', 'adherent', 1), ('2026-09-01 10:00:00', 1, 'consultation', 'adherent', 3);
   `);
   return db;
@@ -118,6 +121,10 @@ describe('purge RGPD', () => {
     expect(db.prepare('SELECT adherent_id, date FROM garderie_demandes ORDER BY date').all()).toEqual([{ adherent_id: 3, date: '2026-09-30' }]);
   });
 
+  it('photos : celles des adhérents anonymisés et celles de plus d’un an disparaissent', () => {
+    expect((db.prepare('SELECT adherent_id FROM photos_adherents').all() as { adherent_id: number }[]).map((p) => p.adherent_id)).toEqual([3]);
+  });
+
   it('rapport du passage', () => {
     expect(ligne(db, 'SELECT seuil, adherents, comptes FROM purges')).toEqual({ seuil: 2023, adherents: 3, comptes: 2 });
   });
@@ -126,5 +133,17 @@ describe('purge RGPD', () => {
     purger(db, '2026-10-05 03:00:00');
     expect(ligne(db, 'SELECT adherents, comptes FROM purges ORDER BY id DESC LIMIT 1')).toEqual({ adherents: 0, comptes: 0 });
     expect(ligne(db, 'SELECT prenom FROM adherents WHERE id = 3')).toEqual({ prenom: 'Zoé' });
+  });
+});
+
+describe('durées techniques seules (durée de conservation à confirmer)', () => {
+  const db = base();
+  for (const { sql, params } of instructionsDurees(MAINTENANT)) db.prepare(sql).run(...params);
+
+  it('effacent journal, demandes et photos de plus d’un an, sans rien anonymiser', () => {
+    expect(ligne(db, 'SELECT count(*) AS n FROM journal_acces')).toEqual({ n: 1 });
+    expect(ligne(db, 'SELECT count(*) AS n FROM garderie_demandes')).toEqual({ n: 1 });
+    expect((db.prepare('SELECT adherent_id FROM photos_adherents ORDER BY adherent_id').all() as { adherent_id: number }[]).map((p) => p.adherent_id)).toEqual([1, 3]);
+    expect(ligne(db, 'SELECT count(*) AS n FROM adherents WHERE anonymise_le IS NOT NULL')).toEqual({ n: 0 });
   });
 });

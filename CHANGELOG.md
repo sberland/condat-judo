@@ -6,6 +6,37 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.14.0] — 2026-09-24
+
+### Garderie du mercredi : liste du jour de l'encadrant, photos
+
+#### Notes client
+
+Le mercredi, l'encadrant qui va chercher les enfants à la garderie ouvre « Mercredi du jour » sur
+son téléphone : les enfants à récupérer, par lieu, avec leur photo pour les reconnaître, et qui
+peut venir les chercher au dojo, avec leur téléphone pour appeler en un geste. Cette liste n'est
+visible que le mercredi même, et chaque consultation est enregistrée. Les parents déposent
+eux-mêmes la photo de leur enfant depuis leur espace (réduite sur le téléphone avant l'envoi),
+avec leur accord, retirable à tout moment ; le bureau peut aussi la prendre au dojo si l'accord
+figure au dossier. La photo est effacée au bout d'un an. Les parents gèrent aussi la liste des
+personnes autorisées à venir chercher leur enfant (grands-parents, nounou…) : l'encadrant ne
+confie un enfant qu'aux personnes de cette liste.
+
+#### Ajouts
+
+- Écran « Mercredi du jour » (encadrants, bureau) : enfants par lieu, photo agrandissable,
+  responsables et personnes autorisées avec leur téléphone
+- Espace famille : « Photo pour la garderie du mercredi » et « Autorisés à le récupérer » sur la
+  fiche de chaque enfant ; accord « Photo pour la garderie » dans les autorisations
+- Dossier d'adhésion : accord « Photo pour la garderie du mercredi » ; fiche adhérent : photo
+- Aide intégrée pour l'encadrant ; page « Données personnelles » et registre mis à jour
+
+#### Modifications
+
+- Les demandes de garderie et la photo figurent dans le téléchargement « Mes données »
+- Effacements techniques (journal, demandes et photos de plus d'un an) appliqués chaque semaine,
+  même avant la confirmation de la durée de conservation par le club
+
 ## [0.13.0] — 2026-09-24
 
 ### Garderie du mercredi : les parents demandent en ligne

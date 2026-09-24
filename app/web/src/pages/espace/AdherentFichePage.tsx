@@ -8,6 +8,8 @@ import { HistoriqueCompetitions } from '../../components/espace/HistoriqueCompet
 import { FormulaireAdherent } from '../../components/espace/FormulaireAdherent'
 import { estMineur } from '../../content/adhesion'
 import { LienConnexion } from '../../components/espace/LienConnexion'
+import { GestionPhoto } from '../../components/espace/Photo'
+import { PersonnesAutorisees } from '../../components/espace/PersonnesAutorisees'
 import { Alerte, Bouton, Case, Champ, Selection } from '../../components/formulaire'
 import {
   age,
@@ -48,7 +50,8 @@ export function AdherentFichePage() {
             <Identite fiche={data} rafraichir={rafraichir} />
             <Responsables fiche={data} rafraichir={rafraichir} />
             {!data.adherent.supprime_le && <BlocAdhesion adherentId={data.adherent.id} />}
-            <PersonnesAutorisees fiche={data} rafraichir={rafraichir} />
+            <BlocPersonnesAutorisees fiche={data} rafraichir={rafraichir} />
+            {!data.adherent.supprime_le && <BlocPhoto fiche={data} rafraichir={rafraichir} />}
             <Bloc titre="Compétitions">
               <HistoriqueCompetitions competitions={data.competitions} vers="bureau" />
             </Bloc>
@@ -490,100 +493,28 @@ function AjoutResponsable({ adherentId, fermer, rafraichir }: { adherentId: numb
 
 // --- Personnes autorisées à récupérer l'enfant ---
 
-function PersonnesAutorisees({ fiche, rafraichir }: PropsBloc) {
-  const [ajout, setAjout] = useState(false)
-  const [s, setS] = useState({ prenom: '', nom: '', lien: '', telephone: '' })
-  const [erreurs, setErreurs] = useState<Record<string, string>>({})
-  const [enCours, setEnCours] = useState(false)
-  const base = `/api/admin/adherents/${fiche.adherent.id}/personnes-autorisees`
-
-  async function ajouter(e: FormEvent) {
-    e.preventDefault()
-    setEnCours(true)
-    setErreurs({})
-    try {
-      await appel('POST', base, s)
-      await rafraichir()
-      setS({ prenom: '', nom: '', lien: '', telephone: '' })
-      setAjout(false)
-    } catch (err) {
-      if (err instanceof ErreurApi) setErreurs(err.erreurs)
-    } finally {
-      setEnCours(false)
-    }
-  }
-
+function BlocPersonnesAutorisees({ fiche, rafraichir }: PropsBloc) {
   return (
-    <Bloc
-      titre="Autorisés à récupérer l’enfant"
-      action={
-        !ajout &&
-        !fiche.adherent.supprime_le && (
-          <Bouton variante="secondaire" onClick={() => setAjout(true)}>
-            <Plus className="size-4" aria-hidden /> Ajouter
-          </Bouton>
-        )
-      }
-    >
+    <Bloc titre="Autorisés à récupérer l’enfant">
       <p className="mb-3 text-sm text-muted-foreground">Personnes sans compte (grands-parents, nounou…), en plus des responsables.</p>
-      <ul className="grid gap-2">
-        {fiche.personnesAutorisees.map((p) => (
-          <li key={p.id} className="flex items-center justify-between gap-3 rounded-xl border px-4 py-3">
-            <span>
-              <span className="font-semibold">
-                {p.prenom} {p.nom}
-              </span>
-              <span className="text-muted-foreground"> · {p.lien}</span>
-              {p.telephone && <span className="block text-sm text-muted-foreground">{p.telephone}</span>}
-            </span>
-            <button
-              type="button"
-              aria-label={`Retirer ${p.prenom} ${p.nom}`}
-              onClick={async () => {
-                await appel('DELETE', `${base}/${p.id}`)
-                await rafraichir()
-              }}
-              className="flex size-10 items-center justify-center rounded-full text-muted-foreground hover:bg-brand-soft hover:text-brand"
-            >
-              <Trash2 className="size-4" aria-hidden />
-            </button>
-          </li>
-        ))}
-        {fiche.personnesAutorisees.length === 0 && !ajout && <li className="text-muted-foreground">Aucune personne autorisée.</li>}
-      </ul>
-      {ajout && (
-        <form onSubmit={ajouter} className="mt-4 grid gap-4 rounded-xl border border-dashed p-4" noValidate>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Champ id="pa-prenom" libelle="Prénom" requis valeur={s.prenom} onChange={(v) => setS((p) => ({ ...p, prenom: v }))} erreur={erreurs.prenom} />
-            <Champ id="pa-nom" libelle="Nom" requis valeur={s.nom} onChange={(v) => setS((p) => ({ ...p, nom: v }))} erreur={erreurs.nom} />
-            <Champ
-              id="pa-lien"
-              libelle="Lien avec l’enfant"
-              requis
-              valeur={s.lien}
-              onChange={(v) => setS((p) => ({ ...p, lien: v }))}
-              erreur={erreurs.lien}
-              aide="Ex. grand-mère, nounou"
-            />
-            <Champ
-              id="pa-telephone"
-              libelle="Téléphone"
-              type="tel"
-              valeur={s.telephone}
-              onChange={(v) => setS((p) => ({ ...p, telephone: v }))}
-              erreur={erreurs.telephone}
-            />
-          </div>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Bouton type="submit" enCours={enCours}>
-              Ajouter
-            </Bouton>
-            <Bouton variante="secondaire" onClick={() => setAjout(false)}>
-              Annuler
-            </Bouton>
-          </div>
-        </form>
-      )}
+      <PersonnesAutorisees
+        base={`/api/admin/adherents/${fiche.adherent.id}/personnes-autorisees`}
+        personnes={fiche.personnesAutorisees}
+        modifiable={!fiche.adherent.supprime_le}
+        rafraichir={rafraichir}
+        prefixe="pa"
+      />
+    </Bloc>
+  )
+}
+
+// --- Photo pour la garderie du mercredi (spec 012b) ---
+
+function BlocPhoto({ fiche, rafraichir }: PropsBloc) {
+  const a = fiche.adherent
+  return (
+    <Bloc titre="Photo pour la garderie">
+      <GestionPhoto prenom={a.prenom} nom={a.nom} etat={fiche.photo} url={`/api/admin/adherents/${a.id}/photo`} mode="bureau" rafraichir={rafraichir} />
     </Bloc>
   )
 }

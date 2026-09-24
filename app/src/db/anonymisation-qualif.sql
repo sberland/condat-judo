@@ -17,6 +17,7 @@
 DELETE FROM sessions;
 DELETE FROM liens_connexion;
 DELETE FROM journal_acces;
+DELETE FROM photos_adherents;  -- visages d'enfants (spec 012b) : les testeurs déposent des photos fictives
 
 -- Comptes sans rôle (familles, adhérents majeurs).
 UPDATE users SET

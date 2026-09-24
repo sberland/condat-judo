@@ -135,11 +135,15 @@ export type Responsable = {
 
 export type PersonneAutorisee = { id: number; prenom: string; nom: string; lien: string; telephone: string | null }
 
+/** Photo pour la garderie (spec 012b) : date de dépôt (null sans photo), accord du dossier de la saison (null sans dossier). */
+export type EtatPhoto = { deposeeLe: string | null; accord: Recueil | null }
+
 export type FicheAdherent = {
   adherent: Adherent
   responsables: Responsable[]
   personnesAutorisees: PersonneAutorisee[]
   competitions: CompetitionEnfant[]
+  photo: EtatPhoto
 }
 
 export type Compte = {
@@ -168,8 +172,11 @@ export type Enfant = {
   peut_inscrire: number
   peut_recuperer: number
   est_contact: number
+  /** Mère, père ou tuteur : répond aux accords, dépose la photo. */
+  responsableLegal: boolean
+  photo: EtatPhoto
   coResponsables: { prenom: string; nom: string; qualite: Qualite }[]
-  personnesAutorisees: { prenom: string; nom: string; lien: string }[]
+  personnesAutorisees: { id: number; prenom: string; nom: string; lien: string }[]
   competitions: CompetitionEnfant[]
 }
 
@@ -199,6 +206,8 @@ export type Adhesion = {
   droit_image_le: string | null
   whatsapp: Recueil
   whatsapp_le: string | null
+  photo_garderie: Recueil
+  photo_garderie_le: string | null
   valide_le: string | null
 }
 

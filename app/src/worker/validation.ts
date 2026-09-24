@@ -13,6 +13,7 @@ import {
 import { categorieParId, type Categorie } from '../../web/src/content/categories';
 import type { Tarifs } from '../../web/src/content/tarifs';
 import { MODES_ENCAISSEMENT, type ModeEncaissement } from '../../web/src/content/paiements';
+import { TAILLE_MAX_PHOTO, TYPES_PHOTO, type TypePhoto } from '../../web/src/content/photos';
 
 export type Resultat<T> = { ok: true; valeur: T } | { ok: false; erreurs: Record<string, string> };
 
@@ -174,6 +175,8 @@ export type AdhesionSaisie = {
   soins_urgence: Recueil;
   droit_image: Recueil;
   whatsapp: Recueil;
+  /** null = inchangé : l'accord a pu être donné ou retiré par la famille depuis l'ouverture du formulaire. */
+  photo_garderie: Recueil | null;
 };
 
 const dansListe = <T extends string>(liste: Record<T, string>, v: unknown): v is T => typeof v === 'string' && Object.hasOwn(liste, v);
@@ -212,6 +215,7 @@ export function validerAdhesion(corps: Corps, tarifs: Tarifs, aujourdhui = new D
     soins_urgence: recueil('soins_urgence', 'Soins d’urgence'),
     droit_image: recueil('droit_image', 'Droit à l’image'),
     whatsapp: recueil('whatsapp', 'Groupe WhatsApp'),
+    photo_garderie: corps.photo_garderie === undefined ? null : recueil('photo_garderie', 'Photo pour la garderie'),
   });
 }
 
@@ -306,4 +310,27 @@ export function validerPaiement(corps: Corps): Resultat<PaiementSaisi> {
     encaisser_le: encaisser,
     parts: parts.map((p) => ({ adhesion_id: p.adhesion_id, montant: p.montant ?? 0 })),
   });
+}
+
+// --- Photo d'identification (spec 012b) ---
+
+export type PhotoSaisie = { image: string; type: TypePhoto };
+
+/** Photo déjà réduite par le navigateur, en base64 : format, poids et signature du fichier contrôlés. */
+export function validerPhoto(corps: Corps): Resultat<PhotoSaisie> {
+  const refus = (message: string): Resultat<PhotoSaisie> => ({ ok: false, erreurs: { image: message } });
+  const type = corps.type;
+  if (typeof type !== 'string' || !(TYPES_PHOTO as readonly string[]).includes(type)) return refus('Format de photo non pris en charge (JPEG ou WebP)');
+  const image = typeof corps.image === 'string' ? corps.image.replace(/\s/g, '') : '';
+  if (!image || image.length % 4 !== 0 || !/^[A-Za-z0-9+/]+={0,2}$/.test(image)) return refus('Photo illisible');
+  const octets = (image.length / 4) * 3 - (image.endsWith('==') ? 2 : image.endsWith('=') ? 1 : 0);
+  if (octets > TAILLE_MAX_PHOTO) return refus(`Photo trop lourde (${Math.round(TAILLE_MAX_PHOTO / 1024)} Ko au plus)`);
+  // Signature : JPEG (FF D8 FF) ou WebP (« RIFF » … « WEBP »).
+  const debut = atob(image.slice(0, 16));
+  const signature =
+    type === 'image/jpeg'
+      ? debut.charCodeAt(0) === 0xff && debut.charCodeAt(1) === 0xd8 && debut.charCodeAt(2) === 0xff
+      : debut.startsWith('RIFF') && debut.slice(8, 12) === 'WEBP';
+  if (!signature) return refus('Le fichier n’est pas une photo');
+  return { ok: true, valeur: { image, type: type as TypePhoto } };
 }

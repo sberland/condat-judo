@@ -9,6 +9,7 @@ import {
   validerLien,
   validerPaiement,
   validerPersonneAutorisee,
+  validerPhoto,
 } from './validation';
 import { REFERENTIEL_2026_2027 as REF } from '../../web/src/content/referentiel-initial';
 
@@ -111,6 +112,7 @@ describe('validerAdhesion', () => {
       soins_urgence: 'non_recueilli',
       droit_image: 'non_recueilli',
       whatsapp: 'non_recueilli',
+      photo_garderie: null, // absent du formulaire : inchangé
     });
   });
   it('accepte un dossier complet', () => {
@@ -125,11 +127,12 @@ describe('validerAdhesion', () => {
         soins_urgence: 'oui',
         droit_image: 'non',
         whatsapp: 'oui',
+        photo_garderie: 'oui',
       },
       REF.tarifs,
       AUJOURDHUI,
     );
-    expect(r.ok && r.valeur).toMatchObject({ passeport: 1, paiement_3_fois: 1, paiement_mode: 'cheque', droit_image: 'non' });
+    expect(r.ok && r.valeur).toMatchObject({ passeport: 1, paiement_3_fois: 1, paiement_mode: 'cheque', droit_image: 'non', photo_garderie: 'oui' });
   });
   it('refuse formule, mode, pièce et consentement inconnus', () => {
     const r = validerAdhesion({ formule: 'karate', paiement_mode: 'bitcoin', formalite_type: 'radio', droit_image: 'peut-etre' }, REF.tarifs, AUJOURDHUI);
@@ -201,5 +204,25 @@ describe('validerPaiement', () => {
   it('date d’encaissement facultative', () => {
     const r = validerPaiement({ ...cheque, encaisser_le: '' });
     expect(r.ok && r.valeur.encaisser_le).toBe(null);
+  });
+});
+
+describe('validerPhoto', () => {
+  const jpeg = btoa(String.fromCharCode(0xff, 0xd8, 0xff, 0xe0, 0, 16, 74, 70, 73, 70, 0, 1));
+  const webp = btoa('RIFF   WEBPVP8 ');
+  it('accepte un JPEG et un WebP en base64', () => {
+    expect(validerPhoto({ image: jpeg, type: 'image/jpeg' })).toEqual({ ok: true, valeur: { image: jpeg, type: 'image/jpeg' } });
+    expect(validerPhoto({ image: webp, type: 'image/webp' }).ok).toBe(true);
+  });
+  it('refuse un autre format, un fichier déguisé, un base64 invalide', () => {
+    expect(validerPhoto({ image: jpeg, type: 'image/png' }).ok).toBe(false);
+    expect(validerPhoto({ image: webp, type: 'image/jpeg' }).ok).toBe(false);
+    expect(validerPhoto({ image: 'pas du base64 !', type: 'image/jpeg' }).ok).toBe(false);
+    expect(validerPhoto({ type: 'image/jpeg' }).ok).toBe(false);
+  });
+  it('refuse une photo de plus de 60 Ko', () => {
+    const lourde = btoa(String.fromCharCode(0xff, 0xd8, 0xff) + 'x'.repeat(61 * 1024));
+    const r = validerPhoto({ image: lourde, type: 'image/jpeg' });
+    expect(!r.ok && r.erreurs.image).toMatch(/trop lourde/);
   });
 });

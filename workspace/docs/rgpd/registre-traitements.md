@@ -62,22 +62,23 @@
 
 | Rubrique | Contenu |
 | --- | --- |
-| Finalités | Savoir quels enfants récupérer chaque mercredi (garderie → goûter et cours), et où |
-| Base légale | Exécution du contrat d'adhésion (art. 6.1.b), à la demande du responsable |
-| Personnes concernées | Enfants adhérents ; responsable ou membre du bureau auteur de la demande |
-| Données | Enfant, mercredi, lieu de récupération, auteur et date de la demande — **aucune donnée de santé** (allergies : arbitrage du club attendu) |
-| Accès | Le responsable qui peut inscrire l'enfant (ses demandes) ; le bureau (liste de chaque mercredi) |
-| Durée | Un an après le mercredi (purge hebdomadaire) ; effacées à l'anonymisation de l'adhérent |
+| Finalités | Savoir quels enfants récupérer chaque mercredi (garderie → goûter et cours), et où ; les reconnaître et ne les confier qu'aux personnes autorisées (spec 012b) |
+| Base légale | Exécution du contrat d'adhésion (art. 6.1.b), à la demande du responsable ; photo : consentement (art. 6.1.a) d'un responsable légal, retirable à tout moment |
+| Personnes concernées | Enfants adhérents ; responsables et personnes autorisées à les récupérer ; auteur de la demande |
+| Données | Enfant, mercredi, lieu de récupération, auteur et date de la demande ; photo d'identification (réduite, sans métadonnées) si accord ; pour l'encadrant, le jour même : responsables et personnes autorisées avec leur téléphone — **aucune donnée de santé** (allergies : rien de collecté, arbitrage A12) |
+| Accès | Le responsable qui peut inscrire l'enfant (ses demandes, les personnes autorisées) ; les responsables légaux (photo) ; le bureau (liste de chaque mercredi) ; encadrants, bureau et admin : liste du jour avec photos et contacts, **le mercredi même seulement**, chaque consultation journalisée |
+| Durée | Demandes : un an après le mercredi ; photo : un an après son dépôt, effacée aussitôt au retrait de l'accord (purge hebdomadaire) ; tout est effacé à l'anonymisation de l'adhérent |
+| Sécurité | Photo stockée dans la base (UE), servie par l'API sans mise en cache, jamais copiée dans la qualification |
 
 ## 2. Autorisations et consentements
 
 | Rubrique | Contenu |
 | --- | --- |
-| Finalités | Soins d'urgence ; droit à l'image (site, réseaux sociaux, presse) ; ajout au groupe WhatsApp du club |
+| Finalités | Soins d'urgence ; droit à l'image (site, réseaux sociaux, presse) ; ajout au groupe WhatsApp du club ; photo pour la garderie du mercredi (spec 012b) |
 | Base légale | Consentement (art. 6.1.a), donné par un responsable légal pour un mineur, retirable à tout moment ; soins d'urgence : intérêt vital (art. 6.1.d) |
 | Données | Réponse (oui / non / non recueilli), date, auteur de la saisie |
 | Durée | Jusqu'au retrait, et au plus la durée de conservation de l'adhérent |
-| Exercice | La famille répond ou retire son accord (droit à l'image, WhatsApp) depuis son espace ; réponse datée, à son nom (spec 019) |
+| Exercice | La famille répond ou retire son accord (droit à l'image, WhatsApp, photo pour la garderie) depuis son espace ; réponse datée, à son nom (spec 019) |
 | Remarque | Le formulaire papier 2026/2027 présentait le droit à l'image comme « accepté par l'inscription » : non valable, saisi « non recueilli » (spec 010) |
 
 ## 3. Espace membres (comptes et connexion)
@@ -124,3 +125,4 @@
 | 2026-09-24 | Ajout du traitement « Cotisations et paiements » (spec 011) |
 | 2026-09-24 | Purge automatique, journal des accès, export et accords depuis l’espace (spec 019) |
 | 2026-09-24 | Ajout du traitement « Garderie du mercredi » (spec 012a) |
+| 2026-09-24 | Garderie : photo d'identification sur accord, liste du jour de l'encadrant, personnes autorisées gérées par les familles (spec 012b) |

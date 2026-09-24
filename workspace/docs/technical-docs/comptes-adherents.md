@@ -30,7 +30,7 @@ users ──< user_roles            rôles club cumulables : admin, bureau, tres
 | `user_roles` | `(user_id, role)` — rôles club. Aucun rôle = « famille » (droits dérivés des liens seuls). |
 | `adherents` | Pratiquant (enfant ou adulte). `user_id` renseigné pour un adhérent majeur qui a un compte. Suppression **logique** (`supprime_le`), restaurable. |
 | `liens` | Responsable ↔ adhérent : qualité (mère, père, tuteur, autre) et capacités. Plusieurs responsables par enfant (parents séparés), plusieurs enfants par responsable. |
-| `personnes_autorisees` | Personnes sans compte autorisées à récupérer l'enfant (garderie, spec 012). |
+| `personnes_autorisees` | Personnes sans compte autorisées à récupérer l'enfant (garderie, spec 012) ; gérées par le bureau et, depuis la 012b, par un responsable qui peut inscrire l'enfant. |
 
 « Famille » = ensemble des responsables liés à un même enfant : pas de table dédiée, donc pas de
 foyer à maintenir quand des parents se séparent ou se recomposent.
@@ -47,7 +47,8 @@ foyer à maintenir quand des parents se séparent ou se recomposent.
 | --- | --- |
 | `/api/admin/*` (`routes/admin.ts`) | `bureau` ou `admin` — adhérents, liens, personnes autorisées, comptes |
 | `PUT /api/admin/comptes/:id/roles` | `admin` seulement |
-| `/api/famille/*` (`routes/famille.ts`) | tout compte connecté — **filtré en SQL** sur `liens.user_id = moi` |
+| `/api/famille/*` (`routes/famille.ts`) | tout compte connecté — **filtré en SQL** sur `liens.user_id = moi` ; personnes autorisées : *peut inscrire* ; photo : responsable légal (spec 012b) |
+| `/api/encadrant/*` (`routes/encadrant.ts`) | `encadrant`, `bureau` ou `admin` — liste du mercredi du jour (spec 012b) |
 
 Les droits d'un responsable sont **recalculés à chaque requête** à partir des liens : retirer un
 lien retire immédiatement l'accès. L'e-mail n'intervient jamais dans un droit.

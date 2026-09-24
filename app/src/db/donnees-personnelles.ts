@@ -103,6 +103,7 @@ export const TABLES: Record<string, Table> = {
         'soins_urgence', 'soins_urgence_le', 'soins_urgence_par',
         'droit_image', 'droit_image_le', 'droit_image_par',
         'whatsapp', 'whatsapp_le', 'whatsapp_par',
+        'photo_garderie', 'photo_garderie_le', 'photo_garderie_par',
         'valide_le', 'valide_par', 'cree_par', 'created_at', 'updated_at',
       ].map((c) => [c, 'conservee' as const]),
     ),
@@ -139,6 +140,8 @@ export const TABLES: Record<string, Table> = {
   },
   // Garderie (012a) : enfant, mercredi, lieu, auteur — pas de donnée identifiante (adhérent pseudonymisé).
   garderie_demandes: { colonnes: { adherent_id: 'conservee', date: 'conservee', lieu: 'conservee', demande_par: 'conservee', demande_le: 'conservee' } },
+  // Photos d'identification de la garderie (012b) : visages d'enfants — jamais dans la qualif.
+  photos_adherents: { colonnes: { adherent_id: 'purgee', image: 'purgee', type: 'purgee', deposee_le: 'purgee', deposee_par: 'purgee' } },
   // Journal des accès (019) : qui a consulté quelle famille en prod — vidé dans la qualif.
   journal_acces: {
     colonnes: { id: 'purgee', cree_le: 'purgee', user_id: 'purgee', action: 'purgee', cible: 'purgee', cible_id: 'purgee', detail: 'purgee' },

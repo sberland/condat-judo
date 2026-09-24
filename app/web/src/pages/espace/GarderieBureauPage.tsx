@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Trash2, UserPlus } from 'lucide-react'
 import { Bloc, Espace } from '../../components/espace/Garde'
@@ -27,6 +28,13 @@ export function GarderieBureauPage() {
         const autres = data.demandes.filter((d) => !data.lieux.includes(d.lieu))
         return (
           <div className="grid grid-cols-1 gap-6">
+            <p className="text-sm text-muted-foreground">
+              Le jour même, la liste avec les photos et les personnes autorisées :{' '}
+              <Link to="/espace/garderie-du-jour" className="font-semibold text-brand">
+                Mercredi du jour
+              </Link>
+              .
+            </p>
             <div className="flex flex-wrap gap-2" role="group" aria-label="Choisir le mercredi">
               {data.mercredis.map((m) => (
                 <button
