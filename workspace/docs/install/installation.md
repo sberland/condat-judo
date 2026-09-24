@@ -1,5 +1,5 @@
 ---
-doc-version: "0.3"
+doc-version: "0.4"
 doc-date: "2026-09-24"
 ---
 
@@ -41,7 +41,53 @@ npm run dev:web    # front :5173 (autre terminal)
 3. **Cloudflare Access** : application de verrouillage de la **preview** uniquement (la prod est
    publique) — voir [`cloudflare-access.md`](../technical-docs/cloudflare-access.md). Aucune
    valeur à reporter dans le code : Access n'est pas une source d'identité pour l'app.
-4. **Premier déploiement** : voir `workspace/workflow-deploy-spe.md`.
+4. **Sauvegarde de la base** (spec 007) : voir « Sauvegarde de la base » ci-dessous — **avant**
+   tout déploiement en prod qui applique une migration (il la sauvegarde d'abord, et échoue sinon).
+5. **Premier déploiement** : voir `workspace/workflow-deploy-spe.md`.
+
+### Sauvegarde de la base (une fois)
+
+Sauvegarde quotidienne de la D1 de prod, **chiffrée**, dans un dépôt GitHub **privé** (le dépôt
+du projet est public). Détail : [`sauvegarde.md`](../technical-docs/sauvegarde.md).
+
+1. **Dépôt privé** :
+
+   ```bash
+   gh repo create sberland/condat-judo-sauvegardes --private --description "Sauvegardes chiffrées de la base Condat Judo"
+   ```
+
+2. **Clé de chiffrement** (poste du responsable) : `winget install FiloSottile.age`, rouvrir le
+   terminal, puis :
+
+   ```powershell
+   age-keygen -o "$HOME\condat-judo-sauvegarde.key"
+   ```
+
+   La commande affiche la **clé publique** (`age1…`). Le fichier contient la **clé privée** :
+   la ranger hors ligne, en deux exemplaires (gestionnaire de mots de passe + support hors
+   ligne). ⚠️ Sans elle, les sauvegardes sont illisibles ; elle ne va jamais dans GitHub.
+
+3. **Clé publique** → variable GitHub du projet :
+
+   ```bash
+   gh variable set SAUVEGARDE_CLE_PUBLIQUE --repo sberland/condat-judo --body "age1…"
+   ```
+
+4. **Jeton limité au dépôt privé** : github.com → Settings → Developer settings → *Fine-grained
+   tokens* → *Generate new token* : accès au seul dépôt `condat-judo-sauvegardes`, permission
+   **Contents : Read and write**, expiration 1 an (noter la date de renouvellement). Puis :
+
+   ```bash
+   gh secret set SAUVEGARDE_TOKEN --repo sberland/condat-judo   # coller le jeton
+   ```
+
+5. **Vérifier** (une fois `sauvegarde.yml` sur `main`) : `gh workflow run sauvegarde.yml`, puis
+   `gh release list --repo sberland/condat-judo-sauvegardes`.
+6. **Tester la restauration** (vers la qualif, anonymisée) :
+
+   ```powershell
+   .\deploy\restaurer-sauvegarde.ps1 -Nom quotidienne-AAAA-MM-JJ -Cle "$HOME\condat-judo-sauvegarde.key"
+   ```
 
 ## Configuration initiale
 
