@@ -27,6 +27,24 @@ les testeurs n'ont besoin que de données réalistes, pas réelles.
 
 - Anonymisation de la prod (purge RGPD : spec 006)
 
+## Réalisation (2026-09-24) — choix appliqués
+
+- **Comptes avec un rôle conservés** (bureau, admin, encadrant…) : ce sont les testeurs, qui se
+  connectent à la qualif avec leur vrai e-mail (`deploy/lien-connexion.ps1 -Cible preview`) ;
+  leurs noms sont déjà publics. Idem pour la fiche d'un adhérent majeur qui a un rôle.
+- **Pseudonymisation stable** (fonction de l'id) : prénoms / noms fictifs, e-mails
+  `compte<id>@exemple.test`, téléphones fictifs, date de naissance ramenée au 15 juin de la même
+  année, n° de licence et adresse fictifs (absences conservées), code postal et ville conservés
+  (supplément « hors commune ») ; `identites.email_vu` vidé ; sessions et liens de connexion
+  supprimés.
+- **Contrôle en CI plutôt qu'au déploiement** : `app/src/db/donnees-personnelles.ts` classe
+  chaque colonne (conservée / pseudonymisée / purgée) ; `anonymisation.test.ts` applique les
+  migrations dans une vraie base SQLite (`node:sqlite`) et échoue si une colonne n'est pas
+  classée, si une valeur réelle subsiste, ou si l'anonymisation n'est pas idempotente → la PR
+  est bloquée avant même d'atteindre la qualif.
+- Script : `app/src/db/anonymisation-qualif.sql`, exécuté par `preview.yml` et
+  `deploy/refresh-preview-db.ps1` après les migrations (remplace la purge des sessions de la 005a).
+
 ## Notes
 
 - À livrer **avant** les premières données réelles en prod (avec 006 et 007).

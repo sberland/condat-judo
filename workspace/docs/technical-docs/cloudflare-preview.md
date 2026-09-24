@@ -38,10 +38,14 @@ feature/NNN ─PR▶ preview ─(preview.yml)▶ deploy --env preview + copie D1
 - **Liste des tables à purger codée en dur** (`sessions`, `liens_connexion`, `liens`, `personnes_autorisees`, `identites`, `user_roles`, `adherents`, `saisons`, `users`, `d1_migrations`) à
   trois endroits (`app/package.json`, `deploy/refresh-preview-db.ps1`, `preview.yml`) — à mettre
   à jour à chaque nouvelle table, ordre = dépendances FK (enfants d'abord).
-- **Sessions et liens de connexion de la prod supprimés** après import + migrations (`DELETE FROM
-  sessions; DELETE FROM liens_connexion;`, dans `preview.yml` et `refresh-preview-db.ps1`) : aucun
-  accès ouvert en prod ne reste valable en qualif. Un testeur obtient son lien par
-  `deploy/lien-connexion.ps1 -Cible preview`, puis passe le verrou Access **et** la connexion de l'app.
+- **Copie anonymisée** (spec 008) après import + migrations : `app/src/db/anonymisation-qualif.sql`
+  (dans `preview.yml` et `refresh-preview-db.ps1`) pseudonymise familles, adhérents et personnes
+  autorisées, et supprime sessions et liens de connexion de la prod. Les **comptes avec un rôle**
+  (testeurs du bureau) sont conservés : un testeur obtient son lien par
+  `deploy/lien-connexion.ps1 -Email <son e-mail> -Cible preview`, puis passe le verrou Access **et**
+  la connexion de l'app. Les comptes famille y ont des e-mails `compte<id>@exemple.test`.
+- **Toute nouvelle colonne** doit être classée dans `app/src/db/donnees-personnelles.ts` (et
+  traitée dans le SQL si elle est personnelle) : le test `anonymisation.test.ts` bloque la CI sinon.
 - **Snapshot prod vide** (avant la première mise en prod) : l'import est sauté, les migrations
   créent le schéma.
 - **Clés étrangères à l'import** : l'import D1 se fait par lots et n'honore pas

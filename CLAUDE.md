@@ -231,6 +231,6 @@ Voir [`workspace/workflow-workspace.md`](workspace/workflow-workspace.md) — fi
 
 - **Front React** (`app/web/src/`) — TypeScript ; composants sous `components/` et `pages/`, style **Tailwind CSS 4** (tokens dans `index.css` via `@theme`). Routing **TanStack Router**, data-fetching **TanStack Query**. **Mobile first** : toute page doit être utilisable à 360 px de large.
 - **Worker** (`app/src/worker/`) — TypeScript (Hono). Autorisation via le seam d'identité `resolveUser` — voir `workspace/docs/technical-docs/identite-auth.md` (jamais de droit keyé sur l'email ; Access n'est pas une source d'identité).
-- **Base D1** — migrations numérotées dans `app/src/db/migrations/` (jamais modifier une migration déjà appliquée) ; seed réservé au `--local`. Toute nouvelle table doit être ajoutée aux listes de purge de la preview (cf. `workflow-deploy-spe.md`).
+- **Base D1** — migrations numérotées dans `app/src/db/migrations/` (jamais modifier une migration déjà appliquée) ; seed réservé au `--local`. Toute nouvelle table doit être ajoutée aux listes de purge de la preview (cf. `workflow-deploy-spe.md`), et toute nouvelle colonne classée pour l'anonymisation de la qualif (`app/src/db/donnees-personnelles.ts`, spec 008).
 - **Données personnelles** — minimisation (RGPD) : ne collecter que le nécessaire, pas de données de santé stockées, photos d'enfants accessibles au strict nécessaire.
 - **Version applicative** : `app/package.json` (champ `version`, source unique) — injectée dans le front via Vite (`__APP_VERSION__`) et renvoyée par `/api/health`.

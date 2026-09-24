@@ -6,6 +6,22 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+### Site de qualification sans données réelles des familles
+
+#### Notes client
+
+Le site de qualification (site de test réservé au bureau) reçoit une copie du site public pour
+vérifier chaque nouvelle version. Désormais, cette copie est rendue anonyme à chaque mise à jour :
+les noms, coordonnées et dates de naissance des familles et des enfants y sont remplacés par des
+valeurs fictives. Seuls les comptes des membres du bureau, qui font les tests, restent inchangés.
+
+#### Ajouts
+
+- Anonymisation automatique de la copie de qualification (familles, adhérents, personnes
+  autorisées) ; les accès ouverts sur le site public n'y sont jamais valables
+- Contrôle automatique : toute nouvelle information enregistrée par le site doit être classée
+  (anonymisée ou non) avant de pouvoir être livrée
+
 ## [0.6.0] — 2026-09-24
 
 ### Aide intégrée à l'espace membres

@@ -105,6 +105,11 @@ Si la spec ajoute une table D1 : l'ajouter aux listes de purge de la preview
 (`db:reset:local` dans `app/package.json`, `deploy/refresh-preview-db.ps1`,
 `.github/workflows/preview.yml`).
 
+Si la spec ajoute une table **ou une colonne** : la classer dans
+`app/src/db/donnees-personnelles.ts` (conservée / pseudonymisée / purgée) et, si elle est
+personnelle, la traiter dans `app/src/db/anonymisation-qualif.sql` (spec 008) — sinon le test
+`anonymisation.test.ts` échoue.
+
 ---
 
 ## URL et ports
