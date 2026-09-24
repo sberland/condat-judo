@@ -4,6 +4,17 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.12.0 — 24 septembre 2026
+
+Le bureau gère lui-même, saison par saison, les catégories d’âge, la grille tarifaire, les dates
+du paiement en 3 fois et les horaires des cours : plus besoin d’un développeur pour les changer.
+Pour la rentrée suivante, il prépare la nouvelle saison en un clic (copie de la précédente, années
+et dates décalées d’un an), l’ajuste tranquillement, puis la rend « courante » quand il le décide :
+dossiers d’adhésion, trésorerie, compétitions et page publique « Horaires & tarifs » passent
+alors dessus. Rien ne change pour la saison 2026/2027 : ses valeurs sont reprises à l’identique.
+
+---
+
 ## v0.11.0 — 24 septembre 2026
 
 Les familles exercent elles-mêmes leurs droits depuis leur espace : elles téléchargent en un geste

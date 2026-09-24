@@ -23,10 +23,10 @@ permet au bureau de préparer la saison suivante sans développement.
 
 ## Critères d'acceptation
 
-- [ ] La catégorie d'un enfant né le JJ/MM/AAAA est calculée correctement pour une saison donnée
-- [ ] Le bureau prépare la saison N+1 en copiant la saison N puis en ajustant années et tarifs
-- [ ] La vitrine lit horaires et tarifs depuis ces référentiels (fin du contenu statique de 002)
-- [ ] API protégée : lecture publique des horaires / tarifs ; écriture réservée au bureau
+- [x] La catégorie d'un enfant né le JJ/MM/AAAA est calculée correctement pour une saison donnée
+- [x] Le bureau prépare la saison N+1 en copiant la saison N puis en ajustant années et tarifs
+- [x] La vitrine lit horaires et tarifs depuis ces référentiels (fin du contenu statique de 002)
+- [x] API protégée : lecture publique des horaires / tarifs ; écriture réservée au bureau
 
 ## Hors périmètre
 
