@@ -53,11 +53,12 @@ celui utilisé pour se connecter à l'app) :
 
 ```bash
 cd app
-npx wrangler d1 execute condat-judo --remote --command "INSERT INTO users (prenom, nom, email, role) VALUES ('Prénom', 'Nom', 'adresse@exemple.fr', 'admin');"
+npx wrangler d1 execute condat-judo --remote --command "INSERT INTO users (prenom, nom, email) VALUES ('Prénom', 'Nom', 'adresse@exemple.fr'); INSERT INTO user_roles (user_id, role) SELECT id, 'admin' FROM users WHERE email = 'adresse@exemple.fr';"
 ```
 
 À sa première connexion, son identité est reliée à ce compte (table `identites`). La preview le
-récupère ensuite à chaque recopie des données de prod.
+récupère ensuite à chaque recopie des données de prod. Les autres comptes et leurs rôles se gèrent
+ensuite depuis l'application (**Mon espace → Comptes**).
 
 ## Désinstallation
 

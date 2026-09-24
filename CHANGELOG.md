@@ -6,6 +6,32 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+### Adhérents, responsables légaux et rôles du bureau
+
+#### Notes client
+
+Le site sait désormais qui est responsable de quel enfant. Le bureau peut enregistrer les
+adhérents, leurs parents ou tuteurs (deux parents séparés peuvent chacun avoir leur accès), les
+personnes autorisées à venir chercher l'enfant, et choisir pour chaque parent s'il peut inscrire
+l'enfant, le récupérer et être prévenu. Les membres du bureau reçoivent des rôles (bureau,
+trésorier, encadrant, gestion du site). Chaque parent verra uniquement ses propres enfants.
+Ces écrans ouvriront aux familles et au bureau avec la connexion au site, prochaine étape.
+
+#### Ajouts
+
+- Espace connecté « Mon espace » : accueil, fiches des adhérents (identité, ceinture, licence,
+  adresse), responsables légaux avec leurs droits, personnes autorisées à récupérer l'enfant
+- Gestion des comptes : création, modification, suppression, attribution des rôles (réservée à
+  l'administrateur ; il reste toujours au moins un administrateur)
+- Espace famille : un parent consulte les fiches de ses enfants et met à jour son téléphone
+- Saisie guidée sur mobile : messages d'erreur sous chaque champ, noms et téléphones remis en
+  forme, proposition de relier un parent déjà connu plutôt que de créer un doublon
+- Protection des formulaires contre les envois frauduleux depuis un autre site
+
+#### Modifications
+
+- Un compte peut cumuler plusieurs rôles (le rôle unique « admin » est repris automatiquement)
+
 ## [0.3.0] — 2026-09-24
 
 ### Tarifs de la saison 2026/2027

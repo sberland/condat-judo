@@ -165,7 +165,7 @@ La prod, elle, n'a pas de verrou Access : le site est public.
 
 ### Tables purgées avant import
 
-Liste codée en dur (ordre = dépendances FK) : `identites`, `saisons`, `users`, `d1_migrations`.
+Liste codée en dur (ordre = dépendances FK) : `liens`, `personnes_autorisees`, `identites`, `user_roles`, `adherents`, `saisons`, `users`, `d1_migrations`.
 Présente à trois endroits, **à tenir à jour à chaque nouvelle table** :
 `app/package.json` (`db:reset:local`), `deploy/refresh-preview-db.ps1`, `.github/workflows/preview.yml`.
 

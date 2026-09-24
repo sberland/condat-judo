@@ -24,14 +24,17 @@ export type Identite = {
   email: string | null;
 };
 
-export type Role = 'admin' | 'membre';
+/** Rôles club, cumulables (table `user_roles`). Sans rôle : « famille » (droits dérivés des liens). */
+export const ROLES = ['admin', 'bureau', 'tresorier', 'encadrant', 'contenu'] as const;
+export type Role = (typeof ROLES)[number];
 
 export type Utilisateur = {
   id: number;
   prenom: string;
   nom: string;
   email: string | null;
-  role: Role;
+  telephone: string | null;
+  roles: Role[];
   provider: Provider;
 };
 
@@ -54,9 +57,9 @@ export async function resolveIdentite(_request: Request, env: Env): Promise<Iden
 
 // --- Identité → utilisateur interne ---
 
-type UtilisateurRow = { id: number; prenom: string; nom: string; email: string | null; role: string };
+type UtilisateurRow = { id: number; prenom: string; nom: string; email: string | null; telephone: string | null };
 
-const COLONNES = 'u.id, u.prenom, u.nom, u.email, u.role';
+const COLONNES = 'u.id, u.prenom, u.nom, u.email, u.telephone';
 
 async function parIdentite(env: Env, identite: Identite): Promise<UtilisateurRow | null> {
   return env.DB.prepare(
@@ -101,6 +104,10 @@ export async function resolveUser(request: Request, env: Env): Promise<Resolutio
     .bind(identite.email, identite.provider, identite.subject)
     .run();
 
+  const roles = await env.DB.prepare('SELECT role FROM user_roles WHERE user_id = ? ORDER BY role')
+    .bind(row.id)
+    .all<{ role: Role }>();
+
   return {
     statut: 'ok',
     utilisateur: {
@@ -108,7 +115,8 @@ export async function resolveUser(request: Request, env: Env): Promise<Resolutio
       prenom: row.prenom,
       nom: row.nom,
       email: row.email,
-      role: row.role as Role,
+      telephone: row.telephone,
+      roles: roles.results.map((r) => r.role),
       provider: identite.provider,
     },
   };
