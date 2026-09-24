@@ -43,7 +43,8 @@ export function LienConnexion({ compte }: { compte: { id: number; prenom: string
   }
 
   const echeance = dateHeureFr(lien.expire_le)
-  const message = `Bonjour ${compte.prenom}, voici votre lien personnel pour accéder à l’espace membres du ${CLUB.nom} : ${lien.url}\nIl fonctionne une seule fois, jusqu’au ${echeance}.`
+  // Premier contact numérique avec la famille : on y joint l'information sur ses données (RGPD, spec 006).
+  const message = `Bonjour ${compte.prenom}, voici votre lien personnel pour accéder à l’espace membres du ${CLUB.nom} : ${lien.url}\nIl fonctionne une seule fois, jusqu’au ${echeance}.\nCe que le club enregistre sur vous et vos enfants, et vos droits : ${window.location.origin}/donnees-personnelles`
 
   return (
     <div className="grid gap-3 rounded-xl border border-dashed p-4">

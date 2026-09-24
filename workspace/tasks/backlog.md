@@ -70,6 +70,7 @@
 | [012-CHT-garderie-mercredi.md](pending/012-CHT-garderie-mercredi.md) | Garderie | feature | Élevé — remplace un fil WhatsApp confus | M | P2 | — | Chantier (a=demande, b=liste du jour + photo, c=pointage) |
 | [013-communication.md](pending/013-communication.md) | Communication | feature | Moyen — actualités et calendrier | M | P3 | — | WhatsApp / Facebook relaient des liens ; abonnement agenda |
 | [014-administration-contenu.md](pending/014-administration-contenu.md) | Contenu | feature | Élevé — le club tient son site à jour sans développeur | M | P2 | — | Rôle `contenu` ; coordonnées, équipe, disciplines, partenaires, règlement, mentions ; historique ; horaires / tarifs dans 003 |
+| [019-rgpd-droits-purge.md](pending/019-rgpd-droits-purge.md) | RGPD | feature | Moyen — droits des familles outillés | M | P2 | — | Suite de la 006 : export des données par le responsable, purge automatique à la durée décidée, journal des accès sensibles, retrait d'un consentement depuis l'espace |
 | [017-idees-whatsapp-api.md](pending/017-idees-whatsapp-api.md) | Communication | proposition | Moyen — messages envoyés par le site | M | P4 | — | Idées seulement : numéro WhatsApp du club, envoi depuis le site (liens de connexion, rappels), agent conversationnel ; payant, modèles validés par Meta, opt-in |
 | — | Import des adhérents | proposition | Moyen — gain de saisie | S | P3 | — | Import depuis un tableur existant (si le club en a un), sinon saisie bureau (004) |
 | — | Nom de domaine du club | proposition | Moyen — image, e-mails d'envoi | S | P3 | — | Ex. judo-condat.fr (~10 €/an) ; utile pour l'envoi des e-mails de connexion (005, arbitrage A3) |
@@ -110,6 +111,7 @@
 - **#011** — [Cotisations : suivi des paiements](pending/011-cotisations-paiements.md)
 - **#012-CHT** — [Garderie du mercredi](pending/012-CHT-garderie-mercredi.md)
 - **#014** — [Administration du contenu du site](pending/014-administration-contenu.md)
+- **#019** — [RGPD : exercice des droits outillé et purge automatique](pending/019-rgpd-droits-purge.md)
 
 ---
 

@@ -49,6 +49,16 @@ jobs:
             exit 1
           fi
 
+      # Garde-fou RGPD (spec 006) : pas de mise en prod tant qu'une information de la page
+      # « Données personnelles » attend la réponse du club (valeur `provisoire` dans content/rgpd.ts).
+      - name: Contrôle des informations RGPD
+        run: |
+          node -e "import('./web/src/content/rgpd.ts').then(({ RGPD }) => {
+            const manquent = Object.entries(RGPD).filter(([, v]) => v.provisoire).map(([k]) => k)
+            if (manquent.length) { console.log('::error::Informations RGPD à compléter avant la prod : ' + manquent.join(', ')); process.exit(1) }
+            console.log('Informations RGPD complètes.')
+          })"
+
       - run: npm ci
 
       # Sauvegarde avant migration (spec 007) : seulement s'il y a des migrations en attente.

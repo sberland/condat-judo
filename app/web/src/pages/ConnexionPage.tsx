@@ -120,7 +120,13 @@ function AccueilLien({ jeton }: { jeton: string }) {
       <Bouton enCours={enCours} onClick={seConnecter}>
         Me connecter sur cet appareil
       </Bouton>
-      <p className="text-xs">Ce lien ne fonctionne qu’une fois : ne le transférez à personne.</p>
+      <p className="text-xs">
+        Ce lien ne fonctionne qu’une fois : ne le transférez à personne. Ce que le club enregistre sur vous :{' '}
+        <Link to="/donnees-personnelles" className="font-semibold text-brand">
+          données personnelles
+        </Link>
+        .
+      </p>
     </Carte>
   )
 }

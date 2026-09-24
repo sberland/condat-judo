@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { Link } from '@tanstack/react-router'
 import { ASSOCIATION, CLUB, EQUIPE } from '../content/club'
 import { Container, PageHeader } from '../components/ui'
 import { usePageMeta } from '../lib/usePageMeta'
@@ -49,9 +50,12 @@ export function MentionsLegalesPage() {
           <p>
             Espace membres : les personnes à qui le bureau du club a ouvert un compte reçoivent, en se
             connectant, un unique cookie strictement nécessaire au maintien de leur connexion (6 mois
-            au plus, sans usage publicitaire ni mesure d’audience). Les informations des adhérents et
-            de leurs responsables sont gérées par le bureau pour la vie du club ; pour les consulter,
-            les corriger ou les supprimer, adressez-vous au bureau.
+            au plus, sans usage publicitaire ni mesure d’audience). Ce que le club enregistre sur les
+            adhérents et leurs familles, pour combien de temps, et comment exercer vos droits :{' '}
+            <Link to="/donnees-personnelles" className="text-brand underline">
+              page Données personnelles
+            </Link>
+            .
           </p>
           <p>
             Les liens vers des sites extérieurs (France Judo, Facebook, services de cartographie)
