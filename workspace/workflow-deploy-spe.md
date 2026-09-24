@@ -170,8 +170,11 @@ Liste codée en dur (ordre = dépendances FK) : `sessions`, `liens_connexion`, `
 Présente à trois endroits, **à tenir à jour à chaque nouvelle table** :
 `app/package.json` (`db:reset:local`), `deploy/refresh-preview-db.ps1`, `.github/workflows/preview.yml`.
 
-Après import et migrations, les **sessions et liens de connexion** copiés de la prod sont supprimés
-(mêmes deux fichiers) : aucun accès ouvert en prod ne reste valable en qualif.
+Après import et migrations, la copie est **anonymisée** (spec 008,
+`app/src/db/anonymisation-qualif.sql`, mêmes deux fichiers) : familles, adhérents et personnes
+autorisées pseudonymisés, sessions et liens de connexion de la prod supprimés ; comptes avec un
+rôle (testeurs) conservés. Toute nouvelle colonne est classée dans
+`app/src/db/donnees-personnelles.ts` (test bloquant en CI).
 
 ### Déploiement / refresh manuel (hors CI)
 

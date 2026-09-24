@@ -42,8 +42,8 @@ $PreviewDb = "condat-judo-preview"
 # Tables à purger avant import (ordre = FK : enfants avant parents). À tenir à jour à chaque
 # nouvelle table, comme db:reset:local (app/package.json) et .github/workflows/preview.yml.
 $DropSql   = "DROP TABLE IF EXISTS sessions; DROP TABLE IF EXISTS liens_connexion; DROP TABLE IF EXISTS liens; DROP TABLE IF EXISTS personnes_autorisees; DROP TABLE IF EXISTS identites; DROP TABLE IF EXISTS user_roles; DROP TABLE IF EXISTS adherents; DROP TABLE IF EXISTS saisons; DROP TABLE IF EXISTS users; DROP TABLE IF EXISTS d1_migrations;"
-# Sessions et liens de connexion copiés de la prod : supprimés après import + migrations.
-$PurgeSessionsSql = "DELETE FROM sessions; DELETE FROM liens_connexion;"
+# Anonymisation de la copie (spec 008), après import + migrations — comme preview.yml.
+$Anonymisation = "src/db/anonymisation-qualif.sql"
 
 # Appel d'un exe natif (npx wrangler) : il écrit sur stderr même en cas de succès. Sous
 # EAP=Stop, PS 5.1 en ferait une erreur terminante avant la lecture de $LASTEXITCODE.
@@ -92,9 +92,9 @@ try {
     Write-Host "4/5  Application des migrations sur la preview..." -ForegroundColor Yellow
     Invoke-Native -Description "Migrations preview" -Command { npx wrangler d1 migrations apply $PreviewDb --env preview --remote }
 
-    # 5. Aucune session ni lien de connexion de la prod ne reste valable en qualif (spec 005a).
-    Write-Host "5/5  Purge des sessions et liens copiés de la prod..." -ForegroundColor Yellow
-    Invoke-Native -Description "Purge sessions preview" -Command { npx wrangler d1 execute $PreviewDb --env preview --remote --yes --command $PurgeSessionsSql }
+    # 5. Anonymisation (spec 008) : familles et adhérents pseudonymisés, sessions et liens de la prod supprimés.
+    Write-Host "5/5  Anonymisation de la copie de la prod..." -ForegroundColor Yellow
+    Invoke-Native -Description "Anonymisation preview" -Command { npx wrangler d1 execute $PreviewDb --env preview --remote --yes --file $Anonymisation }
 }
 finally {
     Pop-Location

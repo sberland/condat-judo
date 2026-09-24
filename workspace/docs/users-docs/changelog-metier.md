@@ -4,6 +4,15 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.6.1 — 24 septembre 2026
+
+Le site de qualification (site de test réservé au bureau) reçoit une copie du site public pour
+vérifier chaque nouvelle version. Désormais, cette copie est rendue anonyme à chaque mise à jour :
+les noms, coordonnées et dates de naissance des familles et des enfants y sont remplacés par des
+valeurs fictives. Seuls les comptes des membres du bureau, qui font les tests, restent inchangés.
+
+---
+
 ## v0.6.0 — 24 septembre 2026
 
 L'espace membres a désormais sa propre aide, adaptée à chacun : un parent y trouve comment se

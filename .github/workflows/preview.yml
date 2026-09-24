@@ -67,12 +67,11 @@ jobs:
       # 4. Migrations plus récentes que le snapshot prod.
       - run: npx wrangler d1 migrations apply condat-judo-preview --env preview --remote
 
-      # 5. Aucune session ni lien de connexion de la prod ne reste valable en qualif (spec 005a).
-      #    Après les migrations : les tables existent forcément.
-      - name: Purge des sessions et liens copiés de la prod
-        run: >
-          npx wrangler d1 execute condat-judo-preview --env preview --remote --yes --command
-          "DELETE FROM sessions; DELETE FROM liens_connexion;"
+      # 5. Anonymisation de la copie (spec 008) : familles, adhérents et personnes autorisées
+      #    pseudonymisés ; sessions et liens de connexion de la prod supprimés (005a). Après les
+      #    migrations : le schéma est à jour. Toute erreur fait échouer le déploiement.
+      - name: Anonymisation de la copie de la prod
+        run: npx wrangler d1 execute condat-judo-preview --env preview --remote --yes --file src/db/anonymisation-qualif.sql
 
       # 6. Build du front puis déploiement du Worker de preview.
       - run: npm run build:web
