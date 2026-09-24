@@ -1,10 +1,14 @@
 import { Hono } from 'hono';
 import pkg from '../../package.json';
-import type { Env } from './env';
-import { resolveUser } from './identite';
+import { connexionRequise, protectionCsrf, type AppEnv } from './droits';
+import { admin } from './routes/admin';
+import { famille } from './routes/famille';
 
-const app = new Hono<{ Bindings: Env }>();
-const api = new Hono<{ Bindings: Env }>();
+const app = new Hono<AppEnv>();
+const api = new Hono<AppEnv>();
+
+// Toute écriture de l'API exige l'en-tête anti-CSRF (cf. droits.ts).
+api.use('*', protectionCsrf);
 
 // --- /api/health : public ---
 
@@ -14,17 +18,18 @@ api.get('/health', (c) =>
 
 // --- /api/me : utilisateur connecté, via le seam d'identité ---
 
-api.get('/me', async (c) => {
-  const resolution = await resolveUser(c.req.raw, c.env);
-  if (resolution.statut === 'anonyme') return c.json({ error: 'Non authentifié' }, 401);
-  if (resolution.statut === 'inconnu') return c.json({ error: 'Compte non reconnu' }, 403);
-
-  const { utilisateur } = resolution;
+api.get('/me', connexionRequise, async (c) => {
+  const utilisateur = c.get('utilisateur');
   await c.env.DB.prepare("UPDATE users SET last_login = datetime('now') WHERE id = ?")
     .bind(utilisateur.id)
     .run();
   return c.json(utilisateur);
 });
+
+// --- Espaces connectés (spec 004) ---
+
+api.route('/admin', admin);
+api.route('/famille', famille);
 
 api.all('*', (c) => c.json({ error: 'Not found' }, 404));
 

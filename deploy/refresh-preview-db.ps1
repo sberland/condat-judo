@@ -41,7 +41,7 @@ $ProdDb    = "condat-judo"
 $PreviewDb = "condat-judo-preview"
 # Tables à purger avant import (ordre = FK : enfants avant parents). À tenir à jour à chaque
 # nouvelle table, comme db:reset:local (app/package.json) et .github/workflows/preview.yml.
-$DropSql   = "DROP TABLE IF EXISTS identites; DROP TABLE IF EXISTS saisons; DROP TABLE IF EXISTS users; DROP TABLE IF EXISTS d1_migrations;"
+$DropSql   = "DROP TABLE IF EXISTS liens; DROP TABLE IF EXISTS personnes_autorisees; DROP TABLE IF EXISTS identites; DROP TABLE IF EXISTS user_roles; DROP TABLE IF EXISTS adherents; DROP TABLE IF EXISTS saisons; DROP TABLE IF EXISTS users; DROP TABLE IF EXISTS d1_migrations;"
 
 # Appel d'un exe natif (npx wrangler) : il écrit sur stderr même en cas de succès. Sous
 # EAP=Stop, PS 5.1 en ferait une erreur terminante avant la lecture de $LASTEXITCODE.

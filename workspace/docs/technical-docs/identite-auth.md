@@ -34,7 +34,8 @@ Requête ──▶ fournisseur d'identité ──▶ Identite { provider, subjec
 
 | Table | Rôle |
 | --- | --- |
-| `users` | Personne connue du club (`prenom`, `nom`, `email` de contact, `role`, `supprime_le`). Créée par un admin (invitation). **Tous les droits référencent `users.id`.** |
+| `users` | Personne connue du club (`prenom`, `nom`, `email` et `telephone` de contact, `supprime_le`). Créée par le bureau (invitation). **Tous les droits référencent `users.id`.** |
+| `user_roles` | Rôles club cumulables sur `users.id` (spec 004) — cf. [`comptes-adherents.md`](comptes-adherents.md). |
 | `identites` | `(provider, subject)` → `user_id`. Seule table qui connaît le fournisseur. `email_vu` = information, jamais un critère. |
 
 ### Code
@@ -62,9 +63,9 @@ données) ne change pas.
   qui n'existent que dans `app/.dev.vars`. Testé ; vérifié aussi avec `ENVIRONMENT=production` → 401.
 - **Access ignoré** : en-tête `Cf-Access-Jwt-Assertion`, cookie `CF_Authorization`, `ctx.access` ne
   sont jamais lus (testé). En preview, passer le verrou Access ne connecte donc personne dans l'app.
-- **Futures routes d'écriture** : l'authentification reposera sur une session navigateur (cookie) ;
-  toute route `POST/PUT/DELETE` devra se protéger du CSRF (contrôle de l'en-tête `Origin`, ou
-  en-tête personnalisé exigé côté API).
+- **CSRF** : l'authentification reposera sur une session navigateur (cookie) ; toute écriture de
+  l'API exige donc l'en-tête `X-Condat-Judo` (middleware `protectionCsrf`, spec 004 — cf.
+  [`comptes-adherents.md`](comptes-adherents.md)).
 
 ## Références
 

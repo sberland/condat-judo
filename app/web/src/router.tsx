@@ -8,6 +8,12 @@ import { HorairesTarifsPage } from './pages/HorairesTarifsPage'
 import { MentionsLegalesPage } from './pages/MentionsLegalesPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { ReglementPage } from './pages/ReglementPage'
+import { AdherentFichePage } from './pages/espace/AdherentFichePage'
+import { AdherentNouveauPage } from './pages/espace/AdherentNouveauPage'
+import { AdherentsPage } from './pages/espace/AdherentsPage'
+import { ComptesPage } from './pages/espace/ComptesPage'
+import { EspaceAccueilPage } from './pages/espace/EspaceAccueilPage'
+import { FamillePage } from './pages/espace/FamillePage'
 
 const rootRoute = createRootRoute({ component: Layout, notFoundComponent: NotFoundPage })
 const getParentRoute = () => rootRoute
@@ -22,6 +28,13 @@ const routeTree = rootRoute.addChildren([
   createRoute({ getParentRoute, path: '/reglement', component: ReglementPage }),
   createRoute({ getParentRoute, path: '/contact', component: ContactPage }),
   createRoute({ getParentRoute, path: '/mentions-legales', component: MentionsLegalesPage }),
+  // Espace connecté (spec 004) — les droits sont vérifiés par l'API, les pages ne font que masquer.
+  createRoute({ getParentRoute, path: '/espace', component: EspaceAccueilPage }),
+  createRoute({ getParentRoute, path: '/espace/famille', component: FamillePage }),
+  createRoute({ getParentRoute, path: '/espace/adherents', component: AdherentsPage }),
+  createRoute({ getParentRoute, path: '/espace/adherents/nouveau', component: AdherentNouveauPage }),
+  createRoute({ getParentRoute, path: '/espace/adherents/$id', component: AdherentFichePage }),
+  createRoute({ getParentRoute, path: '/espace/comptes', component: ComptesPage }),
 ])
 
 // scrollRestoration : haut de page à chaque navigation, position conservée au retour arrière.
