@@ -10,7 +10,7 @@ son enfant a bien été récupéré.
 
 ## Sous-specs (dans l'ordre)
 
-- [ ] `012a-garderie-demande.md` — le parent signale, pour un ou plusieurs mercredis, qu'un enfant
+- [x] [`012a-garderie-demande.md`](../done/012a-garderie-demande.md) (v0.13.0) — le parent signale, pour un ou plusieurs mercredis, qu'un enfant
   doit être récupéré (ou annule) ; date limite (la veille ?) ; récurrence possible (tous les
   mercredis de la période)
 - [ ] `012b-garderie-liste-du-jour.md` — l'encadrant voit sur son téléphone la liste du jour :

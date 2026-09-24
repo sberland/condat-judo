@@ -25,6 +25,8 @@ import { FamillePage } from './pages/espace/FamillePage'
 import { TresorerieFamillePage } from './pages/espace/TresorerieFamillePage'
 import { TresoreriePage } from './pages/espace/TresoreriePage'
 import { RgpdPage } from './pages/espace/RgpdPage'
+import { GarderieBureauPage } from './pages/espace/GarderieBureauPage'
+import { GarderiePage } from './pages/espace/GarderiePage'
 import { SaisonPage } from './pages/espace/SaisonPage'
 import { SaisonsPage } from './pages/espace/SaisonsPage'
 
@@ -60,6 +62,9 @@ const routeTree = rootRoute.addChildren([
   // Trésorerie (spec 011) : trésorier et administrateur.
   createRoute({ getParentRoute, path: '/espace/tresorerie', component: TresoreriePage }),
   createRoute({ getParentRoute, path: '/espace/tresorerie/familles/$id', component: TresorerieFamillePage }),
+  // Garderie du mercredi (spec 012a) : familles, puis suivi du bureau.
+  createRoute({ getParentRoute, path: '/espace/mercredis', component: GarderiePage }),
+  createRoute({ getParentRoute, path: '/espace/garderie', component: GarderieBureauPage }),
   // Saisons et référentiels (spec 003) : bureau.
   createRoute({ getParentRoute, path: '/espace/saisons', component: SaisonsPage }),
   createRoute({ getParentRoute, path: '/espace/saisons/$id', component: SaisonPage }),

@@ -51,6 +51,7 @@ export function instructionsPurge(maintenant: string, seuil: number): Instructio
     // 3. Effacer ce qui n'a plus de raison d'être.
     lot(`DELETE FROM personnes_autorisees WHERE adherent_id IN (${ADHERENTS_DU_LOT})`),
     lot(`DELETE FROM liens WHERE adherent_id IN (${ADHERENTS_DU_LOT})`),
+    lot(`DELETE FROM garderie_demandes WHERE adherent_id IN (${ADHERENTS_DU_LOT})`),
     lot(`UPDATE adhesions SET
         soins_urgence = 'non_recueilli', soins_urgence_le = NULL, soins_urgence_par = NULL,
         droit_image = 'non_recueilli', droit_image_le = NULL, droit_image_par = NULL,
@@ -70,8 +71,9 @@ export function instructionsPurge(maintenant: string, seuil: number): Instructio
     lot(`UPDATE users SET prenom = 'Ancien', nom = printf('responsable n° %d', id), email = NULL, telephone = NULL,
         supprime_le = COALESCE(supprime_le, ?1)
       WHERE anonymise_le = ?1`),
-    // 5. Durées techniques : journal des accès (1 an), sessions et liens expirés.
+    // 5. Durées techniques : journal des accès et demandes de garderie (1 an), sessions et liens expirés.
     lot("DELETE FROM journal_acces WHERE cree_le < datetime(?1, '-1 year')"),
+    lot("DELETE FROM garderie_demandes WHERE date < date(?1, '-1 year')"),
     lot('DELETE FROM sessions WHERE expire_le < ?1'),
     lot('DELETE FROM liens_connexion WHERE expire_le < ?1'),
     // 6. Rapport.

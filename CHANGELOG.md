@@ -6,6 +6,25 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.13.0] — 2026-09-24
+
+### Garderie du mercredi : les parents demandent en ligne
+
+#### Notes client
+
+Les parents demandent eux-mêmes, depuis leur téléphone, que le club récupère leur enfant à la
+garderie le mercredi : pour un mercredi, ou pour tous les mercredis jusqu’à une date, en un geste.
+Ils peuvent annuler jusqu’au délai fixé par le club (par défaut la veille au soir). Le bureau voit
+chaque mercredi la liste des enfants à récupérer, par lieu, et peut ajouter ou retirer un enfant
+à tout moment. Lieux, calendrier (mercredis sans garderie) et délai se règlent dans la saison ;
+tant que le club ne les a pas confirmés, les demandes ne sont pas ouvertes sur le site public.
+
+#### Ajouts
+
+- Espace famille : « Garderie du mercredi » (demander, annuler, tous les mercredis jusqu’au …)
+- Bureau : liste de chaque mercredi par lieu, ajout et retrait d’un enfant
+- Saisons et tarifs : réglages de la garderie (lieux, période, mercredis fermés, délai)
+
 ## [0.12.0] — 2026-09-24
 
 ### Saisons et tarifs gérés par le bureau

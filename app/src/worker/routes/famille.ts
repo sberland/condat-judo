@@ -4,6 +4,7 @@
 import { Hono, type Context } from 'hono';
 import { categorieDe, eligible, type Categorie } from '../../../web/src/content/categories';
 import { exigible, situation } from '../../../web/src/content/paiements';
+import { libelleLimite, maintenantParis, mercredisOuverts, modifiable, type ReglagesGarderie } from '../../../web/src/content/garderie';
 import { connexionRequise, type AppEnv } from '../droits';
 import { aujourdhuiParis, COLONNES_COMPETITION, inscriptionsOuvertes, lireCompetition, versCompetition } from './competitions';
 import { donneesDuCompte } from '../export';
@@ -278,6 +279,108 @@ famille.put('/accords/:adhesionId', async (c) => {
     .bind(valeur, moi, dossier.adhesion_id)
     .run();
   return c.json({ ok: true });
+});
+
+// --- Garderie du mercredi (spec 012a) : demandes du responsable pour SES enfants ---
+
+/** Garderie ouverte aux demandes des familles : en production, pas tant que les réglages sont à confirmer. */
+const garderieOuverte = (c: Context<AppEnv>, g: ReglagesGarderie) => !(g.provisoire && c.env.ENVIRONMENT === 'production');
+
+famille.get('/garderie', async (c) => {
+  const saison = await saisonCourante(c);
+  const g = saison.referentiel.garderie;
+  const maintenant = maintenantParis();
+  const aujourdhui = maintenant.slice(0, 10);
+  const moi = c.get('utilisateur').id;
+  const { results: enfants } = await c.env.DB.prepare(
+    `SELECT a.id, a.prenom, a.nom, l.peut_inscrire FROM liens l JOIN adherents a ON a.id = l.adherent_id
+     WHERE l.user_id = ? AND a.supprime_le IS NULL ORDER BY a.date_naissance DESC`,
+  )
+    .bind(moi)
+    .all<{ id: number; prenom: string; nom: string; peut_inscrire: number }>();
+  const { results: demandes } = await c.env.DB.prepare(
+    `SELECT d.adherent_id, d.date, d.lieu FROM garderie_demandes d JOIN liens l ON l.adherent_id = d.adherent_id AND l.user_id = ?
+     WHERE d.date >= ? ORDER BY d.date`,
+  )
+    .bind(moi, aujourdhui)
+    .all<{ adherent_id: number; date: string; lieu: string }>();
+  return c.json({
+    saison: { id: saison.id, libelle: saison.libelle },
+    garderie: { lieux: g.lieux, limite: libelleLimite(g), ouverte: garderieOuverte(c, g), provisoire: g.provisoire, fin: g.fin },
+    mercredis: mercredisOuverts(g)
+      .filter((m) => m >= aujourdhui)
+      .map((m) => ({ date: m, modifiable: modifiable(g, m, maintenant) })),
+    enfants: enfants.map((e) => ({
+      id: e.id,
+      prenom: e.prenom,
+      nom: e.nom,
+      peutInscrire: e.peut_inscrire === 1,
+      demandes: demandes.filter((d) => d.adherent_id === e.id).map(({ date, lieu }) => ({ date, lieu })),
+    })),
+  });
+});
+
+/** Contrôles communs : garderie ouverte, enfant lié avec le droit d'inscrire, lieu connu. */
+async function controleGarderie(c: Context<AppEnv>) {
+  const g = (await saisonCourante(c)).referentiel.garderie;
+  if (!garderieOuverte(c, g)) return { erreur: c.json({ error: 'La garderie n’est pas encore ouverte sur le site' }, 409) };
+  const adherentId = Number(c.req.param('adherentId')) || 0;
+  const lien = await c.env.DB.prepare(
+    'SELECT l.peut_inscrire FROM liens l JOIN adherents a ON a.id = l.adherent_id WHERE l.user_id = ? AND l.adherent_id = ? AND a.supprime_le IS NULL',
+  )
+    .bind(c.get('utilisateur').id, adherentId)
+    .first<{ peut_inscrire: number }>();
+  if (lien?.peut_inscrire !== 1) return { erreur: c.json({ error: 'Vous ne pouvez pas faire de demande pour cet enfant' }, 403) };
+  return { g, adherentId };
+}
+
+const lieuDemande = (g: ReglagesGarderie, v: unknown) => (typeof v === 'string' && g.lieux.includes(v) ? v : g.lieux[0] ?? '');
+
+famille.put('/garderie/:adherentId/:date', async (c) => {
+  const r = await controleGarderie(c);
+  if ('erreur' in r) return r.erreur;
+  const date = c.req.param('date');
+  if (!mercredisOuverts(r.g).includes(date)) return c.json({ error: 'Pas de garderie ce jour-là' }, 409);
+  if (!modifiable(r.g, date, maintenantParis())) return c.json({ error: `Délai dépassé (${libelleLimite(r.g)}) : contactez le bureau` }, 409);
+  const corps = (await c.req.json().catch(() => ({}))) as Record<string, unknown>;
+  await c.env.DB.prepare(
+    `INSERT INTO garderie_demandes (adherent_id, date, lieu, demande_par) VALUES (?, ?, ?, ?)
+     ON CONFLICT (adherent_id, date) DO UPDATE SET lieu = excluded.lieu`,
+  )
+    .bind(r.adherentId, date, lieuDemande(r.g, corps.lieu), c.get('utilisateur').id)
+    .run();
+  return c.json({ ok: true });
+});
+
+famille.delete('/garderie/:adherentId/:date', async (c) => {
+  const r = await controleGarderie(c);
+  if ('erreur' in r) return r.erreur;
+  const date = c.req.param('date');
+  if (!modifiable(r.g, date, maintenantParis())) return c.json({ error: `Délai dépassé (${libelleLimite(r.g)}) : contactez le bureau` }, 409);
+  await c.env.DB.prepare('DELETE FROM garderie_demandes WHERE adherent_id = ? AND date = ?').bind(r.adherentId, date).run();
+  return c.json({ ok: true });
+});
+
+// « Tous les mercredis jusqu'au … » : chaque mercredi ouvert et encore modifiable de la période.
+famille.post('/garderie/:adherentId/serie', async (c) => {
+  const r = await controleGarderie(c);
+  if ('erreur' in r) return r.erreur;
+  const corps = (await c.req.json().catch(() => ({}))) as Record<string, unknown>;
+  const jusquau = typeof corps.jusquau === 'string' ? corps.jusquau : r.g.fin;
+  const maintenant = maintenantParis();
+  const dates = mercredisOuverts(r.g).filter((m) => m <= jusquau && modifiable(r.g, m, maintenant));
+  if (!dates.length) return c.json({ error: 'Aucun mercredi à demander sur cette période' }, 409);
+  const lieu = lieuDemande(r.g, corps.lieu);
+  const moi = c.get('utilisateur').id;
+  await c.env.DB.batch(
+    dates.map((d) =>
+      c.env.DB.prepare(
+        `INSERT INTO garderie_demandes (adherent_id, date, lieu, demande_par) VALUES (?, ?, ?, ?)
+         ON CONFLICT (adherent_id, date) DO UPDATE SET lieu = excluded.lieu`,
+      ).bind(r.adherentId, d, lieu, moi),
+    ),
+  );
+  return c.json({ ok: true, mercredis: dates.length });
 });
 
 famille.put('/moi', async (c) => {

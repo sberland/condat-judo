@@ -51,6 +51,11 @@ limite, « Annuler l'inscription » revient en arrière ; ensuite, prévenez le 
 enfants des catégories concernées peuvent être inscrits, et seulement par un responsable qui en a
 le droit.
 
+**Pour les parents — Garderie du mercredi** : Mon espace → « Garderie du mercredi » : « Demander »
+à côté d’un mercredi pour que le club récupère votre enfant à la garderie, ou « Tous les mercredis
+jusqu’au … » en un geste ; « Annuler » un mercredi. Possible jusqu’au délai indiqué (par défaut la
+veille au soir) ; ensuite, prévenez le bureau.
+
 **Pour les parents — Cotisations** : dans « Mes enfants », le bloc « Cotisations » indique pour
 chaque enfant le montant de l'adhésion, ce qui a été payé, ce qui reste, l'échéancier d'un
 paiement en 3 fois et les versements reçus par le club.
@@ -78,6 +83,7 @@ et des familles pour la comptabilité. Le rôle « bureau » seul ne voit pas le
 
 | Écran | Usage |
 | --- | --- |
+| **Garderie : liste du mercredi** | Les enfants à récupérer chaque mercredi, par lieu, avec qui a fait la demande ; ajouter ou retirer un enfant (sans délai). Lieux, calendrier et délai se règlent dans Saisons et tarifs |
 | **Saisons et tarifs** | Catégories d’âge, grille tarifaire, dates du paiement en 3 fois et horaires des cours, saison par saison. « Préparer la saison … » copie la dernière (années et dates décalées d’un an) ; « Rendre cette saison courante » bascule dossiers, trésorerie, compétitions et page publique. « À confirmer » masque tarifs ou horaires sur le site public |
 | **Compétitions** | Créer une compétition (date, lieu, catégories, date limite, infos pratiques), « Envoyer sur WhatsApp » (message prêt avec le lien), suivre les inscrits avec leurs alertes (licence, dossier, formalité médicale), « Copier » ou « CSV » pour la ressaisie sur le site fédéral, case « Ressaisi », inscrire un enfant à la place de ses parents (même après la date limite), clôturer ou annuler |
 | **Dossiers 2026/2027** | Dossiers d'adhésion de la saison : filtres (sans dossier, à compléter, complets, validés), ce qui manque pour chacun, total des montants ; « Saisir un nouvel adhérent » pour ressaisir un formulaire papier |

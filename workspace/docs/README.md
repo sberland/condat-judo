@@ -19,6 +19,7 @@ Index de toute la documentation du projet.
 | [`identite-auth.md`](technical-docs/identite-auth.md) | Seam d'identité `resolveUser` et connexion applicative — lien de connexion personnel, sessions de 6 mois glissants (spec 005a), fournisseur dev, Access non utilisé comme identité |
 | [`comptes-adherents.md`](technical-docs/comptes-adherents.md) | Comptes, adhérents, responsables légaux et rôles (spec 004), dossiers d'adhésion (spec 010a) — modèle de données, droits (CSRF, rôles, filtrage par liens), calcul partagé écran / Worker, écrans de l'espace connecté |
 | [`competitions.md`](technical-docs/competitions.md) | Compétitions (spec 009) — modèle, catégories partagées écran / Worker, règles d'inscription (droits, date limite, éligibilité), API publique / famille / bureau, liste à ressaisir (copie, CSV), historique |
+| [`garderie.md`](technical-docs/garderie.md) | Garderie du mercredi (spec 012a) — réglages dans la saison (lieux, période, mercredis fermés, délai), demandes des familles au mercredi ou en série, suivi du bureau |
 | [`referentiels-saison.md`](technical-docs/referentiels-saison.md) | Saisons et référentiels (spec 003) — un document JSON validé par saison (catégories, tarifs, paiement en 3 fois, horaires), saison courante choisie par le bureau, saison d'une date (compétitions), copie vers la saison suivante |
 | [`tresorerie.md`](technical-docs/tresorerie.md) | Trésorerie (spec 011) — paiements répartis sur les dossiers, familles calculées (responsables partagés), échéancier en 3 fois, retards, remise en banque, accès trésorier / familles, exports |
 | [`rgpd-droits.md`](technical-docs/rgpd-droits.md) | RGPD outillé (spec 019) — purge automatique hebdomadaire (cron, prod, durée confirmée), journal des accès sensibles (middleware), export des données, accords donnés ou retirés par les familles |
@@ -34,7 +35,7 @@ Utiliser `_template.md` pour créer un nouveau fichier technique.
 
 | Fichier | Contenu |
 | --- | --- |
-| [`registre-traitements.md`](rgpd/registre-traitements.md) | Registre des traitements (art. 30 RGPD) : adhésions, compétitions, cotisations et paiements, consentements, espace membres, sauvegardes — finalités, bases légales, données, destinataires, durées, sécurité. À valider par le bureau ; même contenu que la page « Données personnelles » du site |
+| [`registre-traitements.md`](rgpd/registre-traitements.md) | Registre des traitements (art. 30 RGPD) : adhésions, compétitions, cotisations et paiements, garderie du mercredi, consentements, espace membres, sauvegardes — finalités, bases légales, données, destinataires, durées, sécurité. À valider par le bureau ; même contenu que la page « Données personnelles » du site |
 
 ---
 

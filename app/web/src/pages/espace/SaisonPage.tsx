@@ -6,7 +6,9 @@ import { Bloc, Espace } from '../../components/espace/Garde'
 import { Alerte, Bouton, Case, Champ, Selection, ZoneTexte } from '../../components/formulaire'
 import { Pastille } from '../../components/ui'
 import { libelleCategorie, type Categorie } from '../../content/categories'
+import { libelleLimite, mercredisOuverts, tousLesMercredis, type ReglagesGarderie } from '../../content/garderie'
 import { coursTries, heure, JOURS, type Cours, type Jour, type Referentiel, type Saison } from '../../content/referentiel'
+import { jourCourt, moisDe } from '../../lib/garderie'
 import type { Ajustement, Formule, Tarifs } from '../../content/tarifs'
 import { appel, dateFr, ErreurApi } from '../../lib/api'
 import { slug } from '../../lib/csv'
@@ -108,6 +110,24 @@ export function SaisonPage() {
                 </>
               )}
               edition={(h, maj) => <EditeurHoraires horaires={h} maj={maj} />}
+            />
+            <Section
+              titre="Garderie du mercredi"
+              prefixe="garderie"
+              valeur={r.garderie}
+              enregistrer={(garderie) => enregistrer({ ...r, garderie: { ...garderie, lieux: garderie.lieux.map((l) => l.trim()).filter(Boolean) } })}
+              lecture={(g) => (
+                <div className="grid gap-1">
+                  {g.provisoire && <p className="text-sm font-medium text-amber-800">À confirmer : les familles ne peuvent pas encore demander sur le site public.</p>}
+                  <p>Lieux : {g.lieux.join(', ')}</p>
+                  <p>
+                    Du {dateFr(g.debut)} au {dateFr(g.fin)} : {mercredisOuverts(g).length} mercredis ouverts
+                    {g.fermes.length > 0 && `, ${g.fermes.length} fermé${g.fermes.length > 1 ? 's' : ''}`}.
+                  </p>
+                  <p>Demandes jusqu’à {libelleLimite(g)}.</p>
+                </div>
+              )}
+              edition={(g, maj) => <EditeurGarderie garderie={g} maj={maj} />}
             />
           </div>
         )
@@ -544,6 +564,90 @@ function EditeurHoraires({ horaires: h, maj }: { horaires: Referentiel['horaires
       ))}
       <Ajouter onClick={() => maj({ ...h, cours: [...h.cours, { jour: 'lundi', debut: '18:00', fin: '19:00', cours: '', public: '' }] })}>Ajouter un cours</Ajouter>
       <Case id="horaires-provisoires" libelle="Horaires à confirmer" aide="Masqués sur le site public tant que la case est cochée." coche={h.provisoire} onChange={(v) => maj({ ...h, provisoire: v })} />
+    </div>
+  )
+}
+
+// --- Garderie du mercredi (spec 012a) ---
+
+const DELAIS = [
+  { valeur: '0', libelle: 'Le jour même' },
+  { valeur: '1', libelle: 'La veille' },
+  { valeur: '2', libelle: '2 jours avant' },
+  { valeur: '3', libelle: '3 jours avant' },
+]
+
+function EditeurGarderie({ garderie: g, maj }: { garderie: ReglagesGarderie; maj: (g: ReglagesGarderie) => void }) {
+  const tous = g.debut && g.fin && g.debut <= g.fin ? tousLesMercredis(g.debut, g.fin) : []
+  const parMois = tous.reduce<Record<string, string[]>>((acc, m) => ({ ...acc, [moisDe(m)]: [...(acc[moisDe(m)] ?? []), m] }), {})
+  const basculer = (m: string) => maj({ ...g, fermes: g.fermes.includes(m) ? g.fermes.filter((x) => x !== m) : [...g.fermes, m].sort() })
+  return (
+    <div className="grid gap-5">
+      <fieldset className="grid gap-2">
+        <legend className="mb-1 text-sm font-semibold">Lieux de récupération</legend>
+        {g.lieux.map((l, i) => (
+          <div key={i} className="flex items-end gap-2">
+            <div className="flex-1">
+              <input
+                id={`garderie-lieu-${i}`}
+                aria-label={`Lieu ${i + 1}`}
+                value={l}
+                onChange={(e) => maj({ ...g, lieux: remplacer(g.lieux, i, e.target.value) })}
+                className={CHAMP}
+              />
+            </div>
+            {g.lieux.length > 1 && <Retirer libelle={`Retirer ${l}`} onClick={() => maj({ ...g, lieux: g.lieux.filter((_, j) => j !== i) })} />}
+          </div>
+        ))}
+        <Ajouter onClick={() => maj({ ...g, lieux: [...g.lieux, ''] })}>Ajouter un lieu</Ajouter>
+      </fieldset>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Champ id="garderie-debut" libelle="Premier mercredi" type="date" valeur={g.debut} onChange={(debut) => maj({ ...g, debut })} />
+        <Champ id="garderie-fin" libelle="Dernier mercredi" type="date" valeur={g.fin} onChange={(fin) => maj({ ...g, fin })} />
+      </div>
+      <fieldset className="grid gap-3">
+        <legend className="mb-1 text-sm font-semibold">Mercredis sans garderie (touchez pour fermer ou rouvrir)</legend>
+        {Object.entries(parMois).map(([mois, liste]) => (
+          <div key={mois}>
+            <p className="mb-1 text-xs font-semibold text-muted-foreground capitalize">{mois}</p>
+            <div className="flex flex-wrap gap-1.5">
+              {liste.map((m) => {
+                const ferme = g.fermes.includes(m)
+                return (
+                  <button
+                    key={m}
+                    type="button"
+                    aria-pressed={ferme}
+                    onClick={() => basculer(m)}
+                    className={`min-h-10 rounded-full border px-3 text-sm font-semibold ${ferme ? 'border-brand/40 bg-brand-soft text-brand line-through' : 'bg-white'}`}
+                  >
+                    {jourCourt(m)}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        ))}
+      </fieldset>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Selection
+          id="garderie-delai"
+          libelle="Demandes possibles jusqu’à"
+          valeur={String(g.limite.jours)}
+          options={DELAIS}
+          onChange={(v) => v && maj({ ...g, limite: { ...g.limite, jours: Number(v) } })}
+        />
+        <Petit id="garderie-heure" libelle="Heure">
+          <input id="garderie-heure" type="time" value={g.limite.heure} onChange={(e) => maj({ ...g, limite: { ...g.limite, heure: e.target.value } })} className={CHAMP} />
+        </Petit>
+      </div>
+      <Case
+        id="garderie-provisoire"
+        libelle="Réglages à confirmer"
+        aide="Tant que la case est cochée, les familles ne peuvent pas encore demander sur le site public."
+        coche={g.provisoire}
+        onChange={(v) => maj({ ...g, provisoire: v })}
+      />
     </div>
   )
 }

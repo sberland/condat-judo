@@ -1,7 +1,7 @@
 // Référentiel de la saison 2026/2027 tel qu'il était dans le code avant la spec 003 : formulaire
-// d'inscription papier du club (grille), catégories France Judo, horaires provisoires. La
-// migration 0008 l'insère en base ; ensuite, la base fait foi (écran Saisons du bureau). Sert aux
-// tests (cohérence de la grille, identité avec la migration).
+// d'inscription papier du club (grille), catégories France Judo, horaires provisoires. Les
+// migrations 0008 (et 0009 pour la garderie) l'insèrent en base ; ensuite, la base fait foi
+// (écran Saisons du bureau). Sert aux tests (cohérence de la grille, identité avec la migration).
 import type { Referentiel } from './referentiel'
 
 export const REFERENTIEL_2026_2027: Referentiel = {
@@ -97,5 +97,14 @@ export const REFERENTIEL_2026_2027: Referentiel = {
       { jour: 'jeudi', debut: '19:30', fin: '21:00', cours: 'Jujitsu', public: 'Ados et adultes' },
       { jour: 'vendredi', debut: '18:00', fin: '19:30', cours: 'Judo jeunes', public: '10-15 ans' },
     ],
+  },
+  // Ajouté par la migration 0009 (spec 012a) : réglages à confirmer avec le club.
+  garderie: {
+    lieux: ['Garderie de l’école'],
+    debut: '2026-09-02',
+    fin: '2027-06-30',
+    fermes: [],
+    limite: { jours: 1, heure: '20:00' },
+    provisoire: true,
   },
 }
