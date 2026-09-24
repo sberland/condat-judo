@@ -6,7 +6,7 @@ export type Route =
   | '/'
   | '/disciplines'
   | '/horaires-tarifs'
-  | '/competitions'
+  | '/evenements'
   | '/club'
   | '/reglement'
   | '/contact'
@@ -45,7 +45,7 @@ export function useNavigation(): Entree[] {
       libelle: horairesVisibles ? 'Horaires & tarifs' : 'Tarifs',
       provisoire: horairesProvisoires && tarifsProvisoires,
     },
-    { to: '/competitions', libelle: 'Compétitions' },
+    { to: '/evenements', libelle: 'Événements' },
     { to: '/reglement', libelle: 'Règlement' },
     { to: '/contact', libelle: 'Contact' },
   ]

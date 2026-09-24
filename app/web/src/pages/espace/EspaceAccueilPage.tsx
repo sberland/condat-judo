@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
-import { Baby, CalendarCheck, CalendarRange, FilePenLine, ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, ShieldCheck, Trophy, Users, UsersRound, Wallet } from 'lucide-react'
+import { Baby, CalendarCheck, CalendarDays, CalendarRange, FilePenLine, ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, ShieldCheck, Users, UsersRound, Wallet } from 'lucide-react'
 import { useSaisonCourante } from '../../lib/saison'
 import { Espace } from '../../components/espace/Garde'
 import { Bouton } from '../../components/formulaire'
@@ -39,12 +39,12 @@ export function EspaceAccueilPage() {
               </Tuile>
             )}
             {aUnRole(me, 'bureau', 'admin') ? (
-              <Tuile to="/espace/competitions" icone={<Trophy className="size-6" />} titre="Compétitions">
-                Créer une compétition, partager son lien, suivre les inscrits et les ressaisir sur le site fédéral.
+              <Tuile to="/espace/evenements" icone={<CalendarDays className="size-6" />} titre="Événements">
+                Compétitions, stages, repas… : créer, partager le lien, suivre les inscriptions.
               </Tuile>
             ) : (
-              <Tuile to="/competitions" icone={<Trophy className="size-6" />} titre="Compétitions">
-                Les prochaines compétitions, et l’inscription de vos enfants.
+              <Tuile to="/evenements" icone={<CalendarDays className="size-6" />} titre="Événements">
+                Compétitions, stages, rencontres, repas… et les inscriptions.
               </Tuile>
             )}
             {aUnRole(me, 'tresorier', 'admin') && (
@@ -108,7 +108,7 @@ function Tuile({
   titre,
   children,
 }: {
-  to: '/espace/famille' | '/espace/adherents' | '/espace/adhesions' | '/espace/comptes' | '/espace/aide' | '/espace/competitions' | '/competitions' | '/espace/tresorerie' | '/espace/rgpd' | '/espace/saisons' | '/espace/mercredis' | '/espace/garderie' | '/espace/garderie-du-jour' | '/espace/contenu'
+  to: '/espace/famille' | '/espace/adherents' | '/espace/adhesions' | '/espace/comptes' | '/espace/aide' | '/espace/evenements' | '/evenements' | '/espace/tresorerie' | '/espace/rgpd' | '/espace/saisons' | '/espace/mercredis' | '/espace/garderie' | '/espace/garderie-du-jour' | '/espace/contenu'
   icone: ReactNode
   titre: string
   children: ReactNode

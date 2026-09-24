@@ -74,13 +74,14 @@ export const TRAITEMENTS: Traitement[] = [
       'Exécution de l’adhésion à l’association, à votre demande ; photo : votre consentement, retirable à tout moment. Demandes et pointages effacés un an après le mercredi, photo un an après son dépôt.',
   },
   {
-    titre: 'Compétitions',
+    titre: 'Événements et compétitions',
     donnees: [
-      'Inscription : compétition, qui a inscrit l’enfant et quand',
+      'Inscription d’un enfant : événement, qui l’a inscrit et quand',
+      'Inscription d’une famille (repas, fête…) : responsable, nombre d’adultes et d’enfants',
       'Ressaisi sur le site de France Judo pour l’organisateur : nom, prénom, date de naissance, sexe, catégorie, ceinture, n° de licence',
     ],
-    finalite: 'Inscrire les enfants aux compétitions choisies par leurs parents.',
-    base: 'Exécution de l’adhésion à l’association, à votre demande (vous inscrivez votre enfant).',
+    finalite: 'Inscrire les enfants et les familles aux événements du club (compétitions, stages, repas…), à leur demande.',
+    base: 'Exécution de l’adhésion à l’association, à votre demande. Inscriptions des familles effacées un an après l’événement.',
   },
   {
     titre: 'Autorisations et consentements',

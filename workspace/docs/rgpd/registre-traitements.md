@@ -31,18 +31,18 @@
 | Transferts hors UE | Cloudflare et GitHub sont des sociétés américaines : données du site stockées dans l'UE ; sauvegardes illisibles sans la clé du club |
 | Durée | Pendant l'adhésion, puis **À COMPLÉTER** (ex. 3 saisons) après la dernière adhésion ; ensuite **anonymisation automatique** (purge hebdomadaire, spec 019) : fiche, adresse, n° de licence, personnes autorisées, accords et références de chèques effacés ; responsables sans autre enfant anonymisés |
 
-## 1 bis. Compétitions
+## 1 bis. Événements et compétitions
 
 | Rubrique | Contenu |
 | --- | --- |
-| Finalités | Inscription des enfants aux compétitions choisies par leurs parents ; ressaisie sur le site fédéral pour l'organisateur |
+| Finalités | Inscription des enfants aux événements choisis par leurs parents (compétitions, stages…) ; ressaisie sur le site fédéral pour l'organisateur (compétitions) ; inscription des familles avec le nombre de participants (repas, fête…, spec 021) |
 | Base légale | Exécution du contrat d'adhésion (art. 6.1.b), à la demande du responsable qui inscrit l'enfant |
-| Personnes concernées | Adhérents inscrits (surtout mineurs) ; responsable ou membre du bureau auteur de l'inscription |
-| Données | Inscription : compétition, auteur et date, date de ressaisie. Liste transmise : nom, prénom, date de naissance, sexe, catégorie, ceinture, n° de licence (déjà dans la fiche de l'adhérent) |
-| Accès | Bureau : toutes les inscriptions ; un responsable : ses seuls enfants. La page d'une compétition est publique **sans aucune donnée d'enfant** |
+| Personnes concernées | Adhérents inscrits (surtout mineurs) ; responsable ou membre du bureau auteur de l'inscription ; familles inscrites |
+| Données | Inscription d'un enfant : événement, auteur et date, date de ressaisie. Inscription d'une famille : responsable, nombre d'adultes et d'enfants, dates. Liste transmise : nom, prénom, date de naissance, sexe, catégorie, ceinture, n° de licence (déjà dans la fiche de l'adhérent) |
+| Accès | Bureau : toutes les inscriptions ; un responsable : ses seuls enfants. La page d'un événement est publique **sans aucune donnée sur les inscrits** |
 | Destinataires | France Judo et l'organisateur (ressaisie manuelle sur le site fédéral) — **à confirmer** avec la liste des destinataires |
 | Export | Copie ou fichier CSV sur l'appareil du membre du bureau, le temps de la ressaisie, puis supprimé |
-| Durée | Comme l'adhérent (l'historique des compétitions fait partie de sa fiche) |
+| Durée | Enfants : comme l'adhérent (l'historique des événements fait partie de sa fiche) ; familles : un an après l'événement, ou à l'anonymisation du compte |
 
 ## 1 ter. Cotisations et paiements
 
@@ -132,6 +132,7 @@
 | --- | --- |
 | 2026-09-24 | Création (spec 006) : adhésions, consentements, espace membres, sauvegardes |
 | 2026-09-24 | Ajout du traitement « Compétitions » (spec 009) |
+| 2026-09-24 | « Compétitions » devient « Événements et compétitions » ; inscription des familles (spec 021) |
 | 2026-09-24 | Ajout du traitement « Cotisations et paiements » (spec 011) |
 | 2026-09-24 | Purge automatique, journal des accès, export et accords depuis l’espace (spec 019) |
 | 2026-09-24 | Ajout du traitement « Garderie du mercredi » (spec 012a) |

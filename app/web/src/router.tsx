@@ -1,4 +1,4 @@
-import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router'
+import { createRootRoute, createRoute, createRouter, redirect } from '@tanstack/react-router'
 import { Layout } from './components/Layout'
 import { ClubPage } from './pages/ClubPage'
 import { CompetitionPage } from './pages/CompetitionPage'
@@ -47,9 +47,24 @@ const routeTree = rootRoute.addChildren([
   createRoute({ getParentRoute, path: '/contact', component: ContactPage }),
   createRoute({ getParentRoute, path: '/mentions-legales', component: MentionsLegalesPage }),
   createRoute({ getParentRoute, path: '/donnees-personnelles', component: DonneesPersonnellesPage }),
-  // Compétitions (spec 009) : informations publiques, inscription réservée aux responsables connectés.
-  createRoute({ getParentRoute, path: '/competitions', component: CompetitionsPage }),
-  createRoute({ getParentRoute, path: '/competitions/$id', component: CompetitionPage }),
+  // Événements (specs 009, 021) : informations publiques, inscription réservée aux comptes connectés.
+  createRoute({ getParentRoute, path: '/evenements', component: CompetitionsPage }),
+  createRoute({ getParentRoute, path: '/evenements/$id', component: CompetitionPage }),
+  // Anciennes adresses (liens déjà partagés sur WhatsApp) → événements.
+  createRoute({
+    getParentRoute,
+    path: '/competitions',
+    beforeLoad: () => {
+      throw redirect({ to: '/evenements' })
+    },
+  }),
+  createRoute({
+    getParentRoute,
+    path: '/competitions/$id',
+    beforeLoad: ({ params }) => {
+      throw redirect({ to: '/evenements/$id', params })
+    },
+  }),
   // Connexion par lien personnel (spec 005a) : /connexion#<jeton>.
   createRoute({ getParentRoute, path: '/connexion', component: ConnexionPage }),
   // Espace connecté (spec 004) — les droits sont vérifiés par l'API, les pages ne font que masquer.
@@ -60,8 +75,8 @@ const routeTree = rootRoute.addChildren([
   createRoute({ getParentRoute, path: '/espace/adherents/$id', component: AdherentFichePage }),
   createRoute({ getParentRoute, path: '/espace/comptes', component: ComptesPage }),
   createRoute({ getParentRoute, path: '/espace/adhesions', component: AdhesionsPage }),
-  createRoute({ getParentRoute, path: '/espace/competitions', component: CompetitionsGestionPage }),
-  createRoute({ getParentRoute, path: '/espace/competitions/$id', component: CompetitionGestionPage }),
+  createRoute({ getParentRoute, path: '/espace/evenements', component: CompetitionsGestionPage }),
+  createRoute({ getParentRoute, path: '/espace/evenements/$id', component: CompetitionGestionPage }),
   // Trésorerie (spec 011) : trésorier et administrateur.
   createRoute({ getParentRoute, path: '/espace/tresorerie', component: TresoreriePage }),
   createRoute({ getParentRoute, path: '/espace/tresorerie/familles/$id', component: TresorerieFamillePage }),

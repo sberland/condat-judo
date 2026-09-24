@@ -1,53 +1,85 @@
+import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { ChevronRight, MapPin, Settings } from 'lucide-react'
+import { IconeEvenement } from '../components/IconeEvenement'
 import { Container, PageHeader, Pastille } from '../components/ui'
+import { TYPES_EVENEMENT, type TypeEvenement } from '../content/evenements'
 import { aUnRole, appel, useMe } from '../lib/api'
-import { etatInscriptions, libelleCriteres, paveDate, type CompetitionDetail, type EnfantsConcernes } from '../lib/competitions'
+import {
+  etatInscriptions,
+  heureFr,
+  libelleCriteres,
+  libelleParticipants,
+  libelleType,
+  paveDate,
+  type CompetitionDetail,
+  type EnfantsConcernes,
+} from '../lib/competitions'
 import { useReferentiel } from '../lib/saison'
 import { usePageMeta } from '../lib/usePageMeta'
 
+// Événements du club (specs 009, 021) : compétitions, stages, rencontres, repas… à venir.
+
 export function CompetitionsPage() {
   usePageMeta(
-    'Compétitions',
-    'Les prochaines compétitions du club Judo Condat-sur-Vienne : dates, lieux, catégories et inscription des enfants.',
+    'Événements',
+    'Les prochains événements du club Judo Condat-sur-Vienne : compétitions, stages, rencontres, repas… et inscriptions en ligne.',
   )
   const { data: me } = useMe()
   const connecte = me?.etat === 'ok'
+  const [filtre, setFiltre] = useState<TypeEvenement | null>(null)
   const { data, isPending, isError } = useQuery({
     queryKey: ['competitions'],
     queryFn: () => appel<CompetitionDetail[]>('GET', '/api/competitions'),
   })
-  // Connecté : mes enfants concernés par chaque compétition (inscrits ou non).
+  // Connecté : mes enfants concernés par chaque événement (inscrits ou non), ou ma famille inscrite.
   const { data: concernes } = useQuery({
     queryKey: ['famille', 'competitions'],
     queryFn: () => appel<EnfantsConcernes>('GET', '/api/famille/competitions'),
     enabled: connecte,
   })
+  const types = [...new Set(data?.map((c) => c.type) ?? [])]
+  const liste = data?.filter((c) => !filtre || c.type === filtre)
 
   return (
     <div className="animate-apparition">
-      <PageHeader surtitre="Vie du club" titre="Compétitions">
-        Les prochaines compétitions du club. Parents : ouvrez une compétition pour y inscrire vos enfants depuis votre espace.
+      <PageHeader surtitre="Vie du club" titre="Événements">
+        Compétitions, stages, rencontres, repas… Ouvrez un événement pour les informations pratiques et, s’il y a lieu, l’inscription
+        depuis votre espace.
       </PageHeader>
 
       <Container className="grid max-w-4xl grid-cols-1 gap-4 py-10 sm:py-14">
         {connecte && aUnRole(me.me, 'bureau', 'admin') && (
-          <Link to="/espace/competitions" className="inline-flex items-center gap-2 justify-self-start text-sm font-semibold text-brand">
-            <Settings className="size-4" aria-hidden /> Gérer les compétitions (bureau)
+          <Link to="/espace/evenements" className="inline-flex items-center gap-2 justify-self-start text-sm font-semibold text-brand">
+            <Settings className="size-4" aria-hidden /> Gérer les événements (bureau)
           </Link>
         )}
+        {types.length > 1 && (
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Filtrer par type">
+            {[null, ...types].map((t) => (
+              <button
+                key={t ?? 'tous'}
+                type="button"
+                aria-pressed={filtre === t}
+                onClick={() => setFiltre(t)}
+                className="inline-flex min-h-10 items-center gap-1.5 rounded-full border bg-white px-3.5 text-sm font-semibold aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-white"
+              >
+                {t && <IconeEvenement type={t} className="size-4" />}
+                {t ? TYPES_EVENEMENT[t] : 'Tous'}
+              </button>
+            ))}
+          </div>
+        )}
         {isPending && <p className="text-muted-foreground">Chargement…</p>}
-        {isError && <p className="text-brand">Impossible de charger les compétitions.</p>}
+        {isError && <p className="text-brand">Impossible de charger les événements.</p>}
         {data?.length === 0 && (
-          <p className="rounded-2xl border bg-white p-8 text-center text-muted-foreground shadow-sm">
-            Aucune compétition annoncée pour le moment.
-          </p>
+          <p className="rounded-2xl border bg-white p-8 text-center text-muted-foreground shadow-sm">Aucun événement annoncé pour le moment.</p>
         )}
         <ul className="grid grid-cols-1 gap-4">
-          {data?.map((c) => (
+          {liste?.map((c) => (
             <li key={c.id}>
-              <CarteCompetition competition={c} enfants={concernes?.find((x) => x.competition_id === c.id)?.enfants} />
+              <CarteEvenement competition={c} concerne={concernes?.find((x) => x.competition_id === c.id)} />
             </li>
           ))}
         </ul>
@@ -56,15 +88,15 @@ export function CompetitionsPage() {
   )
 }
 
-function CarteCompetition({ competition: c, enfants }: { competition: CompetitionDetail; enfants?: EnfantsConcernes[number]['enfants'] }) {
+function CarteEvenement({ competition: c, concerne }: { competition: CompetitionDetail; concerne?: EnfantsConcernes[number] }) {
   const d = paveDate(c.date)
   const etat = etatInscriptions(c)
   const categories = useReferentiel()?.categories ?? []
-  const inscrits = enfants?.filter((e) => e.inscrit).map((e) => e.prenom) ?? []
-  const aInscrire = enfants?.filter((e) => !e.inscrit).map((e) => e.prenom) ?? []
+  const inscrits = concerne?.enfants.filter((e) => e.inscrit).map((e) => e.prenom) ?? []
+  const aInscrire = concerne?.enfants.filter((e) => !e.inscrit).map((e) => e.prenom) ?? []
   return (
     <Link
-      to="/competitions/$id"
+      to="/evenements/$id"
       params={{ id: String(c.id) }}
       className="group flex items-stretch gap-4 rounded-2xl border bg-white p-4 shadow-sm transition hover:border-brand/40 hover:shadow-md sm:p-5"
     >
@@ -76,15 +108,24 @@ function CarteCompetition({ competition: c, enfants }: { competition: Competitio
         <span className="text-xs uppercase opacity-80">{d.mois}</span>
       </span>
       <span className="min-w-0 flex-1">
-        <span className={`block text-lg leading-snug font-bold ${c.statut === 'annulee' ? 'line-through' : ''}`}>{c.nom}</span>
+        <span className="flex items-center gap-1.5 text-xs font-semibold tracking-wide text-brand uppercase">
+          <IconeEvenement type={c.type} className="size-4" /> {libelleType(c.type)}
+        </span>
+        <span className={`mt-0.5 block text-lg leading-snug font-bold ${c.statut === 'annulee' ? 'line-through' : ''}`}>{c.nom}</span>
         <span className="mt-0.5 flex items-center gap-1 text-sm text-muted-foreground">
           <MapPin className="size-3.5 shrink-0" aria-hidden />
-          <span className="truncate">{c.lieu}</span>
+          <span className="truncate">
+            {c.heure ? `${heureFr(c.heure)} · ` : ''}
+            {c.lieu}
+          </span>
         </span>
-        <span className="mt-0.5 block text-sm text-muted-foreground">{libelleCriteres(c, categories)}</span>
+        {c.inscription === 'enfants' && <span className="mt-0.5 block text-sm text-muted-foreground">{libelleCriteres(c, categories)}</span>}
         <Pastille ton={etat.ton} className="mt-2">
           {etat.libelle}
         </Pastille>
+        {concerne?.famille && (
+          <span className="mt-2 block text-sm font-semibold text-emerald-700">Votre famille est inscrite : {libelleParticipants(concerne.famille)}</span>
+        )}
         {inscrits.length > 0 && <span className="mt-2 block text-sm font-semibold text-emerald-700">Inscrits : {inscrits.join(', ')}</span>}
         {aInscrire.length > 0 && etat.ton === 'ouvert' && (
           <span className="mt-1 block text-sm font-semibold text-brand">Pas encore inscrits : {aInscrire.join(', ')}</span>

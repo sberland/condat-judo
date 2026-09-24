@@ -165,6 +165,29 @@ describe('validerCompetition', () => {
   });
 });
 
+describe('validerCompetition — autres événements (spec 021)', () => {
+  const base = { nom: 'Repas du club', date: '2026-12-12', lieu: 'Salle des fêtes', date_limite: '2026-12-05' };
+  it('une compétition sans type reste une compétition qui inscrit des enfants', () => {
+    const r = validerCompetition({ ...base, categories: ['poussins'], inscription: 'famille' }, REF.categories);
+    expect(r.ok && r.valeur).toMatchObject({ type: 'competition', inscription: 'enfants' });
+  });
+  it('repas : inscription de la famille, sans catégorie ni sexe', () => {
+    const r = validerCompetition({ ...base, type: 'repas', inscription: 'famille', categories: ['poussins'], sexe: 'F', heure: '19:30' }, REF.categories);
+    expect(r.ok && r.valeur).toMatchObject({ type: 'repas', inscription: 'famille', categories: [], sexe: null, heure: '19:30' });
+  });
+  it('stage ouvert à tous les enfants : catégories facultatives', () => {
+    expect(validerCompetition({ ...base, type: 'stage', inscription: 'enfants' }, REF.categories).ok).toBe(true);
+  });
+  it('sans inscription : la date limite est celle de l’événement', () => {
+    const r = validerCompetition({ nom: 'Fête du club', date: '2027-06-19', lieu: 'Dojo', type: 'fete', inscription: 'aucune' }, REF.categories);
+    expect(r.ok && r.valeur.date_limite).toBe('2027-06-19');
+  });
+  it('refuse un type, un mode ou une heure inconnus', () => {
+    const r = validerCompetition({ ...base, type: 'bal', inscription: 'tous', heure: '25:00' }, REF.categories);
+    expect(!r.ok && Object.keys(r.erreurs).sort()).toEqual(['heure', 'inscription', 'type']);
+  });
+});
+
 describe('validerPaiement', () => {
   const cheque = {
     montant: 13000,

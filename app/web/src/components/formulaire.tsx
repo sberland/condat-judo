@@ -24,7 +24,7 @@ export function Champ({
   libelle: string
   erreur?: string
   aide?: string
-  type?: 'text' | 'email' | 'tel' | 'date' | 'url'
+  type?: 'text' | 'email' | 'tel' | 'date' | 'time' | 'url'
   valeur: string
   onChange: (v: string) => void
   requis?: boolean

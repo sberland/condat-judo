@@ -1,4 +1,4 @@
-# Compétitions (spec 009)
+# Événements et compétitions (specs 009, 021)
 
 ## Contexte
 
@@ -6,6 +6,26 @@ Besoin d'origine du projet : remplacer le recueil des inscriptions dans le group
 bureau publie une compétition et poste son lien dans le groupe ; les parents y inscrivent leurs
 enfants depuis leur téléphone ; le bureau récupère une liste propre à ressaisir sur le site
 fédéral (pas d'API connue : la ressaisie reste manuelle).
+
+## Événements (spec 021)
+
+« Compétitions » est devenu « Événements » : compétitions, stages, rencontres, repas, fêtes…
+Choix technique : la table `competitions`, ses routes (`/api/competitions`, `/api/admin/competitions`,
+`/api/famille/competitions`) et le code gardent leur **nom historique** ; les adresses du site
+deviennent `/evenements` et `/espace/evenements` (les anciennes `/competitions…` redirigent).
+
+- Migration 0013 : `type` (`competition`, `stage`, `rencontre`, `repas`, `fete`, `autre`),
+  `inscription` (`aucune`, `enfants`, `famille`), `heure` (facultative) ; table
+  `inscriptions_famille` (`competition_id`, `user_id`, `adultes`, `enfants`, dates).
+- Règles (`validerCompetition`) : une compétition inscrit toujours des enfants, catégories
+  obligatoires ; ailleurs, catégories facultatives (aucune = tous les enfants, `eligible`) ;
+  sans inscription, date limite = date de l'événement ; famille : 1 à 20 adultes + enfants.
+- `inscriptionsOuvertes` exclut le mode `aucune`. Liste fédérale (copie, CSV, « ressaisi »)
+  et alertes (licence, dossier, formalité) : compétitions seulement.
+- Familles : `PUT` / `DELETE /api/famille/competitions/:id/famille` (jusqu'à la date limite) ;
+  bureau : liste, total, CSV des participants, `DELETE /api/admin/competitions/:id/familles/:userId`.
+- Inscriptions des familles effacées un an après l'événement et à l'anonymisation du compte
+  (`purge.ts`) ; présentes dans l'export des données (019).
 
 ## Description / Flux
 

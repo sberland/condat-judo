@@ -14,6 +14,7 @@ import { categorieParId, type Categorie } from '../../web/src/content/categories
 import type { Tarifs } from '../../web/src/content/tarifs';
 import { MODES_ENCAISSEMENT, type ModeEncaissement } from '../../web/src/content/paiements';
 import { TAILLE_MAX_PHOTO, TYPES_PHOTO, type TypePhoto } from '../../web/src/content/photos';
+import { MODES_INSCRIPTION, TYPES_EVENEMENT, type ModeInscription, type TypeEvenement } from '../../web/src/content/evenements';
 
 export type Resultat<T> = { ok: true; valeur: T } | { ok: false; erreurs: Record<string, string> };
 
@@ -224,8 +225,12 @@ export function validerAdhesion(corps: Corps, tarifs: Tarifs, aujourdhui = new D
 export const STATUTS_COMPETITION = ['ouverte', 'cloturee', 'annulee'] as const;
 
 export type CompetitionSaisie = {
+  /** Type d'événement et mode d'inscription (spec 021). */
+  type: TypeEvenement;
+  inscription: ModeInscription;
   nom: string;
   date: string;
+  heure: string | null;
   lieu: string;
   adresse: string | null;
   lien_officiel: string | null;
@@ -242,21 +247,35 @@ export function validerCompetition(corps: Corps, connues: Categorie[]): Resultat
   const lieu = c.requis(corps, 'lieu', 'Lieu', 120);
   const date = texte(corps.date);
   if (!dateIsoValide(date)) c.erreurs.date = 'Date invalide';
-  const limite = texte(corps.date_limite);
+  const type = (corps.type ?? 'competition') as TypeEvenement;
+  if (!Object.hasOwn(TYPES_EVENEMENT, type)) c.erreurs.type = 'Type inconnu';
+  // Une compétition inscrit toujours des enfants (liste fédérale).
+  const inscription = (type === 'competition' ? 'enfants' : (corps.inscription ?? 'enfants')) as ModeInscription;
+  if (!Object.hasOwn(MODES_INSCRIPTION, inscription)) c.erreurs.inscription = 'Mode d’inscription inconnu';
+  const heure = texte(corps.heure) || null;
+  if (heure !== null && !/^([01]\d|2[0-3]):[0-5]\d$/.test(heure)) c.erreurs.heure = 'Heure invalide (HH:MM)';
+  // Sans inscription, pas de date limite : celle de l'événement.
+  const limite = inscription === 'aucune' ? date : texte(corps.date_limite);
   if (!dateIsoValide(limite)) c.erreurs.date_limite = 'Date limite invalide';
-  else if (dateIsoValide(date) && limite > date) c.erreurs.date_limite = 'La date limite doit précéder la compétition';
+  else if (dateIsoValide(date) && limite > date) c.erreurs.date_limite = 'La date limite doit précéder l’événement';
   const lien = c.optionnel(corps, 'lien_officiel', 'Lien', 300);
   if (lien && !/^https?:\/\/\S+$/.test(lien)) c.erreurs.lien_officiel = 'Adresse web invalide (https://…)';
-  const categories = Array.isArray(corps.categories) ? [...new Set(corps.categories.filter((x): x is string => typeof x === 'string'))] : [];
-  if (!categories.length) c.erreurs.categories = 'Choisir au moins une catégorie';
+  // Catégories : obligatoires pour une compétition, facultatives (toutes) pour les autres
+  // inscriptions d'enfants, sans objet sinon.
+  const categories =
+    inscription === 'enfants' && Array.isArray(corps.categories) ? [...new Set(corps.categories.filter((x): x is string => typeof x === 'string'))] : [];
+  if (!categories.length && type === 'competition') c.erreurs.categories = 'Choisir au moins une catégorie';
   else if (!categories.every((id) => categorieParId(connues, id))) c.erreurs.categories = 'Catégorie inconnue';
-  const sexe = corps.sexe || null;
+  const sexe = inscription === 'enfants' ? corps.sexe || null : null;
   if (sexe !== null && sexe !== 'F' && sexe !== 'M') c.erreurs.sexe = 'Valeur inconnue';
   const statut = corps.statut ?? 'ouverte';
   if (!STATUTS_COMPETITION.includes(statut as CompetitionSaisie['statut'])) c.erreurs.statut = 'Statut inconnu';
   return c.resultat({
+    type,
+    inscription,
     nom,
     date,
+    heure,
     lieu,
     adresse: c.optionnel(corps, 'adresse', 'Adresse', 160),
     lien_officiel: lien,

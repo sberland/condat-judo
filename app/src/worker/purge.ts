@@ -33,7 +33,8 @@ export type Instruction = { sql: string; params: (string | number)[] };
 
 /**
  * Durées techniques, appliquées chaque semaine même tant que la durée de conservation des
- * adhérents attend la réponse du club : journal des accès, demandes de garderie et photos (1 an),
+ * adhérents attend la réponse du club : journal des accès, demandes de garderie, photos et
+ * inscriptions des familles aux événements (1 an),
  * sessions et liens de connexion expirés.
  */
 export function instructionsDurees(maintenant: string): Instruction[] {
@@ -42,6 +43,7 @@ export function instructionsDurees(maintenant: string): Instruction[] {
     lot("DELETE FROM journal_acces WHERE cree_le < datetime(?1, '-1 year')"),
     lot("DELETE FROM garderie_demandes WHERE date < date(?1, '-1 year')"),
     lot("DELETE FROM photos_adherents WHERE deposee_le < datetime(?1, '-1 year')"),
+    lot("DELETE FROM inscriptions_famille WHERE competition_id IN (SELECT id FROM competitions WHERE date < date(?1, '-1 year'))"),
     lot('DELETE FROM sessions WHERE expire_le < ?1'),
     lot('DELETE FROM liens_connexion WHERE expire_le < ?1'),
   ];
@@ -85,6 +87,7 @@ export function instructionsPurge(maintenant: string, seuil: number): Instructio
       WHERE anonymise_le = ?1`),
     lot('DELETE FROM identites WHERE user_id IN (SELECT id FROM users WHERE anonymise_le = ?1)'),
     lot('DELETE FROM sessions WHERE user_id IN (SELECT id FROM users WHERE anonymise_le = ?1)'),
+    lot('DELETE FROM inscriptions_famille WHERE user_id IN (SELECT id FROM users WHERE anonymise_le = ?1)'),
     lot('DELETE FROM liens_connexion WHERE user_id IN (SELECT id FROM users WHERE anonymise_le = ?1)'),
     lot(`UPDATE users SET prenom = 'Ancien', nom = printf('responsable n° %d', id), email = NULL, telephone = NULL,
         supprime_le = COALESCE(supprime_le, ?1)

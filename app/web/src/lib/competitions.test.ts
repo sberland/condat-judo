@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { REFERENTIEL_2026_2027 } from '../content/referentiel-initial'
-import { etatInscriptions, libelleCriteres, nomFichierCsv, versCsv, versTexte, type CompetitionDetail, type LigneInscrit } from './competitions'
+import { etatInscriptions, heureFr, libelleCriteres, libelleParticipants, messageWhatsApp, nomFichierCsv, versCsv, versTexte, type CompetitionDetail, type LigneInscrit } from './competitions'
 
 const ligne = (p: Partial<LigneInscrit> = {}): LigneInscrit => ({
   id: 1,
@@ -20,8 +20,11 @@ const ligne = (p: Partial<LigneInscrit> = {}): LigneInscrit => ({
 
 const competition = (p: Partial<CompetitionDetail> = {}): CompetitionDetail => ({
   id: 1,
+  type: 'competition',
+  inscription: 'enfants',
   nom: 'Tournoi',
   date: '2026-10-14',
+  heure: null,
   lieu: 'Limoges',
   adresse: null,
   lien_officiel: null,
@@ -71,5 +74,25 @@ describe('liste des inscrits', () => {
   })
   it('nom de fichier sans accent ni espace', () => {
     expect(nomFichierCsv({ date: '2026-10-14', nom: 'Tournoi de l’Épée — Limoges' })).toBe('inscrits-2026-10-14-tournoi-de-l-epee-limoges.csv')
+  })
+})
+
+describe('événements (spec 021)', () => {
+  it('aucune catégorie : tous les enfants', () => {
+    expect(libelleCriteres({ categories: [], sexe: null }, REFERENTIEL_2026_2027.categories)).toBe('Tous les enfants')
+  })
+  it('participants et heures en français', () => {
+    expect(libelleParticipants({ adultes: 2, enfants: 1 })).toBe('2 adultes et 1 enfant')
+    expect(libelleParticipants({ adultes: 0, enfants: 3 })).toBe('3 enfants')
+    expect(heureFr('19:00')).toBe('19 h')
+    expect(heureFr('09:30')).toBe('9 h 30')
+  })
+  it('sans inscription, et message WhatsApp d’un repas', () => {
+    const repas = competition({ type: 'repas', inscription: 'famille', nom: 'Repas du club', heure: '19:30', date: '2026-12-12', date_limite: '2026-12-05' })
+    expect(etatInscriptions({ ...repas, inscription: 'aucune' }).libelle).toBe('Sans inscription')
+    const m = messageWhatsApp(repas, 'https://exemple.test/evenements/1', REFERENTIEL_2026_2027.categories)
+    expect(m).toContain('à 19 h 30')
+    expect(m).toContain('Inscrivez votre famille')
+    expect(m).not.toContain('Pour :')
   })
 })
