@@ -20,11 +20,11 @@ personne autorisée à la fin du cours. Aujourd'hui, il attend un message WhatsA
 
 ## Critères d'acceptation
 
-- [ ] L'encadrant pointe « Récupéré » puis « Parti avec … » en un geste chacun, depuis son téléphone
-- [ ] « Parti avec » n'accepte qu'une personne autorisée pour cet enfant (contrôlé côté API)
-- [ ] Le parent voit l'état de son enfant se mettre à jour sans recharger la page
-- [ ] Le pointage n'est possible que le mercredi même (hors essais), par un encadrant, le bureau ou l'admin
-- [ ] Utilisable à 360 px
+- [x] L'encadrant pointe « Récupéré » puis « Parti avec … » en un geste chacun, depuis son téléphone
+- [x] « Parti avec » n'accepte qu'une personne autorisée pour cet enfant (contrôlé côté API)
+- [x] Le parent voit l'état de son enfant se mettre à jour sans recharger la page
+- [x] Le pointage n'est possible que le mercredi même (hors essais), par un encadrant, le bureau ou l'admin
+- [x] Utilisable à 360 px
 
 ## Hors périmètre
 

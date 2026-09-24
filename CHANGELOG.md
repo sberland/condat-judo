@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.17.0] — 2026-09-24
+
 ### Vitrine : disciplines illustrées, valeurs, esprit du club
 
 #### Notes client
@@ -29,6 +31,8 @@ Horaires & tarifs, puis Règlement et Contact.
 - Présentation du yoga étoffée
 - Code moral retiré de l'accueil et de la page « Le club »
 - Ordre du menu
+
+## [0.16.0] — 2026-09-24
 
 ### Contenu du site modifiable par le club
 
@@ -56,6 +60,8 @@ visites.
 - Toutes les pages du site lisent leur contenu administré (accueil, disciplines, le club,
   règlement, contact, mentions légales, données personnelles, horaires, en-tête et pied de page)
 
+## [0.15.0] — 2026-09-24
+
 ### Garderie du mercredi : pointage et suivi par les parents
 
 #### Notes client
@@ -74,6 +80,8 @@ liste du mercredi.
 - Espace famille : bloc « Aujourd'hui » avec l'état de chaque enfant, mis à jour automatiquement
 - Liste du mercredi du bureau : état de chaque enfant
 - Aide intégrée (encadrant, familles, bureau) ; page « Données personnelles » et registre
+
+## [0.14.0] — 2026-09-24
 
 ### Garderie du mercredi : liste du jour de l'encadrant, photos
 
