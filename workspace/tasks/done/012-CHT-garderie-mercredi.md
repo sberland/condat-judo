@@ -10,13 +10,13 @@ son enfant a bien été récupéré.
 
 ## Sous-specs (dans l'ordre)
 
-- [x] [`012a-garderie-demande.md`](../done/012a-garderie-demande.md) (v0.13.0) — le parent signale, pour un ou plusieurs mercredis, qu'un enfant
+- [x] [`012a-garderie-demande.md`](012a-garderie-demande.md) (v0.13.0) — le parent signale, pour un ou plusieurs mercredis, qu'un enfant
   doit être récupéré (ou annule) ; date limite (la veille ?) ; récurrence possible (tous les
   mercredis de la période)
-- [x] [`012b-garderie-liste-du-jour.md`](../done/012b-garderie-liste-du-jour.md) (v0.14.0) — l'encadrant voit sur son téléphone la liste du jour :
+- [x] [`012b-garderie-liste-du-jour.md`](012b-garderie-liste-du-jour.md) (v0.14.0) — l'encadrant voit sur son téléphone la liste du jour :
   enfants, photo (si consentement), lieu de récupération, contacts des responsables, personnes
   autorisées à récupérer
-- [ ] [`012c-garderie-pointage.md`](012c-garderie-pointage.md) — checklist « récupéré » à la garderie, puis « parti avec … » en
+- [x] [`012c-garderie-pointage.md`](012c-garderie-pointage.md) (v0.15.0) — checklist « récupéré » à la garderie, puis « parti avec … » en
   fin de cours ; le parent voit l'état en direct
 
 ## Ordre et dépendances
