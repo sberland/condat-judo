@@ -31,7 +31,18 @@ d'inscription papier 2026/2027 donne les **vrais tarifs** et révèle une discip
 - Calcul du montant d'une inscription (spec 010)
 - Grille administrable par le bureau (spec 003) — ici, contenu statique dans `content/club.ts`
 
-## Notes — à arbitrer avant implémentation
+## Revue de spec (2026-09-24) — décisions
+
+- Licence : montants **tels que sur le formulaire du club** (46 € judo, 43,80 € taïso / yoga),
+  cohérence à confirmer avec le club — un seul endroit à corriger (`content/club.ts`).
+- Passeport : présenté comme **« recommandé pour les compétiteurs »** (arbitrage A2 de la spec 010).
+- Tranches d'années : celles du formulaire (grille officielle : spec 003).
+- Yoga : discipline **provisoire** (visible en qualif, masquée en prod) tant que le club n'a pas
+  fourni son texte ; ses **tarifs**, eux, sont publiés.
+- Horaires toujours provisoires → en production, le menu et la page s'intitulent « Tarifs ».
+- Droits requis : aucun. Données personnelles : aucune. Mobile : grilles en cartes.
+
+## Notes — points relevés à la rédaction
 
 - **Licence 46 € (judo) vs 43,80 € (taïso / yoga)** sur le formulaire : deux montants pour la même
   licence FFJDA. Erreur de saisie, ou licence différente selon la discipline ? À vérifier avec le

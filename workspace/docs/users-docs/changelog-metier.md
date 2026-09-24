@@ -4,6 +4,14 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.3.0 — 24 septembre 2026
+
+Les tarifs de la saison 2026/2027 sont en ligne : judo (par âge), taïso et yoga, licence France
+Judo comprise, avec le détail du paiement en 3 fois, les suppléments (passeport, hors commune) et
+la réduction famille. Les horaires des cours suivront dès qu'ils seront confirmés.
+
+---
+
 ## v0.2.1 — 24 septembre 2026
 
 Sur téléphone et sur les écrans étroits, le menu s'affiche de nouveau correctement : les rubriques

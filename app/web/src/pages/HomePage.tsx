@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, CalendarDays, IdCard, MapPin } from 'lucide-react'
 import { CLUB, CODE_MORAL, DISCIPLINES, ITINERAIRE, SAISON } from '../content/club'
+import { Provisoire, useProvisoireVisible } from '../components/Provisoire'
 import { BoutonExterne, BoutonLien, Card, Container, FacebookIcon, Section, SectionTitle } from '../components/ui'
 import { usePageMeta } from '../lib/usePageMeta'
 
@@ -9,6 +10,8 @@ export function HomePage() {
     null,
     'Club de judo, jujitsu et taïso de Condat-sur-Vienne (Haute-Vienne). Éveil judo dès 4 ans, cours de septembre à juin au dojo, 9 rue Jules Ferry.',
   )
+  const provisoireVisible = useProvisoireVisible()
+  const disciplines = DISCIPLINES.filter((d) => !d.provisoire || provisoireVisible)
 
   return (
     <div className="animate-apparition">
@@ -19,24 +22,26 @@ export function HomePage() {
           Du judo pour les petits comme pour les grands, du jujitsu pour la self-défense, du taïso
           pour garder la forme en douceur.
         </SectionTitle>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {DISCIPLINES.map((d) => (
-            <Link
-              key={d.id}
-              to="/disciplines"
-              hash={d.id}
-              className="group flex flex-col rounded-2xl border bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-md"
-            >
-              <span className="mb-4 inline-flex w-fit rounded-full bg-brand-soft px-3 py-1 text-xs font-semibold text-brand">
-                {d.public}
-              </span>
-              <h3 className="text-2xl font-bold">{d.nom}</h3>
-              <p className="mt-2 flex-1 text-muted-foreground">{d.accroche}</p>
-              <span className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-brand">
-                En savoir plus <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-              </span>
-            </Link>
-          ))}
+        <div className={`grid gap-4 sm:grid-cols-2 ${disciplines.length > 3 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'}`}>
+          {disciplines.map((d) => {
+            const carte = (
+              <Link
+                to="/disciplines"
+                hash={d.id}
+                className="group flex h-full flex-col rounded-2xl border bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-md"
+              >
+                <span className="mb-4 inline-flex w-fit rounded-full bg-brand-soft px-3 py-1 text-xs font-semibold text-brand">
+                  {d.public}
+                </span>
+                <h3 className="text-2xl font-bold">{d.nom}</h3>
+                <p className="mt-2 flex-1 text-muted-foreground">{d.accroche}</p>
+                <span className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-brand">
+                  En savoir plus <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                </span>
+              </Link>
+            )
+            return d.provisoire ? <Provisoire key={d.id}>{carte}</Provisoire> : <div key={d.id}>{carte}</div>
+          })}
         </div>
       </Section>
 

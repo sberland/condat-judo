@@ -60,7 +60,6 @@
 
 | Fichier | Scope | Type | Impact utilisateur | Effort estimé | Priorité | Date cible | Notes |
 |---|---|---|---|---|---|---|---|
-| [002-vitrine-tarifs-saison.md](pending/002-vitrine-tarifs-saison.md) | Vitrine | feature | Moyen — tarifs réels en ligne | S | P1 | — | Gain rapide ; 3 points à arbitrer (licence 46 € / 43,80 €, passeport, tranches d'âge) ; texte yoga à fournir |
 | [003-referentiels-saison.md](pending/003-referentiels-saison.md) | Référentiels | feature | Élevé — socle de toutes les fonctionnalités | M | P1 | — | Catégories calculées par date de naissance, cours, grades, grille tarifaire ; copie de saison |
 | [004-comptes-foyers-roles.md](pending/004-comptes-foyers-roles.md) | Comptes | feature | Élevé — prérequis de tout l'espace familles | L | P1 | — | Adhérents, responsables multiples (parents séparés), capacités par lien, rôles club, saisie bureau |
 | [005-CHT-authentification.md](pending/005-CHT-authentification.md) | Auth | technique | Élevé — « connexion simple = clé du succès » | L | P1 | — | Chantier (a=invitation + session, b=code e-mail, c=passkey) ; 5 arbitrages au démarrage |
@@ -84,7 +83,7 @@
 
 | Phase | Specs | Pourquoi dans cet ordre |
 | --- | --- | --- |
-| 0 — Tout de suite | **002** | Gain rapide, sans dépendance |
+| 0 — Tout de suite | ~~002~~ (livrée en v0.3.0) | Gain rapide, sans dépendance |
 | 1 — Fondations (bureau d'abord) | **004** → **005-CHT** → **003** | On ne peut inviter que des personnes connues (004) ; les écrans bureau exigent la connexion (005) |
 | 2 — Avant toute donnée réelle | **006**, **007**, **008** | Obligations RGPD et sécurité avant d'héberger des données de mineurs |
 | 3 — Valeur pour les familles | **009** puis **012-CHT** | Besoin d'origine d'abord ; la garderie ensuite (hebdomadaire) — pour la saison en cours, le bureau saisit les adhérents depuis les dossiers papier |
@@ -97,7 +96,6 @@
 
 ### P1 — Critique
 
-- **#002** — [Vitrine : tarifs et disciplines de la saison](pending/002-vitrine-tarifs-saison.md)
 - **#003** — [Saisons et référentiels](pending/003-referentiels-saison.md)
 - **#004** — [Comptes, adhérents, responsables légaux et rôles](pending/004-comptes-foyers-roles.md)
 - **#005-CHT** — [Authentification applicative](pending/005-CHT-authentification.md)
