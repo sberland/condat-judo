@@ -12,7 +12,7 @@ Pour la saison en cours, les formulaires papier sont déjà remis : le bureau le
 
 ## Sous-specs (dans l'ordre)
 
-- [ ] [`010a-dossier-saisie-bureau.md`](010a-dossier-saisie-bureau.md) — le bureau ressaisit les
+- [x] [`010a-dossier-saisie-bureau.md`](../done/010a-dossier-saisie-bureau.md) — le bureau ressaisit les
   dossiers papier 2026/2027 : dossier complet, montant calculé, suivi des dossiers incomplets
 - [ ] [`010b-dossier-en-ligne-familles.md`](010b-dossier-en-ligne-familles.md) — les familles
   remplissent le dossier en ligne (inscriptions 2027/2028), pré-rempli d'une saison sur l'autre

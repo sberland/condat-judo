@@ -1,6 +1,6 @@
 # 010a — Dossier d'adhésion saisi par le bureau (saison 2026/2027)
 
-> Chantier : [010-CHT-adhesion](010-CHT-adhesion.md)
+> Chantier : [010-CHT-adhesion](../pending/010-CHT-adhesion.md)
 
 ## Pourquoi
 
@@ -32,12 +32,12 @@ situation réelle, que la saisie est pratique avant de l'ouvrir aux familles (01
 
 ## Critères d'acceptation
 
-- [ ] Un dossier papier complet (adhérent, un ou deux responsables, formule, paiement) est
+- [x] Un dossier papier complet (adhérent, un ou deux responsables, formule, paiement) est
   ressaisi en moins de 3 minutes
-- [ ] Le montant correspond à la grille 2026/2027 (suppléments, réduction famille, 3 fois)
-- [ ] Le bureau voit d'un coup d'œil les dossiers incomplets et ce qui manque
-- [ ] La ceinture se choisit dans la liste officielle
-- [ ] Aucune donnée de santé ; chaque consentement est daté et attribué à qui l'a saisi
+- [x] Le montant correspond à la grille 2026/2027 (suppléments, réduction famille, 3 fois)
+- [x] Le bureau voit d'un coup d'œil les dossiers incomplets et ce qui manque
+- [x] La ceinture se choisit dans la liste officielle
+- [x] Aucune donnée de santé ; chaque consentement est daté et attribué à qui l'a saisi
 
 ## Hors périmètre
 

@@ -4,6 +4,18 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.7.0 — 24 septembre 2026
+
+Le bureau peut désormais ressaisir sur le site les formulaires d'inscription papier de la saison
+2026/2027. Pour chaque adhérent : la formule (proposée d'après l'âge), le montant calculé
+automatiquement (passeport, hors commune, réduction famille, paiement en 3 fois), le mode de
+paiement, la formalité médicale reçue (sans aucune information de santé), l'autorisation de soins
+d'urgence et les consentements (droit à l'image, groupe WhatsApp). Un écran « Dossiers » montre
+d'un coup d'œil ce qui manque pour chacun et le total des montants. La ceinture se choisit dans la
+liste officielle de France Judo.
+
+---
+
 ## v0.6.1 — 24 septembre 2026
 
 Le site de qualification (site de test réservé au bureau) reçoit une copie du site public pour

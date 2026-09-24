@@ -107,6 +107,6 @@ référentiels en base.
 - Fichiers source : `app/src/db/migrations/0002_comptes_adherents.sql`, `0004_adhesions.sql`,
   `app/src/worker/droits.ts`, `app/src/worker/validation.ts`, `app/src/worker/routes/`,
   `app/web/src/content/adhesion.ts`, `app/web/src/pages/espace/`
-- Spec 010a : [`010a-dossier-saisie-bureau.md`](../../tasks/pending/010a-dossier-saisie-bureau.md)
+- Spec 010a : [`010a-dossier-saisie-bureau.md`](../../tasks/done/010a-dossier-saisie-bureau.md)
 - Spec : [`004-comptes-foyers-roles.md`](../../tasks/done/004-comptes-foyers-roles.md)
 - Seam d'identité : [`identite-auth.md`](identite-auth.md)
