@@ -59,8 +59,8 @@ recherche), `/espace/adherents/nouveau`, `/espace/adherents/$id` (identité, res
 personnes autorisées), `/espace/comptes` (comptes, rôles, liens de connexion — spec 005a, cf.
 [`identite-auth.md`](identite-auth.md)). Le composant `Espace`
 (`components/espace/Garde.tsx`) masque selon les rôles ; **le masquage n'est pas la sécurité**,
-l'API vérifie les mêmes droits. L'entrée « Mon espace » n'apparaît dans le menu que pour un
-utilisateur connecté.
+l'API vérifie les mêmes droits. Le bouton de l'en-tête (`useAccesEspace`, spec 018) mène à
+`/espace` (« Mon espace ») pour un utilisateur connecté, à `/connexion` (« Espace membres ») sinon.
 
 ### Dossiers d'adhésion (spec 010a)
 

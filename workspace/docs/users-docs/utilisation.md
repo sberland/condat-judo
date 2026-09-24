@@ -23,13 +23,13 @@ Réservé aux personnes qui ont un compte, créé par le bureau. Pas de mot de p
 
 1. Le bureau vous envoie un **lien personnel** (WhatsApp ou SMS), valable 7 jours et une seule fois.
 2. Touchez-le **depuis votre téléphone**, puis « Me connecter sur cet appareil ».
-3. Vous restez connecté·e **6 mois** ; chaque visite prolonge ce délai. L'entrée « Mon espace »
-   apparaît dans le menu.
+3. Vous restez connecté·e **6 mois** ; chaque visite prolonge ce délai. Le bouton **« Mon
+   espace »**, en haut à droite de chaque page, y mène directement.
 
 Lien expiré ou perdu, nouveau téléphone : demandez un nouveau lien au bureau. Le lien est
 personnel : ne le transférez pas, il ouvre une session sur votre compte. Pour vous déconnecter :
-**Mon espace → Se déconnecter**. Le lien « Espace membres » en bas de chaque page rappelle la
-marche à suivre.
+**Mon espace → Se déconnecter**. Non connecté, ce même bouton s'intitule « Espace membres »
+(« Connexion » sur les petits écrans) et rappelle la marche à suivre.
 
 ## Mon espace
 
@@ -60,8 +60,8 @@ n'a besoin de connaître l'e-mail ou le téléphone de l'autre.
 ## Site de qualification
 
 La qualification (site de test, accès réservé) se distingue de la production par la mention
-**« Qualif · »** devant le titre de l'onglet et par le badge « Preview / Qualif — pas la
-production » en bas à droite de chaque page.
+**« Qualif · »** devant le titre de l'onglet et par le badge « Preview / Qualif · v… — pas la
+production » en bas à droite de chaque page, qui indique aussi la version testée.
 
 ## Mettre à jour le contenu
 

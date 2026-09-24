@@ -6,6 +6,25 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+### Accès direct à l'espace membres, badge de qualification lisible
+
+#### Notes client
+
+Un bouton en haut de chaque page mène directement à l'espace membres, y compris sur téléphone
+sans ouvrir le menu : « Mon espace » quand on est connecté, « Espace membres » sinon (la page
+explique alors comment se connecter). Sur le site de qualification, le badge en bas à droite
+indique la version testée et ne masque plus le bas de page.
+
+#### Ajouts
+
+- Bouton « Mon espace » / « Espace membres » dans l'en-tête, visible sur tous les écrans
+
+#### Modifications
+
+- Badge « Preview / Qualif » : affiche la version ; marge en fin de page pour ne plus masquer la
+  version du pied de page
+- Menu complet affiché à partir des grands écrans (1280 px), menu compact en dessous
+
 ## [0.7.1] — 2026-09-24
 
 ### Sauvegarde de la base hors Cloudflare
