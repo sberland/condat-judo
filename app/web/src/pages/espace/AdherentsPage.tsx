@@ -19,7 +19,7 @@ export function AdherentsPage() {
   const liste = (data ?? []).filter((a) => `${a.prenom} ${a.nom} ${a.nom} ${a.prenom}`.toLowerCase().includes(terme))
 
   return (
-    <Espace titre="Adhérents" retour={{ to: '/espace', libelle: 'Mon espace' }} roles={['bureau', 'admin']}>
+    <Espace titre="Adhérents" retour={{ to: '/espace', libelle: 'Mon espace' }} roles={['bureau', 'admin']} aide="adherents">
       {() => (
         <div className="grid gap-4">
           <div className="flex flex-col gap-3 sm:flex-row">

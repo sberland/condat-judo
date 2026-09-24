@@ -35,6 +35,7 @@ export function AdherentFichePage() {
       titre={data ? `${data.adherent.prenom} ${data.adherent.nom}` : 'Fiche adhérent'}
       retour={{ to: '/espace/adherents', libelle: 'Adhérents' }}
       roles={['bureau', 'admin']}
+      aide="responsables"
     >
       {() => {
         if (isPending) return <p className="text-muted-foreground">Chargement…</p>

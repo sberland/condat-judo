@@ -33,6 +33,11 @@ marche à suivre.
 
 ## Mon espace
 
+**Aide intégrée** : dans l'espace, **Mon espace → Aide** (ou le bouton « Aide » en haut de chaque
+écran) répond aux questions courantes, écran par écran. Elle s'adapte au profil : un parent voit
+l'aide famille, le bureau y ajoute la sienne, l'administrateur voit tout. C'est la référence
+détaillée, mise à jour à chaque évolution de l'espace ; ce qui suit en donne un aperçu.
+
 **Pour les parents — Mes enfants** : la fiche de chaque enfant (âge, ceinture, n° de licence), ce
 que vous pouvez faire pour lui (l'inscrire, venir le chercher, être prévenu), les autres
 responsables et les personnes autorisées à le récupérer. Vous pouvez y mettre à jour votre

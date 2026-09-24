@@ -6,6 +6,22 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+### Aide intégrée à l'espace membres
+
+#### Notes client
+
+L'espace membres a désormais sa propre aide, adaptée à chacun : un parent y trouve comment se
+connecter, ce que signifient les droits sur ses enfants et comment corriger une information ; le
+bureau y ajoute la saisie des adhérents, des responsables et l'envoi des liens de connexion ;
+l'administrateur y trouve en plus la gestion des rôles. Un bouton « Aide » en haut de chaque écran
+mène directement à la bonne réponse.
+
+#### Ajouts
+
+- Page « Aide » dans Mon espace : questions / réponses par thème, filtrées selon le profil
+- Bouton « Aide » sur chaque écran de l'espace, vers la rubrique correspondante ; tuile « Aide »
+  sur l'accueil de l'espace
+
 ## [0.5.1] — 2026-09-24
 
 ### Le yoga sur tout le site, qualification repérable

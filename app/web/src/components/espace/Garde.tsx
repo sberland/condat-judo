@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
-import { ChevronLeft, LoaderCircle, Lock } from 'lucide-react'
+import { ChevronLeft, CircleHelp, LoaderCircle, Lock } from 'lucide-react'
+import type { IdRubrique } from '../../content/aide'
 import { aUnRole, useMe, type Me, type Role } from '../../lib/api'
 import { Container } from '../ui'
 import { usePageMeta } from '../../lib/usePageMeta'
@@ -14,11 +15,14 @@ export function Espace({
   titre,
   retour,
   roles,
+  aide,
   children,
 }: {
   titre: string
   retour?: { to: '/espace' | '/espace/adherents' | '/espace/comptes'; libelle: string }
   roles?: Role[]
+  /** Rubrique de l'aide intégrée liée à cet écran (lien « Aide » à côté du titre). */
+  aide?: IdRubrique
   children: (me: Me) => ReactNode
 }) {
   usePageMeta(titre, 'Espace connecté du club Judo Condat-sur-Vienne.')
@@ -59,7 +63,18 @@ export function Espace({
             <ChevronLeft className="size-4" aria-hidden /> {retour.libelle}
           </Link>
         )}
-        <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-balance sm:text-4xl">{titre}</h1>
+        <div className="mb-6 flex items-start justify-between gap-4">
+          <h1 className="text-3xl font-extrabold tracking-tight text-balance sm:text-4xl">{titre}</h1>
+          {aide && data?.etat === 'ok' && (
+            <Link
+              to="/espace/aide"
+              hash={aide}
+              className="mt-1 inline-flex shrink-0 items-center gap-1.5 rounded-full border bg-white px-3.5 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:border-brand hover:text-brand"
+            >
+              <CircleHelp className="size-4" aria-hidden /> Aide
+            </Link>
+          )}
+        </div>
         {contenu}
       </Container>
     </div>

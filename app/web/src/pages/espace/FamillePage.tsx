@@ -13,7 +13,7 @@ export function FamillePage() {
   })
 
   return (
-    <Espace titre="Mes enfants" retour={{ to: '/espace', libelle: 'Mon espace' }}>
+    <Espace titre="Mes enfants" retour={{ to: '/espace', libelle: 'Mon espace' }} aide="mes-enfants">
       {(me) => (
         <div className="grid gap-6">
           {isPending && <p className="text-muted-foreground">Chargement…</p>}
