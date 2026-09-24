@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
-import { ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, Trophy, Users, UsersRound, Wallet } from 'lucide-react'
+import { ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, ShieldCheck, Trophy, Users, UsersRound, Wallet } from 'lucide-react'
 import { SAISON } from '../../content/adhesion'
 import { Espace } from '../../components/espace/Garde'
 import { Bouton } from '../../components/formulaire'
@@ -51,6 +51,11 @@ export function EspaceAccueilPage() {
                 </Tuile>
               </>
             )}
+            {aUnRole(me, 'admin') && (
+              <Tuile to="/espace/rgpd" icone={<ShieldCheck className="size-6" />} titre="Données personnelles">
+                Durée de conservation, purge automatique, journal des accès aux coordonnées des familles.
+              </Tuile>
+            )}
             <Tuile to="/espace/aide" icone={<CircleHelp className="size-6" />} titre="Aide">
               Les réponses aux questions courantes{aUnRole(me, 'bureau', 'admin') ? ', y compris pour le bureau' : ''}.
             </Tuile>
@@ -81,7 +86,7 @@ function Tuile({
   titre,
   children,
 }: {
-  to: '/espace/famille' | '/espace/adherents' | '/espace/adhesions' | '/espace/comptes' | '/espace/aide' | '/espace/competitions' | '/competitions' | '/espace/tresorerie'
+  to: '/espace/famille' | '/espace/adherents' | '/espace/adhesions' | '/espace/comptes' | '/espace/aide' | '/espace/competitions' | '/competitions' | '/espace/tresorerie' | '/espace/rgpd'
   icone: ReactNode
   titre: string
   children: ReactNode

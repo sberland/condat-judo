@@ -10,18 +10,22 @@ export type Valeur<T> = { valeur: T; provisoire: boolean }
 export const RGPD: {
   /** Qui traite les demandes des familles (consulter, corriger, supprimer). */
   contact: Valeur<string>
-  /** Conservation des données d'un adhérent qui ne se réinscrit pas. */
-  conservationAdherents: Valeur<string>
+  /** Conservation des données d'un adhérent qui ne se réinscrit pas, en saisons après la dernière
+   *  adhésion (appliquée par la purge automatique, spec 019 — inactive tant que provisoire). */
+  conservationAdherents: Valeur<number>
   /** Destinataires hors du bureau. */
   destinataires: Valeur<string[]>
 } = {
   contact: { valeur: 'le bureau du club, par écrit (adresse à préciser)', provisoire: true },
-  conservationAdherents: { valeur: '3 saisons après la dernière adhésion', provisoire: true },
+  conservationAdherents: { valeur: 3, provisoire: true },
   destinataires: {
     valeur: ['France Judo, pour la prise de licence', 'France Judo et l’organisateur, pour l’inscription aux compétitions'],
     provisoire: true,
   },
 }
+
+/** « 3 saisons après la dernière adhésion ». */
+export const texteConservation = (saisons: number) => `${saisons} saison${saisons > 1 ? 's' : ''} après la dernière adhésion`
 
 /** Durées fixées par le fonctionnement du site (pas de décision du club requise). */
 export const DUREES_TECHNIQUES = [
@@ -29,6 +33,7 @@ export const DUREES_TECHNIQUES = [
   { quoi: 'Lien de connexion', duree: '7 jours, une seule utilisation' },
   { quoi: 'Sauvegardes chiffrées de la base', duree: '1 an au plus (30 quotidiennes, puis une par mois)' },
   { quoi: 'Consentements (droit à l’image, WhatsApp)', duree: 'jusqu’à leur retrait, et au plus la durée de conservation de l’adhérent' },
+  { quoi: 'Journal des consultations et modifications des coordonnées des familles', duree: '1 an' },
 ] as const
 
 export type Traitement = { titre: string; donnees: string[]; finalite: string; base: string }

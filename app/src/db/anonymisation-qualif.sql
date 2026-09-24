@@ -16,6 +16,7 @@
 
 DELETE FROM sessions;
 DELETE FROM liens_connexion;
+DELETE FROM journal_acces;
 
 -- Comptes sans rôle (familles, adhérents majeurs).
 UPDATE users SET

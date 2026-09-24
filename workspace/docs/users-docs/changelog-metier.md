@@ -4,6 +4,18 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.11.0 — 24 septembre 2026
+
+Les familles exercent elles-mêmes leurs droits depuis leur espace : elles téléchargent en un geste
+tout ce que le club enregistre sur elles et leurs enfants, et répondent oui ou non, à tout
+moment, pour les photos et vidéos et pour le groupe WhatsApp — ce qui règle aussi le recueil de
+ces accords cette saison. Une fois la durée de conservation confirmée par le club, les données
+d'un adhérent qui ne se réinscrit plus sont rendues anonymes automatiquement chaque semaine.
+Chaque consultation ou modification des coordonnées d'une famille par le bureau est enregistrée
+et consultable par l'administrateur pendant un an.
+
+---
+
 ## v0.10.0 — 24 septembre 2026
 
 Le trésorier suit les cotisations de la saison sur le site : ce que chaque famille doit, ce

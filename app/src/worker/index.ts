@@ -6,6 +6,8 @@ import { auth } from './routes/auth';
 import { competitions } from './routes/competitions';
 import { famille } from './routes/famille';
 import { tresorerie } from './routes/tresorerie';
+import type { Env } from './env';
+import { purgerRgpd } from './purge';
 import { cookieSession, jetonSession, prolongerSession } from './session';
 
 const app = new Hono<AppEnv>();
@@ -54,4 +56,10 @@ app.route('/api', api);
 // Fallback : tout ce qui n'est pas /api/* → fichiers statiques (Workers Assets, SPA)
 app.all('*', (c) => c.env.ASSETS.fetch(c.req.raw));
 
-export default app;
+export default {
+  fetch: app.fetch,
+  // Purge RGPD hebdomadaire (spec 019) — cf. [triggers] de wrangler.toml.
+  scheduled(_evenement, env, ctx) {
+    ctx.waitUntil(purgerRgpd(env).then((resultat) => console.log(resultat)));
+  },
+} satisfies ExportedHandler<Env>;

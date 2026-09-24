@@ -21,12 +21,20 @@ export const slug = (texte: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
 
-/** Téléchargement (BOM pour que les accents s'affichent sous Excel). */
-export function telechargerCsv(nomFichier: string, lignes: string[][]): void {
-  const url = URL.createObjectURL(new Blob([String.fromCharCode(0xfeff), versCsv(lignes)], { type: 'text/csv;charset=utf-8' }))
+/** Fait télécharger un fichier généré dans le navigateur. */
+export function telecharger(nomFichier: string, contenu: BlobPart[], type: string): void {
+  const url = URL.createObjectURL(new Blob(contenu, { type }))
   const a = document.createElement('a')
   a.href = url
   a.download = nomFichier
   a.click()
   URL.revokeObjectURL(url)
 }
+
+/** Téléchargement CSV (BOM pour que les accents s'affichent sous Excel). */
+export const telechargerCsv = (nomFichier: string, lignes: string[][]) =>
+  telecharger(nomFichier, [String.fromCharCode(0xfeff), versCsv(lignes)], 'text/csv;charset=utf-8')
+
+/** Téléchargement JSON lisible (indenté). */
+export const telechargerJson = (nomFichier: string, donnees: unknown) =>
+  telecharger(nomFichier, [JSON.stringify(donnees, null, 2)], 'application/json;charset=utf-8')

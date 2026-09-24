@@ -23,6 +23,11 @@ binding = "ASSETS"
 not_found_handling = "single-page-application"
 run_worker_first = ["/api/*"]
 
+# Purge RGPD hebdomadaire (spec 019) : lundi 3 h UTC. Le code ne fait rien hors production, ni tant
+# que la durée de conservation n'est pas confirmée par le club (content/rgpd.ts).
+[triggers]
+crons = ["0 3 * * 1"]
+
 # D1 de PRODUCTION — porte les données réelles des familles.
 # ⚠️ Jamais de seed ni de reset en --remote : le seed (src/db/seed.sql) est réservé au --local.
 [[d1_databases]]
@@ -45,6 +50,10 @@ migrations_dir = "src/db/migrations"
 # URL : https://condat-judo-preview.sebastien-berland.workers.dev (tout le host derrière le verrou Access)
 workers_dev = true
 preview_urls = false
+
+# Pas de tâche planifiée en qualification.
+[env.preview.triggers]
+crons = []
 
 [env.preview.vars]
 ENVIRONMENT = "preview"

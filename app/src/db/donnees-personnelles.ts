@@ -28,6 +28,7 @@ export const TABLES: Record<string, Table> = {
       created_at: 'conservee',
       last_login: 'conservee',
       supprime_le: 'conservee',
+      anonymise_le: 'conservee',
     },
   },
   identites: {
@@ -60,6 +61,7 @@ export const TABLES: Record<string, Table> = {
       created_at: 'conservee',
       updated_at: 'conservee',
       supprime_le: 'conservee',
+      anonymise_le: 'conservee',
     },
   },
   liens: {
@@ -130,6 +132,12 @@ export const TABLES: Record<string, Table> = {
   inscriptions_competition: {
     colonnes: { competition_id: 'conservee', adherent_id: 'conservee', inscrit_par: 'conservee', inscrit_le: 'conservee', ressaisi_le: 'conservee' },
   },
+  // Journal des accès (019) : qui a consulté quelle famille en prod — vidé dans la qualif.
+  journal_acces: {
+    colonnes: { id: 'purgee', cree_le: 'purgee', user_id: 'purgee', action: 'purgee', cible: 'purgee', cible_id: 'purgee', detail: 'purgee' },
+  },
+  // Rapports de purge (019) : dates et nombres seulement.
+  purges: { colonnes: { id: 'conservee', execute_le: 'conservee', seuil: 'conservee', adherents: 'conservee', comptes: 'conservee' } },
   liens_connexion: {
     colonnes: {
       empreinte: 'purgee',

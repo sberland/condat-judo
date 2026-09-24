@@ -4,8 +4,12 @@ import { Hono, type Context } from 'hono';
 import { aUnRole, connexionRequise, roleRequis, type AppEnv } from '../droits';
 import { ROLES, type Role } from '../identite';
 import { couperAcces, creerLien } from '../session';
+import { donneesDuCompte } from '../export';
+import { journaliser } from '../journal';
+import { critere, DERNIERE_SAISON, seuilPurge } from '../purge';
+import { RGPD } from '../../../web/src/content/rgpd';
 import { categorieDe, eligible } from '../../../web/src/content/categories';
-import { COLONNES_COMPETITION, inscriptionsOuvertes, lireCompetition, versCompetition } from './competitions';
+import { aujourdhuiParis, COLONNES_COMPETITION, inscriptionsOuvertes, lireCompetition, versCompetition } from './competitions';
 import {
   calculerMontant,
   estMineur,
@@ -27,7 +31,7 @@ import {
 } from '../validation';
 
 export const admin = new Hono<AppEnv>();
-admin.use('*', connexionRequise, roleRequis('bureau', 'admin'));
+admin.use('*', connexionRequise, roleRequis('bureau', 'admin'), journaliser);
 
 // --- Outils ---
 
@@ -175,7 +179,8 @@ admin.delete('/adherents/:id', async (c) => {
 
 admin.post('/adherents/:id/restaurer', async (c) => {
   const res = await c.env.DB.prepare(
-    'UPDATE adherents SET supprime_le = NULL WHERE id = ? AND supprime_le IS NOT NULL',
+    // Une fiche rendue anonyme (purge RGPD, spec 019) ne se restaure pas.
+    'UPDATE adherents SET supprime_le = NULL WHERE id = ? AND supprime_le IS NOT NULL AND anonymise_le IS NULL',
   )
     .bind(id(c, 'id'))
     .run();
@@ -692,4 +697,64 @@ admin.put('/competitions/:id/inscriptions/:adherentId/ressaisi', async (c) => {
     .run();
   if (!res.meta.changes) return c.json({ error: 'Inscription introuvable' }, 404);
   return c.json({ ok: true });
+});
+
+// --- RGPD (spec 019) : administrateur seulement ---
+
+// Données d'un compte, pour répondre à une demande reçue par écrit.
+admin.get('/comptes/:id/export', roleRequis('admin'), async (c) => {
+  const donnees = await donneesDuCompte(c.env, id(c, 'id') ?? 0);
+  return donnees ? c.json(donnees) : c.json({ error: 'Compte introuvable' }, 404);
+});
+
+type Echu = { id: number; prenom: string; nom: string; derniere_saison: number };
+
+// Durée de conservation, adhérents concernés par la purge, historique des passages.
+admin.get('/rgpd', roleRequis('admin'), async (c) => {
+  const conservation = RGPD.conservationAdherents;
+  const seuil = seuilPurge(aujourdhuiParis(), conservation.valeur);
+  const liste = (s: number) =>
+    c.env.DB.prepare(
+      `SELECT id, prenom, nom, ${DERNIERE_SAISON} AS derniere_saison FROM adherents WHERE ${critere(1)} ORDER BY nom, prenom LIMIT 500`,
+    ).bind(s);
+  const [echus, prochains, purges] = await c.env.DB.batch([
+    liste(seuil),
+    liste(seuil + 1),
+    c.env.DB.prepare('SELECT execute_le, seuil, adherents, comptes FROM purges ORDER BY id DESC LIMIT 20'),
+  ]);
+  const idsEchus = new Set(((echus?.results ?? []) as Echu[]).map((a) => a.id));
+  return c.json({
+    conservation,
+    // La tâche planifiée ne tourne qu'en production, et seulement une fois la durée confirmée par le club.
+    active: c.env.ENVIRONMENT === 'production' && !conservation.provisoire,
+    environnement: c.env.ENVIRONMENT,
+    seuil,
+    echus: echus?.results ?? [],
+    saisonSuivante: ((prochains?.results ?? []) as Echu[]).filter((a) => !idsEchus.has(a.id)),
+    purges: purges?.results ?? [],
+  });
+});
+
+// Journal des accès sensibles (conservé un an), le plus récent d'abord ; recherche sur l'auteur ou la cible.
+admin.get('/journal', roleRequis('admin'), async (c) => {
+  const { results } = await c.env.DB.prepare(
+    `SELECT j.id, j.cree_le, j.action, j.cible, j.cible_id, j.detail, u.prenom || ' ' || u.nom AS acteur,
+            CASE j.cible
+              WHEN 'adherent' THEN (SELECT a.prenom || ' ' || a.nom FROM adherents a WHERE a.id = j.cible_id)
+              WHEN 'compte' THEN (SELECT x.prenom || ' ' || x.nom FROM users x WHERE x.id = j.cible_id)
+              WHEN 'famille' THEN (SELECT 'Famille ' || a.nom FROM adhesions d JOIN adherents a ON a.id = d.adherent_id WHERE d.id = j.cible_id)
+              ELSE 'Liste des comptes'
+            END AS cible_libelle
+     FROM journal_acces j LEFT JOIN users u ON u.id = j.user_id
+     WHERE lower(COALESCE(u.prenom || ' ' || u.nom, '')) LIKE ?1
+        OR lower(COALESCE(CASE j.cible
+              WHEN 'adherent' THEN (SELECT a.prenom || ' ' || a.nom FROM adherents a WHERE a.id = j.cible_id)
+              WHEN 'compte' THEN (SELECT x.prenom || ' ' || x.nom FROM users x WHERE x.id = j.cible_id)
+              WHEN 'famille' THEN (SELECT a.nom FROM adhesions d JOIN adherents a ON a.id = d.adherent_id WHERE d.id = j.cible_id)
+            END, '')) LIKE ?1
+     ORDER BY j.id DESC LIMIT 300`,
+  )
+    .bind(recherche(c.req.query('q')))
+    .all();
+  return c.json(results);
 });
