@@ -19,10 +19,10 @@ de référence (StrategyHub, specs 008 / 013), transposé à GitHub.
 
 ## Critères d'acceptation
 
-- [ ] Un export quotidien est produit et conservé selon la rétention
-- [ ] Un déploiement avec migration crée un export avant d'appliquer la migration
-- [ ] Les exports sont chiffrés et inaccessibles publiquement
-- [ ] La restauration d'un export vers la qualif est documentée et a été testée
+- [x] Un export quotidien est produit et conservé selon la rétention (1re exécution réelle le 2026-09-24)
+- [ ] Un déploiement avec migration crée un export avant d’appliquer la migration — à constater au prochain tag (migration 0004)
+- [x] Les exports sont chiffrés et inaccessibles publiquement (dépôt privé, age ; journaux sans contenu)
+- [x] La restauration d’un export vers la qualif est documentée et a été testée (2026-09-24)
 
 ## Hors périmètre
 

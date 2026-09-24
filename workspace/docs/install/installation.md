@@ -53,8 +53,11 @@ du projet est public). Détail : [`sauvegarde.md`](../technical-docs/sauvegarde.
 1. **Dépôt privé** :
 
    ```bash
-   gh repo create sberland/condat-judo-sauvegardes --private --description "Sauvegardes chiffrées de la base Condat Judo"
+   gh repo create sberland/condat-judo-sauvegardes --private --add-readme --description "Sauvegardes chiffrées de la base Condat Judo"
    ```
+
+   `--add-readme` est indispensable : une Release doit s'accrocher à un commit, et un dépôt vide
+   n'en a pas (erreur « Repository is empty »).
 
 2. **Clé de chiffrement** (poste du responsable) : `winget install FiloSottile.age`, rouvrir le
    terminal, puis :
