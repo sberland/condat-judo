@@ -66,10 +66,12 @@ export const TRAITEMENTS: Traitement[] = [
       'Demande : enfant, mercredi, lieu de récupération, qui l’a faite et quand',
       'Photo de l’enfant (si vous l’acceptez), montrée aux seuls encadrants, le mercredi même',
       'Pour l’encadrant, le jour même : responsables et personnes autorisées à récupérer l’enfant, avec leur téléphone',
+      'Pointage : heure de prise en charge à la garderie, personne avec qui l’enfant est parti et à quelle heure',
     ],
-    finalite: 'Savoir quels enfants récupérer chaque mercredi, et où ; les reconnaître et ne les confier qu’aux personnes autorisées.',
+    finalite:
+      'Savoir quels enfants récupérer chaque mercredi, et où ; les reconnaître, ne les confier qu’aux personnes autorisées, et permettre aux parents de suivre la prise en charge.',
     base:
-      'Exécution de l’adhésion à l’association, à votre demande ; photo : votre consentement, retirable à tout moment. Demandes effacées un an après le mercredi, photo un an après son dépôt.',
+      'Exécution de l’adhésion à l’association, à votre demande ; photo : votre consentement, retirable à tout moment. Demandes et pointages effacés un an après le mercredi, photo un an après son dépôt.',
   },
   {
     titre: 'Compétitions',

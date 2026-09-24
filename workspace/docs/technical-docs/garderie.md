@@ -1,12 +1,12 @@
-# Garderie du mercredi — demandes, liste du jour, photos (specs 012a, 012b)
+# Garderie du mercredi — demandes, liste du jour, photos, pointage (specs 012a à 012c)
 
 ## Contexte
 
 Le mercredi, le club récupère des enfants à la garderie (goûter, cours de judo). Les demandes
 passaient par WhatsApp. La 012a les met dans le site : le parent demande ou annule, le bureau a la
 liste de chaque mercredi. La 012b donne à l'encadrant la liste du jour (photos, personnes
-autorisées, téléphones) et laisse les familles gérer photo et personnes autorisées. Le pointage
-viendra avec 012c.
+autorisées, téléphones) et laisse les familles gérer photo et personnes autorisées. La 012c
+ajoute le pointage de l'encadrant et le suivi en direct par les parents.
 
 ## Description / Flux
 
@@ -74,6 +74,21 @@ l'adhérent (`instructionsPurge`, spec 019).
   l'accord. **Jamais dans la qualif** (`anonymisation-qualif.sql` vide la table).
 - Export des données (019) : la photo (data URL) et les demandes de garderie y figurent.
 
+### Pointage (spec 012c)
+
+- Colonnes de `garderie_demandes` (migration 0011) : `recupere_le`, `absent_le`, `pointe_par`,
+  `parti_le`, `parti_avec` (« Prénom Nom (lien) », **recopié** au départ : la liste des
+  personnes autorisées peut changer ensuite), `parti_par`. Heures en UTC.
+- `etatPointage` (`content/garderie.ts`) : `demande` → `recupere` | `absent` → `parti`.
+- `PUT /api/encadrant/garderie/:date/:adherentId/pointage` `{ etape, avec? }` : le jour consultable
+  seulement (même règle que la liste) ; `parti` exige « récupéré » et une personne autorisée
+  **pour cet enfant** (`{ type: 'responsable', id: users.id }` avec *peut récupérer*, ou
+  `{ type: 'personne', id }` de `personnes_autorisees`), sinon 403 ; `annuler` défait la
+  dernière étape.
+- Suivi : la liste de l'encadrant et la page des familles s'interrogent toutes les 30 secondes
+  (`refetchInterval`), seulement quand un enfant est concerné ; la liste du bureau affiche l'état.
+- `parti_avec` est pseudonymisé dans la qualif ; tout est effacé avec la demande.
+
 ### Personnes autorisées gérées par les familles (spec 012b)
 
 `POST /api/famille/enfants/:id/personnes-autorisees`, `DELETE …/:pid` : un responsable qui
@@ -86,9 +101,10 @@ il l'est à l'encadrant et au bureau.
   jusqu'au … », liste des mercredis (8 puis « voir les suivants ») avec « Demander » / « Annuler » /
   « Délai passé » ; enfants sans le droit d'inscrire en lecture seule.
 - `/espace/garderie` (bureau) : choix du mercredi, enfants par lieu, retrait, ajout par recherche.
-- `/espace/garderie-du-jour` (encadrant, bureau, admin) : « Mercredi du jour », cartes par lieu
-  (photo agrandissable, « Qui peut venir le chercher » avec appel en un geste) ; sélecteur de
-  mercredi hors production.
+- `/espace/garderie-du-jour` (encadrant, bureau, admin) : « Mercredi du jour », compteurs, cartes
+  par lieu (photo agrandissable, état, « Récupéré » / « Absent », « Parti avec : », « Annuler »,
+  « Qui peut venir le chercher » avec appel en un geste) ; sélecteur de mercredi hors production.
+- `/espace/mercredis` (familles) : bloc « Aujourd’hui » avec l’état de chaque enfant demandé.
 - « Mes enfants » (familles) : « Autorisés à le récupérer » et « Photo pour la garderie du
   mercredi » sur chaque fiche ; fiche adhérent (bureau) : bloc « Photo pour la garderie »
   (composants partagés `PersonnesAutorisees`, `GestionPhoto`).

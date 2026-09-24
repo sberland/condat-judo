@@ -63,7 +63,10 @@ retirable à tout moment, effacée au bout d'un an).
 **Pour l'encadrant — Mercredi du jour** : Mon espace → « Mercredi du jour » : le mercredi même, les
 enfants à récupérer par lieu, avec leur photo (touchez-la pour l'agrandir) et « Qui peut venir le
 chercher » (responsables autorisés et personnes autorisées, avec leur téléphone). Ne confiez
-jamais un enfant à une personne absente de la liste : appelez un responsable.
+jamais un enfant à une personne absente de la liste : appelez un responsable. Pointez chaque
+enfant « Récupéré » (ou « Absent ») à la garderie, puis « Parti avec » la personne venue le
+chercher ; « Annuler » corrige une erreur. Les parents suivent l'état de leur enfant en direct
+dans « Garderie du mercredi ».
 
 **Pour les parents — Cotisations** : dans « Mes enfants », le bloc « Cotisations » indique pour
 chaque enfant le montant de l'adhésion, ce qui a été payé, ce qui reste, l'échéancier d'un

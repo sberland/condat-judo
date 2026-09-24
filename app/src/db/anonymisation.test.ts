@@ -46,6 +46,9 @@ function baseRemplie(): DatabaseSync {
       (1, '2026-2027', 14700, 'cheque', 'Chèque 1234567 — Banque Réelle — P. Parent', '2026-09-10'),
       (2, '2026-2027', 500, 'especes', NULL, '2026-09-11');
     INSERT INTO paiement_parts (paiement_id, adhesion_id, montant) VALUES (1, 1, 14700), (2, 1, 500);
+    INSERT INTO garderie_demandes (adherent_id, date, lieu, recupere_le, parti_le, parti_avec) VALUES
+      (1, '2026-09-30', 'École', '2026-09-30 14:30:00', '2026-09-30 16:05:00', 'Mamie Réelle (grand-mère)');
+    INSERT INTO photos_adherents (adherent_id, image, type) VALUES (1, 'AAAA', 'image/jpeg');
   `)
   return db
 }

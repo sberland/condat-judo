@@ -16,7 +16,7 @@ garderie.get('/', async (c) => {
   const aVenir = ouverts.filter((m) => m >= aujourdhui);
   const date = c.req.query('date') ?? aVenir[0] ?? ouverts.at(-1) ?? aujourdhui;
   const { results } = await c.env.DB.prepare(
-    `SELECT d.adherent_id, a.prenom, a.nom, a.date_naissance, d.lieu, d.demande_le,
+    `SELECT d.adherent_id, a.prenom, a.nom, a.date_naissance, d.lieu, d.demande_le, d.recupere_le, d.absent_le, d.parti_le, d.parti_avec,
             (SELECT u.prenom || ' ' || u.nom FROM users u WHERE u.id = d.demande_par) AS demande_par
      FROM garderie_demandes d JOIN adherents a ON a.id = d.adherent_id
      WHERE d.date = ? ORDER BY d.lieu, a.nom, a.prenom`,

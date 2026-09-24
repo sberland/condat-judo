@@ -5,7 +5,8 @@ import { Trash2, UserPlus } from 'lucide-react'
 import { Bloc, Espace } from '../../components/espace/Garde'
 import { Alerte, Bouton, Champ, Selection } from '../../components/formulaire'
 import { appel, dateHeureFr, ErreurApi, type AdherentListe } from '../../lib/api'
-import { jourCourt, jourLong, majuscule, type GarderieBureau } from '../../lib/garderie'
+import { jourCourt, jourLong, libellePointage, majuscule, type GarderieBureau } from '../../lib/garderie'
+import { etatPointage } from '../../content/garderie'
 
 // Garderie du mercredi (spec 012a), côté bureau : la liste d'un mercredi, par lieu ; ajout ou
 // retrait d'un enfant sans délai (demande tardive, erreur).
@@ -71,6 +72,9 @@ export function GarderieBureauPage() {
                               <span className="block text-xs text-muted-foreground">
                                 Demandé{d.demande_par ? ` par ${d.demande_par}` : ''}, le {dateHeureFr(d.demande_le)}
                               </span>
+                              {etatPointage(d) !== 'demande' && (
+                                <span className="block text-sm font-medium">{libellePointage({ ...d, etat: etatPointage(d) })}</span>
+                              )}
                             </span>
                             <button
                               type="button"

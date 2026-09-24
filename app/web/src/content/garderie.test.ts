@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { estMercredi, libelleLimite, limiteDemande, maintenantParis, mercredisOuverts, modifiable, tousLesMercredis } from './garderie'
+import { estMercredi, etatPointage, libelleLimite, limiteDemande, maintenantParis, mercredisOuverts, modifiable, tousLesMercredis } from './garderie'
 import { copierReferentiel, validerReferentiel } from './referentiel'
 import { REFERENTIEL_2026_2027 } from './referentiel-initial'
 
@@ -64,5 +64,15 @@ describe('réglages dans le référentiel', () => {
     expect(!v.ok && v.erreurs['garderie.lieux']).toBeTruthy()
     expect(!v.ok && v.erreurs['garderie.limite']).toBeTruthy()
     expect(!v.ok && v.erreurs['garderie.fermes']).toBeTruthy()
+  })
+})
+
+describe('etatPointage', () => {
+  const vide = { recupere_le: null, absent_le: null, parti_le: null, parti_avec: null }
+  it('suit les étapes du mercredi', () => {
+    expect(etatPointage(vide)).toBe('demande')
+    expect(etatPointage({ ...vide, recupere_le: '2026-09-30 14:30:00' })).toBe('recupere')
+    expect(etatPointage({ ...vide, absent_le: '2026-09-30 14:30:00' })).toBe('absent')
+    expect(etatPointage({ ...vide, recupere_le: '2026-09-30 14:30:00', parti_le: '2026-09-30 16:05:00', parti_avec: 'X' })).toBe('parti')
   })
 })

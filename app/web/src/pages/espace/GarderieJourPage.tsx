@@ -1,14 +1,17 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { ChevronDown, Phone, X } from 'lucide-react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { Check, ChevronDown, Phone, Undo2, UserX, X } from 'lucide-react'
 import { Bloc, Espace } from '../../components/espace/Garde'
 import { Alerte } from '../../components/formulaire'
 import { PhotoEnfant } from '../../components/espace/Photo'
-import { appel, QUALITES, type Qualite } from '../../lib/api'
-import { jourCourt, jourLong, majuscule, type EnfantDuJour, type GarderieJour } from '../../lib/garderie'
+import { appel, ErreurApi, QUALITES, type Qualite } from '../../lib/api'
+import { jourCourt, jourLong, libellePointage, majuscule, type EnfantDuJour, type GarderieJour } from '../../lib/garderie'
+import type { EtatPointage } from '../../content/garderie'
 
 // Liste du mercredi de l'encadrant (spec 012b) : les enfants à récupérer par lieu, leur photo et
 // qui peut venir les chercher. Visible le mercredi même seulement (contrôlé par l'API).
+// Pointage (spec 012c) : récupéré / absent à la garderie, puis parti avec une personne autorisée ;
+// la liste se rafraîchit toutes les 30 secondes (plusieurs encadrants, personne ajoutée par un parent).
 
 export function GarderieJourPage() {
   const [date, setDate] = useState<string | null>(null)
@@ -16,6 +19,7 @@ export function GarderieJourPage() {
   const { data, isPending, isError } = useQuery({
     queryKey: ['encadrant', 'garderie', date],
     queryFn: () => appel<GarderieJour>('GET', `/api/encadrant/garderie${date ? `?date=${date}` : ''}`),
+    refetchInterval: (q) => (q.state.data?.enfants?.length ? 30_000 : false),
   })
   const photo = (e: EnfantDuJour) => (e.photo && data ? `/api/encadrant/garderie/${data.date}/photo/${e.id}` : null)
 
@@ -70,6 +74,7 @@ export function GarderieJourPage() {
             ) : (
               <Bloc titre={`${majuscule(jourLong(data.date))} · ${enfants.length} enfant${enfants.length > 1 ? 's' : ''}`}>
                 {enfants.length === 0 && <p className="text-muted-foreground">Aucun enfant à récupérer ce mercredi.</p>}
+                {enfants.length > 0 && <Compteurs enfants={enfants} />}
                 <div className="grid gap-6">
                   {parLieu.map((p) => (
                     <section key={p.lieu} aria-label={p.lieu}>
@@ -78,7 +83,7 @@ export function GarderieJourPage() {
                       </h3>
                       <ul className="grid gap-3">
                         {p.enfants.map((e) => (
-                          <CarteEnfant key={e.id} enfant={e} photo={photo(e)} agrandir={() => setAgrandie(e)} />
+                          <CarteEnfant key={e.id} date={data.date} enfant={e} photo={photo(e)} agrandir={() => setAgrandie(e)} />
                         ))}
                       </ul>
                     </section>
@@ -111,9 +116,49 @@ export function GarderieJourPage() {
   )
 }
 
-function CarteEnfant({ enfant: e, photo, agrandir }: { enfant: EnfantDuJour; photo: string | null; agrandir: () => void }) {
+const TONS: Record<EtatPointage, string> = {
+  demande: 'bg-surface text-foreground',
+  recupere: 'bg-sky-100 text-sky-900',
+  absent: 'bg-amber-100 text-amber-900',
+  parti: 'bg-emerald-100 text-emerald-900',
+}
+
+function Compteurs({ enfants }: { enfants: EnfantDuJour[] }) {
+  const n = (etat: EtatPointage) => enfants.filter((e) => e.pointage.etat === etat).length
+  const recuperes = n('recupere') + n('parti')
+  return (
+    <p className="mb-4 flex flex-wrap gap-2 text-sm font-semibold" aria-live="polite">
+      <span className={`rounded-full px-3 py-1 ${TONS.recupere}`}>
+        Récupérés {recuperes}/{enfants.length}
+      </span>
+      {n('absent') > 0 && <span className={`rounded-full px-3 py-1 ${TONS.absent}`}>Absents {n('absent')}</span>}
+      <span className={`rounded-full px-3 py-1 ${TONS.parti}`}>Partis {n('parti')}</span>
+    </p>
+  )
+}
+
+function CarteEnfant({ date, enfant: e, photo, agrandir }: { date: string; enfant: EnfantDuJour; photo: string | null; agrandir: () => void }) {
+  const client = useQueryClient()
+  const [enCours, setEnCours] = useState('')
+  const [erreur, setErreur] = useState('')
   const recuperent = e.responsables.filter((r) => r.peutRecuperer)
   const prevenir = e.responsables.filter((r) => !r.peutRecuperer && r.estContact)
+  const etat = e.pointage.etat
+
+  async function pointer(etape: 'recupere' | 'absent' | 'parti' | 'annuler', avec?: { type: 'responsable' | 'personne'; id: number }) {
+    setErreur('')
+    setEnCours(avec ? `${avec.type}-${avec.id}` : etape)
+    try {
+      await appel('PUT', `/api/encadrant/garderie/${date}/${e.id}/pointage`, { etape, avec })
+      await client.invalidateQueries({ queryKey: ['encadrant', 'garderie'] })
+    } catch (err) {
+      setErreur(err instanceof ErreurApi ? err.message : 'Enregistrement impossible, réessayez.')
+    } finally {
+      setEnCours('')
+    }
+  }
+
+  const bouton = 'flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-semibold disabled:opacity-60'
   return (
     <li className="rounded-2xl border bg-white p-3">
       <div className="flex items-center gap-4">
@@ -133,6 +178,48 @@ function CarteEnfant({ enfant: e, photo, agrandir }: { enfant: EnfantDuJour; pho
           </p>
         </div>
       </div>
+      <p className={`mt-3 rounded-xl px-3 py-2 text-sm font-semibold ${TONS[etat]}`}>{libellePointage(e.pointage)}</p>
+      {etat === 'absent' && <p className="mt-1 text-sm text-amber-900">Prévenez un responsable (numéros ci-dessous).</p>}
+      <div className="mt-3 flex flex-wrap gap-2">
+        {etat === 'demande' && (
+          <>
+            <button type="button" disabled={!!enCours} onClick={() => pointer('recupere')} className={`${bouton} border-sky-700 bg-sky-700 text-white`}>
+              <Check className="size-4" aria-hidden /> Récupéré
+            </button>
+            <button type="button" disabled={!!enCours} onClick={() => pointer('absent')} className={`${bouton} bg-white`}>
+              <UserX className="size-4" aria-hidden /> Absent
+            </button>
+          </>
+        )}
+        {etat === 'recupere' && (
+          <div className="grid w-full gap-2">
+            <p className="text-sm font-semibold">Parti avec :</p>
+            <div className="flex flex-wrap gap-2">
+              {recuperent.map((r) => (
+                <button key={`r-${r.id}`} type="button" disabled={!!enCours} onClick={() => pointer('parti', { type: 'responsable', id: r.id })} className={`${bouton} bg-white`}>
+                  {r.prenom} {r.nom}
+                </button>
+              ))}
+              {e.personnes.map((p) => (
+                <button key={`p-${p.id}`} type="button" disabled={!!enCours} onClick={() => pointer('parti', { type: 'personne', id: p.id })} className={`${bouton} bg-white`}>
+                  {p.prenom} {p.nom}
+                </button>
+              ))}
+            </div>
+            <p className="text-sm text-muted-foreground">Quelqu’un d’autre ? Ne confiez pas l’enfant : appelez un responsable, qui peut l’ajouter depuis son espace.</p>
+          </div>
+        )}
+        {etat !== 'demande' && (
+          <button type="button" disabled={!!enCours} onClick={() => pointer('annuler')} className={`${bouton} bg-white text-muted-foreground`}>
+            <Undo2 className="size-4" aria-hidden /> {etat === 'parti' ? 'Annuler le départ' : 'Annuler'}
+          </button>
+        )}
+      </div>
+      {erreur && (
+        <p role="alert" className="mt-2 text-sm font-medium text-brand">
+          {erreur}
+        </p>
+      )}
       <details className="group mt-3 rounded-xl border">
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 px-3 font-semibold">
           Qui peut venir le chercher ({recuperent.length + e.personnes.length})

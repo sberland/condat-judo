@@ -6,6 +6,27 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.15.0] — 2026-09-24
+
+### Garderie du mercredi : pointage et suivi par les parents
+
+#### Notes client
+
+La garderie du mercredi est désormais complète sur le site. Le mercredi, l'encadrant pointe
+chaque enfant « Récupéré » à la garderie (ou « Absent », et il prévient la famille), puis, à la
+fin du cours, « Parti avec » la personne venue le chercher, choisie parmi les seules personnes
+autorisées. Les parents suivent l'état de leur enfant en direct dans « Garderie du mercredi »
+(récupéré à quelle heure, parti avec qui), sans rien avoir à demander ; le bureau le voit dans la
+liste du mercredi.
+
+#### Ajouts
+
+- « Mercredi du jour » : boutons « Récupéré », « Absent », « Parti avec … », « Annuler » ;
+  compteurs ; liste mise à jour toute seule toutes les 30 secondes
+- Espace famille : bloc « Aujourd'hui » avec l'état de chaque enfant, mis à jour automatiquement
+- Liste du mercredi du bureau : état de chaque enfant
+- Aide intégrée (encadrant, familles, bureau) ; page « Données personnelles » et registre
+
 ## [0.14.0] — 2026-09-24
 
 ### Garderie du mercredi : liste du jour de l'encadrant, photos

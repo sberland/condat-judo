@@ -196,6 +196,13 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
         r: ['« Annuler » à côté du mercredi, tant que le délai n’est pas passé. Les autres mercredis demandés restent valables.'],
       },
       {
+        q: 'Savoir si mon enfant a bien été récupéré',
+        r: [
+          'Le mercredi, « Garderie du mercredi » affiche en haut l’état de chaque enfant demandé : récupéré à la garderie (avec l’heure), puis parti avec la personne venue le chercher. La page se met à jour toute seule tant qu’elle est ouverte.',
+          '« Pas à la garderie » : l’encadrant ne l’a pas trouvé ; il vous appelle.',
+        ],
+      },
+      {
         q: 'Je ne vois pas les boutons pour mon enfant',
         r: ['Seul un responsable qui a le droit d’« inscrire » l’enfant peut faire les demandes (voir « Mes enfants »). Les demandes faites par l’autre responsable apparaissent quand même.'],
       },
@@ -408,8 +415,16 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
         q: 'Qui peut venir chercher un enfant ?',
         r: [
           '« Qui peut venir le chercher » : les responsables qui peuvent le récupérer et les personnes autorisées par la famille, avec leur téléphone (touchez le numéro pour appeler).',
-          'Ne confiez jamais un enfant à une personne absente de cette liste : appelez un responsable, qui peut l’ajouter depuis son espace ; la liste se met à jour en rechargeant la page.',
+          'Ne confiez jamais un enfant à une personne absente de cette liste : appelez un responsable, qui peut l’ajouter depuis son espace ; la liste se met à jour d’elle-même (toutes les 30 secondes).',
           '« À prévenir, mais ne peut pas le récupérer » : un responsable à contacter, qui n’est pas autorisé à venir le chercher.',
+        ],
+      },
+      {
+        q: 'Pointer les enfants',
+        r: [
+          'À la garderie : « Récupéré » pour chaque enfant pris en charge, « Absent » s’il n’y est pas (appelez alors un responsable). Les compteurs en haut de la liste indiquent où vous en êtes.',
+          'À la fin du cours : « Parti avec : » puis le nom de la personne venue le chercher. Seules les personnes autorisées sont proposées.',
+          'Une erreur ? « Annuler » revient à l’étape précédente. Les parents voient l’état de leur enfant en direct dans leur espace.',
         ],
       },
       {
@@ -432,6 +447,10 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
       {
         q: 'Une demande tardive, ou une erreur',
         r: ['« Ajouter un enfant » (recherche par nom) ou « Retirer » : le bureau n’est pas limité par le délai des familles.'],
+      },
+      {
+        q: 'Savoir qui est parti avec qui',
+        r: ['Dans la liste du mercredi, chaque enfant pointé par l’encadrant affiche « Récupéré à la garderie à … », « Pas à la garderie » ou « Parti avec … à … ».'],
       },
       {
         q: 'Photo d’un enfant pour la garderie',

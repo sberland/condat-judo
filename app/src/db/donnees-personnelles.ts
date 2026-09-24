@@ -139,7 +139,22 @@ export const TABLES: Record<string, Table> = {
     colonnes: { competition_id: 'conservee', adherent_id: 'conservee', inscrit_par: 'conservee', inscrit_le: 'conservee', ressaisi_le: 'conservee' },
   },
   // Garderie (012a) : enfant, mercredi, lieu, auteur — pas de donnée identifiante (adhérent pseudonymisé).
-  garderie_demandes: { colonnes: { adherent_id: 'conservee', date: 'conservee', lieu: 'conservee', demande_par: 'conservee', demande_le: 'conservee' } },
+  // Pointage (012c) : heures et auteurs conservés ; `parti_avec` (nom de la personne) pseudonymisé.
+  garderie_demandes: {
+    colonnes: {
+      adherent_id: 'conservee',
+      date: 'conservee',
+      lieu: 'conservee',
+      demande_par: 'conservee',
+      demande_le: 'conservee',
+      recupere_le: 'conservee',
+      absent_le: 'conservee',
+      pointe_par: 'conservee',
+      parti_le: 'conservee',
+      parti_avec: 'pseudonymisee',
+      parti_par: 'conservee',
+    },
+  },
   // Photos d'identification de la garderie (012b) : visages d'enfants — jamais dans la qualif.
   photos_adherents: { colonnes: { adherent_id: 'purgee', image: 'purgee', type: 'purgee', deposee_le: 'purgee', deposee_par: 'purgee' } },
   // Journal des accès (019) : qui a consulté quelle famille en prod — vidé dans la qualif.
