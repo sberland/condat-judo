@@ -2,13 +2,13 @@
 // (minimisation : le rôle « bureau » seul ne voit pas les paiements). Les familles voient leurs
 // propres paiements via /api/famille/paiements, sans les références des chèques.
 import { Hono, type Context } from 'hono';
-import { SAISON } from '../../../web/src/content/adhesion';
-import { cumul, ECHEANCES_3_FOIS, ENCAISSES_A_RECEPTION, exigible, situation } from '../../../web/src/content/paiements';
+import { cumul, ENCAISSES_A_RECEPTION, exigible, situation } from '../../../web/src/content/paiements';
 import { connexionRequise, roleRequis, type AppEnv } from '../droits';
 import { regrouperFamilles } from '../familles';
 import { journaliser } from '../journal';
 import { validerPaiement, type PaiementSaisi } from '../validation';
 import { aujourdhuiParis } from './competitions';
+import { saisonCourante } from '../saison';
 
 export const tresorerie = new Hono<AppEnv>();
 tresorerie.use('*', connexionRequise, roleRequis('tresorier', 'admin'), journaliser);
@@ -43,9 +43,12 @@ type LignePaiement = {
 type Part = { paiement_id: number; adhesion_id: number; prenom: string; nom: string; montant: number };
 
 const id = (c: Context<AppEnv>, nom: string) => Number(c.req.param(nom)) || 0;
+const saisonResumee = (s: { id: string; libelle: string }) => ({ id: s.id, libelle: s.libelle });
 
 /** Dossiers de la saison, regroupés en familles, avec la situation de chacune. */
 async function chargerFamilles(c: Context<AppEnv>) {
+  const saison = await saisonCourante(c);
+  const dates = saison.referentiel.echeances3Fois.dates;
   const [dossiersR, comptesR] = await c.env.DB.batch([
     c.env.DB.prepare(
       `SELECT d.id AS adhesion_id, d.adherent_id, a.prenom, a.nom, d.formule, d.montant_total, d.paiement_3_fois,
@@ -53,7 +56,7 @@ async function chargerFamilles(c: Context<AppEnv>) {
               COALESCE((SELECT sum(p.montant) FROM paiement_parts p WHERE p.adhesion_id = d.id), 0) AS paye
        FROM adhesions d JOIN adherents a ON a.id = d.adherent_id
        WHERE d.saison = ? ORDER BY a.nom, a.prenom`,
-    ).bind(SAISON.id),
+    ).bind(saison.id),
     // Arêtes de famille : responsables légaux, et compte de l'adhérent majeur lui-même.
     c.env.DB.prepare(
       `SELECT l.adherent_id, u.id AS user_id, u.prenom, u.nom, u.telephone
@@ -63,7 +66,7 @@ async function chargerFamilles(c: Context<AppEnv>) {
        SELECT a.id, u.id, u.prenom, u.nom, u.telephone
        FROM adherents a JOIN users u ON u.id = a.user_id AND u.supprime_le IS NULL
        WHERE a.id IN (SELECT adherent_id FROM adhesions WHERE saison = ?1)`,
-    ).bind(SAISON.id),
+    ).bind(saison.id),
   ]);
   const dossiers = (dossiersR?.results ?? []) as LigneDossier[];
   const comptes = (comptesR?.results ?? []) as LigneCompte[];
@@ -75,7 +78,7 @@ async function chargerFamilles(c: Context<AppEnv>) {
   ).map((ids) => {
     const ds = dossiers.filter((d) => ids.includes(d.adherent_id));
     const responsables = [...new Map(comptes.filter((r) => ids.includes(r.adherent_id)).map((r) => [r.user_id, r])).values()];
-    const avecSituation = ds.map((d) => ({ ...d, ...situation(d.montant_total, d.paye, exigible(d, jour)) }));
+    const avecSituation = ds.map((d) => ({ ...d, ...situation(d.montant_total, d.paye, exigible(d, jour, dates)) }));
     return {
       id: Math.min(...ds.map((d) => d.adhesion_id)),
       libelle: [...new Set(ds.map((d) => d.nom))].join(' / '),
@@ -90,17 +93,18 @@ async function chargerFamilles(c: Context<AppEnv>) {
 
 /** Paiements de la saison (filtre SQL facultatif), chacun avec sa répartition par enfant. */
 async function chargerPaiements(c: Context<AppEnv>, filtre = '', ...params: (string | number)[]) {
+  const saison = (await saisonCourante(c)).id;
   const [paiementsR, partsR] = await c.env.DB.batch([
     c.env.DB.prepare(
       `SELECT id, montant, mode, reference, recu_le, encaisser_le, encaisse_le FROM paiements p
        WHERE saison = ? ${filtre} ORDER BY recu_le, id`,
-    ).bind(SAISON.id, ...params),
+    ).bind(saison, ...params),
     c.env.DB.prepare(
       `SELECT pp.paiement_id, pp.adhesion_id, a.prenom, a.nom, pp.montant
        FROM paiement_parts pp JOIN paiements p ON p.id = pp.paiement_id
        JOIN adhesions d ON d.id = pp.adhesion_id JOIN adherents a ON a.id = d.adherent_id
        WHERE p.saison = ? ${filtre} ORDER BY a.prenom`,
-    ).bind(SAISON.id, ...params),
+    ).bind(saison, ...params),
   ]);
   const parts = (partsR?.results ?? []) as Part[];
   return ((paiementsR?.results ?? []) as LignePaiement[]).map((p) => ({
@@ -114,8 +118,8 @@ tresorerie.get('/', async (c) => {
   const { familles, jour } = await chargerFamilles(c);
   const aRemettre = await chargerPaiements(c, `AND encaisse_le IS NULL AND (encaisser_le IS NULL OR encaisser_le <= ?)`, `${jour.slice(0, 7)}-31`);
   return c.json({
-    saison: SAISON,
-    echeances: ECHEANCES_3_FOIS,
+    saison: saisonResumee(await saisonCourante(c)),
+    echeances: (await saisonCourante(c)).referentiel.echeances3Fois,
     totaux: cumul(familles),
     aRemettre,
     familles: familles.map(({ dossiers: _, responsables: __, ...f }) => f),
@@ -133,7 +137,8 @@ tresorerie.get('/familles/:id', async (c) => {
     `AND p.id IN (SELECT paiement_id FROM paiement_parts WHERE adhesion_id IN (${ids.map(() => '?').join(', ')}))`,
     ...ids,
   );
-  return c.json({ saison: SAISON, echeances: ECHEANCES_3_FOIS, famille, paiements });
+  const saison = await saisonCourante(c);
+  return c.json({ saison: saisonResumee(saison), echeances: saison.referentiel.echeances3Fois, famille, paiements });
 });
 
 // Tous les paiements de la saison (export pour la comptabilité).
@@ -156,8 +161,9 @@ tresorerie.post('/paiements', async (c) => {
     valides.push(r.valeur);
   }
   const dossiers = [...new Set(valides.flatMap((p) => p.parts.map((x) => x.adhesion_id)))];
+  const saison = (await saisonCourante(c)).id;
   const connus = await c.env.DB.prepare(`SELECT count(*) AS n FROM adhesions WHERE saison = ? AND id IN (${dossiers.map(() => '?').join(', ')})`)
-    .bind(SAISON.id, ...dossiers)
+    .bind(saison, ...dossiers)
     .first<{ n: number }>();
   if (connus?.n !== dossiers.length) return c.json({ error: 'Dossier introuvable pour cette saison' }, 404);
 
@@ -165,7 +171,7 @@ tresorerie.post('/paiements', async (c) => {
   const instructions = valides.flatMap((p) => [
     c.env.DB.prepare(
       `INSERT INTO paiements (saison, montant, mode, reference, recu_le, encaisser_le, encaisse_le, saisi_par) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    ).bind(SAISON.id, p.montant, p.mode, p.reference, p.recu_le, p.encaisser_le, ENCAISSES_A_RECEPTION.includes(p.mode) ? p.recu_le : null, moi),
+    ).bind(saison, p.montant, p.mode, p.reference, p.recu_le, p.encaisser_le, ENCAISSES_A_RECEPTION.includes(p.mode) ? p.recu_le : null, moi),
     // Le lot est une transaction : le dernier paiement inséré est celui de la ligne précédente.
     ...p.parts.map((x) =>
       c.env.DB.prepare('INSERT INTO paiement_parts (paiement_id, adhesion_id, montant) VALUES ((SELECT max(id) FROM paiements), ?, ?)').bind(
@@ -184,14 +190,14 @@ tresorerie.put('/paiements/:id/encaisse', async (c) => {
   const date = corps.encaisse_le ?? null;
   if (date !== null && (typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date))) return c.json({ error: 'Date invalide' }, 400);
   const res = await c.env.DB.prepare("UPDATE paiements SET encaisse_le = ?, updated_at = datetime('now') WHERE id = ? AND saison = ?")
-    .bind(date, id(c, 'id'), SAISON.id)
+    .bind(date, id(c, 'id'), (await saisonCourante(c)).id)
     .run();
   if (!res.meta.changes) return c.json({ error: 'Paiement introuvable' }, 404);
   return c.json({ ok: true });
 });
 
 tresorerie.delete('/paiements/:id', async (c) => {
-  const res = await c.env.DB.prepare('DELETE FROM paiements WHERE id = ? AND saison = ?').bind(id(c, 'id'), SAISON.id).run();
+  const res = await c.env.DB.prepare('DELETE FROM paiements WHERE id = ? AND saison = ?').bind(id(c, 'id'), (await saisonCourante(c)).id).run();
   if (!res.meta.changes) return c.json({ error: 'Paiement introuvable' }, 404);
   return c.json({ ok: true });
 });

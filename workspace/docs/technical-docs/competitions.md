@@ -22,11 +22,12 @@ preview.
 
 ### Catégories d'âge
 
-`app/web/src/content/categories.ts` — table **en dur** de la saison 2026/2027 (termes du formulaire
-du club : micro-poussins 2021-2022 … seniors 2006 et avant), **importée par le Worker** comme
-`adhesion.ts` : l'écran et l'API calculent la même catégorie (`categorieDe`, d'après l'année de
-naissance) et la même éligibilité (`eligible` : catégorie cochée et sexe compatible). À mettre à
-jour chaque saison (en base avec la spec 003).
+Table de la saison dans le **référentiel** (spec 003, table `saisons`) — termes du formulaire du
+club : micro-poussins 2021-2022 … seniors 2006 et avant en 2026/2027. Fonctions partagées
+`app/web/src/content/categories.ts` (`categorieDe`, `eligible`), qui reçoivent la table : le
+Worker prend celle de la **saison de la date de la compétition** (`saisonPourDate`, repli sur la
+saison courante), l'écran celle de la saison courante pour les libellés. Les identifiants de
+catégorie sont stables d'une saison à l'autre (seules les années glissent).
 
 ### Règles d'inscription
 
@@ -76,8 +77,8 @@ Mises en forme et export : `app/web/src/lib/competitions.ts` (testé).
 ## Points de vigilance
 
 - La date limite s'entend **en heure de Paris** (`aujourdhuiParis`), jour inclus.
-- Les catégories sont figées pour 2026/2027 : une compétition de la saison suivante nécessite de
-  mettre la table à jour (ou la spec 003).
+- Une compétition de la saison suivante utilise ses catégories dès que le bureau a préparé cette
+  saison (écran Saisons) ; sinon, celles de la saison courante.
 - Le CSV contient des données de mineurs : il est généré dans le navigateur (rien n'est stocké
   côté serveur) ; l'aide du bureau rappelle de le supprimer après la ressaisie.
 - La page publique n'expose aucune donnée d'enfant ; les prénoms n'apparaissent qu'aux
@@ -88,6 +89,6 @@ Mises en forme et export : `app/web/src/lib/competitions.ts` (testé).
 - Worker : `app/src/worker/routes/competitions.ts`, `routes/famille.ts`, `routes/admin.ts`, `validation.ts`
 - Front : `app/web/src/pages/Competition*.tsx`, `pages/espace/Competition*GestionPage.tsx`,
   `components/espace/FormulaireCompetition.tsx`, `components/espace/HistoriqueCompetitions.tsx`
-- Contenu partagé : `app/web/src/content/categories.ts` ; aide : rubriques `competitions` et
+- Contenu partagé : `app/web/src/content/categories.ts` (table : référentiel de la saison) ; aide : rubriques `competitions` et
   `competitions-bureau` de `content/aide.ts`
 - RGPD : traitement « Compétitions » (`content/rgpd.ts`, `docs/rgpd/registre-traitements.md`)

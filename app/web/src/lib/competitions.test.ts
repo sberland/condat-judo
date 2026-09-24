@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { REFERENTIEL_2026_2027 } from '../content/referentiel-initial'
 import { etatInscriptions, libelleCriteres, nomFichierCsv, versCsv, versTexte, type CompetitionDetail, type LigneInscrit } from './competitions'
 
 const ligne = (p: Partial<LigneInscrit> = {}): LigneInscrit => ({
@@ -35,11 +36,11 @@ const competition = (p: Partial<CompetitionDetail> = {}): CompetitionDetail => (
 
 describe('libelleCriteres', () => {
   it('suit l’ordre de la table officielle, quel que soit l’ordre saisi', () => {
-    expect(libelleCriteres({ categories: ['benjamins', 'mini-poussins', 'poussins'], sexe: null })).toBe('Mini-poussins, Poussins, Benjamins')
+    expect(libelleCriteres({ categories: ['benjamins', 'mini-poussins', 'poussins'], sexe: null }, REFERENTIEL_2026_2027.categories)).toBe('Mini-poussins, Poussins, Benjamins')
   })
   it('précise le sexe d’une compétition non mixte', () => {
-    expect(libelleCriteres({ categories: ['minimes'], sexe: 'F' })).toBe('Minimes · filles')
-    expect(libelleCriteres({ categories: ['minimes'], sexe: 'M' })).toBe('Minimes · garçons')
+    expect(libelleCriteres({ categories: ['minimes'], sexe: 'F' }, REFERENTIEL_2026_2027.categories)).toBe('Minimes · filles')
+    expect(libelleCriteres({ categories: ['minimes'], sexe: 'M' }, REFERENTIEL_2026_2027.categories)).toBe('Minimes · garçons')
   })
 })
 

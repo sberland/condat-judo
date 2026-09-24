@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import indexHtml from '../../index.html?raw'
-import { DISCIPLINES_PUBLIQUES, enLettres, enumerer, LISTE_DISCIPLINES, TARIFS } from './club'
+import { DISCIPLINES_PUBLIQUES, enLettres, enumerer, LISTE_DISCIPLINES } from './club'
+import { REFERENTIEL_2026_2027 } from './referentiel-initial'
 import { euros, totalFormule } from '../lib/tarifs'
 
 describe('disciplines : énumérations déduites de la liste', () => {
@@ -36,7 +37,7 @@ describe('disciplines : énumérations déduites de la liste', () => {
   })
 })
 
-const formules = TARIFS.groupes.flatMap((g) => g.formules)
+const formules = REFERENTIEL_2026_2027.tarifs.groupes.flatMap((g) => g.formules)
 
 describe('grille tarifaire (formulaire d’inscription du club)', () => {
   it('reprend les sous-totaux du formulaire', () => {

@@ -313,23 +313,8 @@ export const CONTACT = {
   telephone: '05 00 00 00 00',
 }
 
-export type Creneau = { jour: string; horaire: string; cours: string; public: string }
-
-export const HORAIRES: { provisoire: boolean; creneaux: Creneau[] } = {
-  provisoire: true,
-  creneaux: [
-    { jour: 'Mercredi', horaire: '16 h 00 – 16 h 45', cours: 'Éveil judo', public: '4-5 ans' },
-    { jour: 'Mercredi', horaire: '17 h 00 – 18 h 00', cours: 'Judo enfants', public: '6-9 ans' },
-    { jour: 'Vendredi', horaire: '18 h 00 – 19 h 30', cours: 'Judo jeunes', public: '10-15 ans' },
-    { jour: 'Lundi', horaire: '18 h 30 – 19 h 45', cours: 'Yoga', public: 'Adultes' },
-    { jour: 'Mardi', horaire: '19 h 00 – 20 h 00', cours: 'Taïso', public: 'Adultes' },
-    { jour: 'Jeudi', horaire: '18 h 00 – 19 h 15', cours: 'Yoga', public: 'Adultes' },
-    { jour: 'Jeudi', horaire: '19 h 30 – 21 h 00', cours: 'Jujitsu', public: 'Ados et adultes' },
-  ],
-}
-
-// Grille tarifaire : content/tarifs.ts (partagée avec le Worker), réexportée ici pour la vitrine.
-export * from './tarifs'
+// Horaires des cours et grille tarifaire : référentiel de la saison, en base (spec 003) —
+// page publique « Horaires & tarifs », écran Saisons du bureau.
 
 export const PARTENAIRES: { nom: string; activite: string; adresse: string; provisoire: boolean }[] = [
   {

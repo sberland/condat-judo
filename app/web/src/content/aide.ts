@@ -13,6 +13,7 @@ export type IdRubrique =
   | 'cotisations'
   | 'donnees'
   | 'competitions-bureau'
+  | 'saisons'
   | 'tresorerie'
   | 'adherents'
   | 'adhesions'
@@ -320,6 +321,35 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
     ],
   },
   {
+    id: 'saisons',
+    titre: 'Saisons : catégories, tarifs, horaires',
+    profil: 'bureau',
+    questions: [
+      {
+        q: 'À quoi sert l’écran Saisons et tarifs ?',
+        r: [
+          'Chaque saison a ses catégories d’âge (compétitions), sa grille tarifaire (dossiers d’adhésion, page publique), les dates des 2e et 3e versements du paiement en 3 fois (trésorerie) et les horaires des cours (page publique).',
+          'La saison courante est celle qu’utilisent les dossiers, la trésorerie, les compétitions et le site public.',
+        ],
+      },
+      {
+        q: 'Modifier un tarif, un horaire, une catégorie',
+        r: [
+          'Ouvrez la saison, « Modifier » sur la partie voulue, puis « Enregistrer ». Le site vérifie tout avant d’enregistrer (par exemple, les trois versements doivent totaliser le montant de la formule) et signale ce qui ne va pas.',
+          'Un dossier déjà enregistré garde ses montants : une modification de tarif ne vaut que pour les dossiers saisis ou modifiés ensuite.',
+          '« À confirmer » (tarifs, horaires) : masqués sur le site public tant que la case est cochée.',
+        ],
+      },
+      {
+        q: 'Préparer la saison suivante',
+        r: [
+          '« Préparer la saison … » copie la dernière saison en décalant les années de naissance des catégories et des formules, et les dates du paiement en 3 fois, d’un an. Ajustez ensuite tarifs et horaires : rien ne change sur le site.',
+          'Le moment venu (fin août en général), « Rendre cette saison courante » : les nouveaux dossiers, la trésorerie et la page publique passent sur la nouvelle saison.',
+        ],
+      },
+    ],
+  },
+  {
     id: 'responsables',
     titre: 'Responsables légaux et personnes autorisées',
     profil: 'bureau',
@@ -478,7 +508,7 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
       {
         q: 'Qui peut quoi ?',
         r: [
-          'Bureau : adhérents, dossiers, compétitions, responsables, comptes, liens de connexion des familles.',
+          'Bureau : adhérents, dossiers, compétitions, saisons et tarifs, responsables, comptes, liens de connexion des familles.',
           'Administrateur : tout, y compris les rôles, les liens de connexion des membres du bureau et la page « Données personnelles » (purge, journal des accès).',
           'Trésorier : la trésorerie (cotisations, paiements, remises en banque) — le rôle « bureau » seul ne voit pas les paiements.',
           'Encadrant, gestion du site : leurs écrans arriveront avec les prochaines fonctionnalités (garderie, contenu du site).',

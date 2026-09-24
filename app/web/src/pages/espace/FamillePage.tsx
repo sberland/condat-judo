@@ -262,7 +262,7 @@ function MesCotisations() {
             </p>
             {d.paiement_3_fois === 1 && (
               <p className="text-sm text-muted-foreground">
-                En 3 fois : {echeancier(d).map((v) => `${euros(v.montant)} ${v.date ? `au ${dateFr(v.date)}` : 'à l’inscription'}`).join(', ')}
+                En 3 fois : {echeancier(d, data.echeances.dates).map((v) => `${euros(v.montant)} ${v.date ? `au ${dateFr(v.date)}` : 'à l’inscription'}`).join(', ')}
               </p>
             )}
             {d.versements.length > 0 && (

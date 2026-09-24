@@ -1,6 +1,6 @@
 // Compétitions (spec 009) — types des réponses de l'API et mises en forme partagées par les pages
 // publiques et l'espace bureau.
-import { CATEGORIES } from '../content/categories'
+import type { Categorie } from '../content/categories'
 import { dateFr } from './api'
 import * as csv from './csv'
 
@@ -86,9 +86,9 @@ export function paveDate(iso: string): { semaine: string; jour: string; mois: st
   }
 }
 
-/** « Poussins, Benjamins · filles » — catégories dans l'ordre de la table officielle. */
-export function libelleCriteres(c: Pick<Competition, 'categories' | 'sexe'>): string {
-  const noms = CATEGORIES.filter((cat) => c.categories.includes(cat.id)).map((cat) => cat.nom)
+/** « Poussins, Benjamins · filles » — catégories dans l'ordre de la table de la saison. */
+export function libelleCriteres(c: Pick<Competition, 'categories' | 'sexe'>, categories: Categorie[]): string {
+  const noms = categories.filter((cat) => c.categories.includes(cat.id)).map((cat) => cat.nom)
   const sexe = c.sexe === 'F' ? ' · filles' : c.sexe === 'M' ? ' · garçons' : ''
   return `${noms.join(', ')}${sexe}`
 }
@@ -108,10 +108,10 @@ export const lienItineraire = (c: Pick<Competition, 'adresse' | 'lieu'>) =>
 export const urlCompetition = (id: number) => `${window.location.origin}/competitions/${id}`
 
 /** Message prêt à poster dans le groupe WhatsApp du club. */
-export function messageWhatsApp(c: Competition, url: string): string {
+export function messageWhatsApp(c: Competition, url: string, categories: Categorie[]): string {
   return [
     `🥋 ${c.nom} — ${dateLongue(c.date)}, ${c.lieu}`,
-    `Pour : ${libelleCriteres(c)}`,
+    `Pour : ${libelleCriteres(c, categories)}`,
     `Inscrivez vos enfants avant le ${dateLongue(c.date_limite).replace(/ \d{4}$/, '')} inclus :`,
     url,
   ].join('\n')

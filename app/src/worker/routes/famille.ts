@@ -2,12 +2,12 @@
 // auxquels il est lié (filtre sur `liens.user_id` = lui-même, côté SQL). v1 : consultation, et mise
 // à jour de son propre téléphone ; la modification des fiches enfants viendra avec la spec 010.
 import { Hono, type Context } from 'hono';
-import { SAISON } from '../../../web/src/content/adhesion';
-import { categorieDe, eligible } from '../../../web/src/content/categories';
-import { ECHEANCES_3_FOIS, exigible, situation } from '../../../web/src/content/paiements';
+import { categorieDe, eligible, type Categorie } from '../../../web/src/content/categories';
+import { exigible, situation } from '../../../web/src/content/paiements';
 import { connexionRequise, type AppEnv } from '../droits';
 import { aujourdhuiParis, COLONNES_COMPETITION, inscriptionsOuvertes, lireCompetition, versCompetition } from './competitions';
 import { donneesDuCompte } from '../export';
+import { saisonCourante, saisonPourDate } from '../saison';
 import { validerTelephoneSeul } from '../validation';
 
 export const famille = new Hono<AppEnv>();
@@ -101,14 +101,15 @@ famille.get('/competitions/:id', async (c) => {
   )
     .bind(comp.id, c.get('utilisateur').id)
     .all<EnfantCompetition>();
+  const cats = (await saisonPourDate(c, comp.date)).referentiel.categories;
   return c.json({
     inscriptionsOuvertes: inscriptionsOuvertes(comp),
     enfants: results.map((e) => ({
       id: e.id,
       prenom: e.prenom,
       nom: e.nom,
-      categorie: categorieDe(e.date_naissance)?.nom ?? null,
-      eligible: eligible(e, comp),
+      categorie: categorieDe(cats, e.date_naissance)?.nom ?? null,
+      eligible: eligible(cats, e, comp),
       peutInscrire: e.peut_inscrire === 1,
       inscrit: e.inscrit === 1,
     })),
@@ -132,11 +133,14 @@ famille.get('/competitions', async (c) => {
   type E = { id: number; prenom: string; date_naissance: string; sexe: 'F' | 'M' };
   const mesEnfants = (enfants?.results ?? []) as E[];
   const inscrits = new Set(((inscriptions?.results ?? []) as { competition_id: number; adherent_id: number }[]).map((i) => `${i.competition_id}-${i.adherent_id}`));
+  const liste = ((comps?.results ?? []) as Parameters<typeof versCompetition>[0][]).map(versCompetition);
+  const categories = new Map<number, Categorie[]>();
+  for (const comp of liste) categories.set(comp.id, (await saisonPourDate(c, comp.date)).referentiel.categories);
   return c.json(
-    ((comps?.results ?? []) as Parameters<typeof versCompetition>[0][]).map(versCompetition).map((comp) => ({
+    liste.map((comp) => ({
       competition_id: comp.id,
       enfants: mesEnfants
-        .map((e) => ({ prenom: e.prenom, inscrit: inscrits.has(`${comp.id}-${e.id}`), eligible: eligible(e, comp) }))
+        .map((e) => ({ prenom: e.prenom, inscrit: inscrits.has(`${comp.id}-${e.id}`), eligible: eligible(categories.get(comp.id) ?? [], e, comp) }))
         .filter((e) => e.inscrit || e.eligible)
         .map(({ prenom, inscrit }) => ({ prenom, inscrit })),
     })),
@@ -162,7 +166,7 @@ async function controleInscription(c: Context<AppEnv>) {
 famille.put('/competitions/:id/inscriptions/:adherentId', async (c) => {
   const r = await controleInscription(c);
   if ('erreur' in r) return r.erreur;
-  if (!eligible(r.enfant, r.comp)) return c.json({ error: 'Cet enfant n’est pas dans les catégories de la compétition' }, 409);
+  if (!eligible((await saisonPourDate(c, r.comp.date)).referentiel.categories, r.enfant, r.comp)) return c.json({ error: 'Cet enfant n’est pas dans les catégories de la compétition' }, 409);
   await c.env.DB.prepare('INSERT OR IGNORE INTO inscriptions_competition (competition_id, adherent_id, inscrit_par) VALUES (?, ?, ?)')
     .bind(r.comp.id, r.adherentId, c.get('utilisateur').id)
     .run();
@@ -193,6 +197,8 @@ type DossierFamille = {
 
 famille.get('/paiements', async (c) => {
   const moi = c.get('utilisateur').id;
+  const saison = await saisonCourante(c);
+  const dates = saison.referentiel.echeances3Fois.dates;
   const { results: dossiers } = await c.env.DB.prepare(
     `SELECT d.id AS adhesion_id, a.prenom, a.nom, d.formule, d.montant_total, d.paiement_3_fois,
             d.echeance_1, d.echeance_2, d.echeance_3,
@@ -201,7 +207,7 @@ famille.get('/paiements', async (c) => {
      WHERE d.saison = ?1 AND (d.adherent_id IN (SELECT adherent_id FROM liens WHERE user_id = ?2) OR a.user_id = ?2)
      ORDER BY a.date_naissance DESC`,
   )
-    .bind(SAISON.id, moi)
+    .bind(saison.id, moi)
     .all<DossierFamille>();
   const ids = dossiers.map((d) => d.adhesion_id);
   // Versements : date, mode, montant de la part de chaque enfant — jamais la référence du chèque.
@@ -218,11 +224,11 @@ famille.get('/paiements', async (c) => {
     : [];
   const jour = aujourdhuiParis();
   return c.json({
-    saison: SAISON,
-    echeances: ECHEANCES_3_FOIS,
+    saison: { id: saison.id, libelle: saison.libelle },
+    echeances: saison.referentiel.echeances3Fois,
     dossiers: dossiers.map((d) => ({
       ...d,
-      ...situation(d.montant_total, d.paye, exigible(d, jour)),
+      ...situation(d.montant_total, d.paye, exigible(d, jour, dates)),
       versements: versements.filter((v) => v.adhesion_id === d.adhesion_id).map(({ adhesion_id: _, ...v }) => v),
     })),
   });
@@ -254,8 +260,9 @@ const ACCORDS = `SELECT d.id AS adhesion_id, a.prenom, l.qualite, d.droit_image,
   WHERE d.saison = ?1 AND (l.qualite IN ('mere', 'pere', 'tuteur') OR a.user_id = ?2)`;
 
 famille.get('/accords', async (c) => {
-  const { results } = await c.env.DB.prepare(`${ACCORDS} ORDER BY a.date_naissance DESC`).bind(SAISON.id, c.get('utilisateur').id).all<Accords>();
-  return c.json({ saison: SAISON, accords: results.map(({ qualite: _, ...a }) => a) });
+  const saison = await saisonCourante(c);
+  const { results } = await c.env.DB.prepare(`${ACCORDS} ORDER BY a.date_naissance DESC`).bind(saison.id, c.get('utilisateur').id).all<Accords>();
+  return c.json({ saison: { id: saison.id, libelle: saison.libelle }, accords: results.map(({ qualite: _, ...a }) => a) });
 });
 
 famille.put('/accords/:adhesionId', async (c) => {
@@ -264,7 +271,7 @@ famille.put('/accords/:adhesionId', async (c) => {
   const valeur = corps.valeur;
   if ((champ !== 'droit_image' && champ !== 'whatsapp') || (valeur !== 'oui' && valeur !== 'non')) return c.json({ error: 'Saisie invalide' }, 400);
   const moi = c.get('utilisateur').id;
-  const dossier = await c.env.DB.prepare(`${ACCORDS} AND d.id = ?3`).bind(SAISON.id, moi, Number(c.req.param('adhesionId')) || 0).first<Accords>();
+  const dossier = await c.env.DB.prepare(`${ACCORDS} AND d.id = ?3`).bind((await saisonCourante(c)).id, moi, Number(c.req.param('adhesionId')) || 0).first<Accords>();
   if (!dossier) return c.json({ error: 'Vous ne pouvez pas répondre pour cet adhérent' }, 403);
   // Colonnes choisies dans une liste fermée (jamais la saisie) : pas d'injection possible.
   await c.env.DB.prepare(`UPDATE adhesions SET ${champ} = ?, ${champ}_le = datetime('now'), ${champ}_par = ?, updated_at = datetime('now') WHERE id = ?`)

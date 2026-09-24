@@ -3,7 +3,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { critere, instructionsPurge, saisonCourante, seuilPurge } from '../worker/purge';
+import { critere, debutSaison, instructionsPurge, seuilPurge } from '../worker/purge';
 
 const migrations = fileURLToPath(new URL('./migrations/', import.meta.url));
 const MAINTENANT = '2026-09-28 03:00:00';
@@ -53,8 +53,8 @@ const ligne = (db: DatabaseSync, sql: string, ...p: (string | number)[]) => db.p
 
 describe('saisons', () => {
   it('la saison commence en septembre', () => {
-    expect(saisonCourante('2026-08-31')).toBe(2025);
-    expect(saisonCourante('2026-09-01')).toBe(2026);
+    expect(debutSaison('2026-08-31')).toBe(2025);
+    expect(debutSaison('2026-09-01')).toBe(2026);
     expect(seuilPurge('2026-09-28', 3)).toBe(2023);
   });
 });

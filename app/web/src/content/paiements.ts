@@ -1,7 +1,6 @@
 // Cotisations (spec 011) — règles partagées par l'écran et le Worker : modes de paiement,
 // échéancier, restant dû, répartition d'un paiement sur plusieurs dossiers. ⚠️ Importé par le
 // Worker : pas de DOM, pas de React ; montants en centimes.
-import { SAISON } from './adhesion'
 
 /** Ce que la famille remet au club (plus détaillé que le « mode prévu » du dossier). */
 export const MODES_ENCAISSEMENT = {
@@ -19,15 +18,10 @@ export type ModeEncaissement = keyof typeof MODES_ENCAISSEMENT
 export const ENCAISSES_A_RECEPTION: readonly ModeEncaissement[] = ['cb', 'virement']
 
 /**
- * Paiement en 3 fois : le 1er versement est dû à l'inscription, les 2e et 3e à ces dates (chèques
- * remis à l'inscription, encaissés plus tard). ⚠️ Dates à confirmer par la trésorière
- * (questionnaire du club) ; en base avec les saisons (spec 003).
+ * Paiement en 3 fois : le 1er versement est dû à l'inscription, les 2e et 3e aux dates du
+ * référentiel de la saison (chèques remis à l'inscription, encaissés plus tard — spec 003).
  */
-export const ECHEANCES_3_FOIS: { saison: string; dates: [string, string]; provisoire: boolean } = {
-  saison: SAISON.id,
-  dates: ['2027-01-05', '2027-04-05'],
-  provisoire: true,
-}
+export type Echeances = { dates: [string, string]; provisoire: boolean }
 
 export type DossierPaiement = {
   montant_total: number
@@ -40,9 +34,9 @@ export type DossierPaiement = {
 export type Versement = { montant: number; date: string | null }
 
 /** Versements attendus ; `date` null = dû dès l'inscription. */
-export function echeancier(d: DossierPaiement): Versement[] {
+export function echeancier(d: DossierPaiement, dates: [string, string]): Versement[] {
   if (!d.paiement_3_fois) return [{ montant: d.montant_total, date: null }]
-  const [date2, date3] = ECHEANCES_3_FOIS.dates
+  const [date2, date3] = dates
   return [
     { montant: d.echeance_1, date: null },
     { montant: d.echeance_2, date: date2 },
@@ -51,8 +45,8 @@ export function echeancier(d: DossierPaiement): Versement[] {
 }
 
 /** Montant échu à la date donnée (AAAA-MM-JJ). */
-export const exigible = (d: DossierPaiement, aujourdhui: string): number =>
-  echeancier(d)
+export const exigible = (d: DossierPaiement, aujourdhui: string, dates: [string, string]): number =>
+  echeancier(d, dates)
     .filter((v) => v.date === null || v.date <= aujourdhui)
     .reduce((s, v) => s + v.montant, 0)
 

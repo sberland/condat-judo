@@ -1,4 +1,4 @@
-import { HORAIRES, TARIFS } from '../content/club'
+import { useReferentiel } from '../lib/saison'
 import { useMe } from '../lib/api'
 import { useProvisoireVisible } from './Provisoire'
 
@@ -29,7 +29,11 @@ export function useAccesEspace(): { to: '/espace' | '/connexion'; libelle: strin
 /** Entrées du menu (pages publiques), sans les pages provisoires en production. */
 export function useNavigation(): Entree[] {
   const provisoireVisible = useProvisoireVisible()
-  const horairesVisibles = !HORAIRES.provisoire || provisoireVisible
+  // Référentiel pas encore chargé : on n'annonce pas d'horaires (« Tarifs »).
+  const r = useReferentiel()
+  const horairesProvisoires = r?.horaires.provisoire ?? true
+  const tarifsProvisoires = r?.tarifs.provisoire ?? false
+  const horairesVisibles = !horairesProvisoires || provisoireVisible
 
   const navigation: Entree[] = [
     { to: '/', libelle: 'Accueil' },
@@ -38,7 +42,7 @@ export function useNavigation(): Entree[] {
     {
       to: '/horaires-tarifs',
       libelle: horairesVisibles ? 'Horaires & tarifs' : 'Tarifs',
-      provisoire: HORAIRES.provisoire && TARIFS.provisoire,
+      provisoire: horairesProvisoires && tarifsProvisoires,
     },
     { to: '/competitions', libelle: 'Compétitions' },
     { to: '/club', libelle: 'Le club' },

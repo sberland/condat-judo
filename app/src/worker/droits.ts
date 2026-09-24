@@ -4,8 +4,10 @@
 import type { MiddlewareHandler } from 'hono';
 import type { Env } from './env';
 import { resolveUser, type Role, type Utilisateur } from './identite';
+import type { Saison } from '../../web/src/content/referentiel';
 
-export type AppEnv = { Bindings: Env; Variables: { utilisateur: Utilisateur } };
+/** `saisons` : saisons déjà lues pendant la requête (spec 003, cf. saison.ts). */
+export type AppEnv = { Bindings: Env; Variables: { utilisateur: Utilisateur; saisons: Map<string, Saison> } };
 
 /** En-tête exigé sur toute écriture : un formulaire d'un autre site ne peut pas l'ajouter, et un
  * script d'un autre site en est empêché par CORS (pas de pré-vol autorisé). Protection CSRF. */

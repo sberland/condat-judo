@@ -32,6 +32,29 @@ permet au bureau de préparer la saison suivante sans développement.
 
 - Inscription d'un adhérent (010), paiements (011)
 
+## Revue (2026-09-24) — décisions
+
+1. **Un document par saison** (table `saisons`, référentiel JSON validé à chaque enregistrement) :
+   copie triviale, un écran d'édition par partie.
+2. **Horaires inclus maintenant** : le bureau saisit les cours ; la page publique les lit (masqués
+   en production tant qu'ils sont « à confirmer »).
+3. **Bascule par le bureau** : la saison suivante se prépare par copie puis devient courante quand
+   le bureau le décide ; rien ne change seul au 1er septembre.
+4. Tranché sans question (évident) : ceintures = liste officielle constante (pas par saison) ;
+   identifiants de catégories et de formules stables ; compétition = catégories de la saison de sa
+   date (si préparée) ; dates de saison septembre → août.
+
+## Réalisation
+
+- Migration `0008_saisons_referentiels.sql` : nouvelle table `saisons`, 2026/2027 insérée avec
+  les valeurs qui étaient dans le code (identité vérifiée par un test).
+- `content/referentiel.ts` (types, validation, copie), règles partagées prenant le référentiel en
+  paramètre (catégories, montants, formule suggérée, échéancier) ; `worker/saison.ts` (courante,
+  saison d'une date) ; `GET /api/saison` public ; `/api/admin/saisons` (bureau).
+- Écrans Saisons et tarifs (liste, préparation, édition par section, bascule, suppression) ; page
+  publique « Horaires & tarifs », menu, dossiers, trésorerie, compétitions branchés sur la saison.
+- Aide (rubrique bureau), doc technique `referentiels-saison.md`, guide.
+
 ## Notes
 
 - **Dépend de** : 004 (rôles, pour les écrans bureau) et 005 (connexion). La lecture publique

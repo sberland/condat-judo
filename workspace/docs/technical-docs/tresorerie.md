@@ -30,8 +30,8 @@ modifications de liens du bureau. Une famille est désignée dans l'URL par l'un
 ### Règles partagées (`app/web/src/content/paiements.ts`, importé par le Worker)
 
 - `echeancier` : comptant = tout à l'inscription ; en 3 fois = `echeance_1` à l'inscription,
-  `echeance_2` et `echeance_3` aux dates `ECHEANCES_3_FOIS` (**provisoires** : 5 janvier et
-  5 avril, à confirmer par la trésorière ; en base avec la spec 003).
+  `echeance_2` et `echeance_3` aux dates du référentiel de la saison (`echeances3Fois`, spec 003 ;
+  en 2026/2027 **provisoires** : 5 janvier et 5 avril, à confirmer par la trésorière).
 - `exigible(dossier, jour)` : versements échus ; `situation(du, paye, exigible)` : restant,
   trop-perçu, retard, statut (`a_payer`, `partiel`, `solde`).
 - `cumul` : situation d'une famille ou de la saison = **somme des situations des dossiers**
@@ -71,8 +71,8 @@ D1 est une transaction).
 - **Minimisation** : le rôle `bureau` seul ne voit pas les paiements ; la trésorière a le rôle
   `tresorier` (et `bureau` si elle gère aussi les adhérents). Les familles ne voient jamais la
   référence d'un chèque.
-- Les dates d'encaissement en 3 fois sont provisoires (`ECHEANCES_3_FOIS.provisoire`) : l'écran
-  le signale ; les corriger dans `content/paiements.ts` dès la réponse de la trésorière.
+- Les dates d'encaissement en 3 fois sont provisoires (`echeances3Fois.provisoire`) : l'écran le
+  signale ; le bureau les corrige dans Saisons et tarifs dès la réponse de la trésorière.
 - Qualif : la référence des chèques est pseudonymisée (`anonymisation-qualif.sql`).
 - Les exports CSV contiennent des données personnelles : générés dans le navigateur, à garder sur
   un appareil du club.

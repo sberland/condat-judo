@@ -7,6 +7,7 @@ import { FormulaireCompetition } from '../../components/espace/FormulaireCompeti
 import { Alerte, Bouton, Champ, LienBouton } from '../../components/formulaire'
 import { Pastille } from '../../components/ui'
 import { appel, dateFr, dateHeureFr, ErreurApi, urlWhatsApp } from '../../lib/api'
+import { useReferentiel } from '../../lib/saison'
 import {
   dateLongue,
   etatInscriptions,
@@ -60,6 +61,7 @@ type PropsBloc = { donnees: InscriptionsBureau; rafraichir: () => Promise<void> 
 // --- Informations ---
 
 function Informations({ donnees, rafraichir }: PropsBloc) {
+  const categories = useReferentiel()?.categories ?? []
   const c = donnees.competition
   const navigate = useNavigate()
   const [edition, setEdition] = useState(false)
@@ -85,7 +87,7 @@ function Informations({ donnees, rafraichir }: PropsBloc) {
   const lignes: [string, string][] = [
     ['Date', dateLongue(c.date)],
     ['Lieu', [c.lieu, c.adresse].filter(Boolean).join(' — ')],
-    ['Pour', libelleCriteres(c)],
+    ['Pour', libelleCriteres(c, categories)],
     ['Date limite', dateLongue(c.date_limite)],
   ]
   return (
@@ -165,6 +167,7 @@ function Informations({ donnees, rafraichir }: PropsBloc) {
 // --- Partage dans le groupe WhatsApp ---
 
 function Partage({ donnees: { competition: c } }: { donnees: InscriptionsBureau }) {
+  const categories = useReferentiel()?.categories ?? []
   const [copie, setCopie] = useState(false)
   const url = urlCompetition(c.id)
   return (
@@ -174,7 +177,7 @@ function Partage({ donnees: { competition: c } }: { donnees: InscriptionsBureau 
         connectent pour inscrire les leurs.
       </p>
       <div className="flex flex-col gap-3 sm:flex-row">
-        <LienBouton href={urlWhatsApp(messageWhatsApp(c, url), null)}>
+        <LienBouton href={urlWhatsApp(messageWhatsApp(c, url, categories), null)}>
           <MessageCircle className="size-4" aria-hidden /> Envoyer sur WhatsApp
         </LienBouton>
         <Bouton

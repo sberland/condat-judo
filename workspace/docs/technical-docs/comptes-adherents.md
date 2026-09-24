@@ -65,12 +65,13 @@ l'API vérifie les mêmes droits. Le bouton de l'en-tête (`useAccesEspace`, spe
 ### Dossiers d'adhésion (spec 010a)
 
 Table `adhesions` (migration `0004`) : un dossier par adhérent **et par saison**
-(`UNIQUE (adherent_id, saison)`), saison `2026-2027` en dur tant que la 003 n'a pas mis les
-référentiels en base.
+(`UNIQUE (adherent_id, saison)`), pour la **saison courante** (spec 003 : table `saisons`, choisie
+par le bureau).
 
 - **Règles partagées** : `app/web/src/content/adhesion.ts` (formule suggérée d'après l'année de
   naissance, suppléments, réduction famille, échéancier en 3 fois, statut, ceintures) et
-  `content/tarifs.ts` (grille) sont importés **par l'écran et par le Worker**. L'écran calcule
+  `content/tarifs.ts` (types de la grille) sont importés **par l'écran et par le Worker** ; la grille
+  elle-même vient du référentiel de la saison courante (spec 003). L'écran calcule
   en direct ; le Worker recalcule et **fige** les montants à l'enregistrement (la saisie du
   client n'est jamais prise pour un montant).
 - **Statut** : `a_completer` (manque un responsable pour un mineur, le mode de paiement ou la

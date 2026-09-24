@@ -9,13 +9,13 @@ import { RGPD } from '../../web/src/content/rgpd';
 import type { Env } from './env';
 
 /** Année de début de la saison en cours (saison = septembre → août). */
-export function saisonCourante(jour: string): number {
+export function debutSaison(jour: string): number {
   const [annee = 0, mois = 0] = jour.split('-').map(Number);
   return mois >= 9 ? annee : annee - 1;
 }
 
 /** Anonymisés : adhérents dont la dernière saison a commencé avant cette année. */
-export const seuilPurge = (jour: string, saisons: number) => saisonCourante(jour) - saisons;
+export const seuilPurge = (jour: string, saisons: number) => debutSaison(jour) - saisons;
 
 /** Dernière saison d'un adhérent : son dernier dossier, sinon la saison où sa fiche a été créée. */
 export const DERNIERE_SAISON = `COALESCE(
