@@ -137,6 +137,8 @@ export const TABLES: Record<string, Table> = {
   inscriptions_competition: {
     colonnes: { competition_id: 'conservee', adherent_id: 'conservee', inscrit_par: 'conservee', inscrit_le: 'conservee', ressaisi_le: 'conservee' },
   },
+  // Garderie (012a) : enfant, mercredi, lieu, auteur — pas de donnée identifiante (adhérent pseudonymisé).
+  garderie_demandes: { colonnes: { adherent_id: 'conservee', date: 'conservee', lieu: 'conservee', demande_par: 'conservee', demande_le: 'conservee' } },
   // Journal des accès (019) : qui a consulté quelle famille en prod — vidé dans la qualif.
   journal_acces: {
     colonnes: { id: 'purgee', cree_le: 'purgee', user_id: 'purgee', action: 'purgee', cible: 'purgee', cible_id: 'purgee', detail: 'purgee' },

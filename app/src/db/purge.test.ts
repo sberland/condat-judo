@@ -40,6 +40,7 @@ function base(): DatabaseSync {
       (3, 4, '2022-2023', 'judo-adulte', 7500, 4600, 0, 0, 12100, 7100, 2500, 2500, 'non_recueilli', NULL, NULL);
     INSERT INTO paiements (id, saison, montant, mode, reference, recu_le) VALUES (1, '2021-2022', 14700, 'cheque', 'Chèque 123 Banque Vraie', '2021-09-10');
     INSERT INTO paiement_parts (paiement_id, adhesion_id, montant) VALUES (1, 1, 14700);
+    INSERT INTO garderie_demandes (adherent_id, date, lieu) VALUES (1, '2021-10-06', 'École'), (3, '2025-06-25', 'École'), (3, '2026-09-30', 'École');
     INSERT INTO journal_acces (cree_le, user_id, action, cible, cible_id) VALUES ('2025-01-01 10:00:00', 1, 'consultation', 'adherent', 1), ('2026-09-01 10:00:00', 1, 'consultation', 'adherent', 3);
   `);
   return db;
@@ -111,6 +112,10 @@ describe('purge RGPD', () => {
   it('durées techniques : journal de plus d’un an, sessions expirées', () => {
     expect(ligne(db, 'SELECT count(*) AS n FROM journal_acces')).toEqual({ n: 1 });
     expect((db.prepare('SELECT empreinte FROM sessions ORDER BY empreinte').all() as { empreinte: string }[]).map((s) => s.empreinte)).toEqual(['s3']);
+  });
+
+  it('demandes de garderie : celles des adhérents anonymisés et celles de plus d’un an disparaissent', () => {
+    expect(db.prepare('SELECT adherent_id, date FROM garderie_demandes ORDER BY date').all()).toEqual([{ adherent_id: 3, date: '2026-09-30' }]);
   });
 
   it('rapport du passage', () => {

@@ -11,9 +11,11 @@ export type IdRubrique =
   | 'mes-enfants'
   | 'competitions'
   | 'cotisations'
+  | 'garderie'
   | 'donnees'
   | 'competitions-bureau'
   | 'saisons'
+  | 'garderie-bureau'
   | 'tresorerie'
   | 'adherents'
   | 'adhesions'
@@ -155,6 +157,28 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
       {
         q: 'Un paiement n’apparaît pas, ou un montant est faux',
         r: ['Adressez-vous au trésorier du club : c’est lui qui enregistre les paiements.'],
+      },
+    ],
+  },
+  {
+    id: 'garderie',
+    titre: 'Garderie du mercredi',
+    profil: 'famille',
+    questions: [
+      {
+        q: 'Demander que le club récupère mon enfant',
+        r: [
+          'Mon espace → « Garderie du mercredi » : « Demander » à côté du mercredi voulu. Pour toute la période, choisissez « Tous les mercredis jusqu’au … » puis « Demander ».',
+          'Vous pouvez demander ou annuler jusqu’au délai indiqué en haut de la page (par défaut la veille au soir). Ensuite, prévenez directement le bureau.',
+        ],
+      },
+      {
+        q: 'Annuler un mercredi',
+        r: ['« Annuler » à côté du mercredi, tant que le délai n’est pas passé. Les autres mercredis demandés restent valables.'],
+      },
+      {
+        q: 'Je ne vois pas les boutons pour mon enfant',
+        r: ['Seul un responsable qui a le droit d’« inscrire » l’enfant peut faire les demandes (voir « Mes enfants »). Les demandes faites par l’autre responsable apparaissent quand même.'],
       },
     ],
   },
@@ -345,6 +369,31 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
         r: [
           '« Préparer la saison … » copie la dernière saison en décalant les années de naissance des catégories et des formules, et les dates du paiement en 3 fois, d’un an. Ajustez ensuite tarifs et horaires : rien ne change sur le site.',
           'Le moment venu (fin août en général), « Rendre cette saison courante » : les nouveaux dossiers, la trésorerie et la page publique passent sur la nouvelle saison.',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'garderie-bureau',
+    titre: 'Garderie du mercredi : suivi',
+    profil: 'bureau',
+    questions: [
+      {
+        q: 'Voir les enfants à récupérer',
+        r: [
+          'Mon espace → « Garderie : liste du mercredi » : choisissez le mercredi ; les enfants sont regroupés par lieu, avec qui a fait la demande et quand.',
+        ],
+      },
+      {
+        q: 'Une demande tardive, ou une erreur',
+        r: ['« Ajouter un enfant » (recherche par nom) ou « Retirer » : le bureau n’est pas limité par le délai des familles.'],
+      },
+      {
+        q: 'Régler lieux, calendrier et délai',
+        r: [
+          'Saisons et tarifs → la saison → « Garderie du mercredi » : lieux de récupération, premier et dernier mercredi, mercredis sans garderie (touchez une date pour la fermer), délai de demande.',
+          'Tant que « Réglages à confirmer » est coché, les familles ne peuvent pas encore demander sur le site public.',
+          'Fermer un mercredi ne supprime pas les demandes déjà faites pour ce jour-là : retirez-les dans la liste du mercredi (le site y signale « mercredi sans garderie »).',
         ],
       },
     ],

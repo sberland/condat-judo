@@ -1,8 +1,9 @@
 // Référentiel d'une saison (spec 003) : catégories d'âge, grille tarifaire, dates du paiement en
-// 3 fois, horaires des cours. Un document par saison, en base (table `saisons`), validé ici à
-// chaque enregistrement ; le bureau prépare la saison suivante par copie. ⚠️ Importé par le
-// Worker : pas de DOM ; compatible `noUncheckedIndexedAccess`.
+// 3 fois, horaires des cours, garderie du mercredi (012a). Un document par saison, en base (table
+// `saisons`), validé ici à chaque enregistrement ; le bureau prépare la saison suivante par
+// copie. ⚠️ Importé par le Worker : pas de DOM ; compatible `noUncheckedIndexedAccess`.
 import type { Categorie } from './categories'
+import { estMercredi, mercrediPrecedent, mercrediSuivant, type ReglagesGarderie } from './garderie'
 import type { Echeances } from './paiements'
 import type { Ajustement, Formule, GroupeTarifs, Tarifs } from './tarifs'
 
@@ -18,6 +19,8 @@ export type Referentiel = {
   echeances3Fois: Echeances
   /** Horaires à confirmer : masqués en production (page publique). */
   horaires: { cours: Cours[]; provisoire: boolean }
+  /** Garderie du mercredi (spec 012a). */
+  garderie: ReglagesGarderie
 }
 
 export type Saison = {
@@ -58,6 +61,11 @@ export function copierReferentiel(r: Referentiel): Referentiel {
   copie.categories = copie.categories.map(decaler)
   for (const g of copie.tarifs.groupes) for (const f of g.formules) f.annees = f.annees ? decaler(f.annees) : null
   copie.echeances3Fois.dates = [plusUnAn(r.echeances3Fois.dates[0]), plusUnAn(r.echeances3Fois.dates[1])]
+  // Garderie : même période un an plus tard (sur des mercredis) ; mercredis fermés à revoir.
+  copie.garderie.debut = mercrediSuivant(plusUnAn(r.garderie.debut))
+  copie.garderie.fin = mercrediPrecedent(plusUnAn(r.garderie.fin))
+  copie.garderie.fermes = []
+  copie.garderie.provisoire = true
   return copie
 }
 
@@ -183,17 +191,36 @@ export function validerReferentiel(entree: unknown): ResultatReferentiel {
   })
   if (cours.length > 40) e('horaires', '40 cours au plus')
 
-  const valeur: Referentiel = { categories, tarifs, echeances3Fois, horaires: { cours, provisoire: h.provisoire === true } }
+  // Garderie du mercredi.
+  const g = objet(r.garderie)
+  const lieux = tableau(g.lieux).map((l) => texte(l)).filter(Boolean)
+  if (!lieux.length || lieux.length > 10 || lieux.some((l) => l.length > 80)) e('garderie.lieux', 'De 1 à 10 lieux, 80 caractères chacun')
+  const debutG = texte(g.debut)
+  const finG = texte(g.fin)
+  if (!estMercredi(debutG) || !estMercredi(finG)) e('garderie', 'Premier et dernier jour : des mercredis')
+  else if (debutG > finG) e('garderie', 'Le premier mercredi doit précéder le dernier')
+  const fermes = [...new Set(tableau(g.fermes).map((d) => texte(d)))].sort()
+  if (fermes.some((d) => !estMercredi(d))) e('garderie.fermes', 'Mercredis fermés : des mercredis')
+  const lim = objet(g.limite)
+  const jours = entier(lim.jours)
+  const heureLimite = texte(lim.heure)
+  if (!(jours >= 0 && jours <= 6) || !HEURE.test(heureLimite)) e('garderie.limite', 'Délai invalide (0 à 6 jours avant, heure HH:MM)')
+  const garderie: ReglagesGarderie = {
+    lieux,
+    debut: debutG,
+    fin: finG,
+    fermes,
+    limite: { jours, heure: heureLimite },
+    provisoire: g.provisoire === true,
+  }
+
+  const valeur: Referentiel = { categories, tarifs, echeances3Fois, horaires: { cours, provisoire: h.provisoire === true }, garderie }
   return Object.keys(erreurs).length ? { ok: false, erreurs } : { ok: true, valeur }
 }
 
 // --- Affichage des horaires ---
 
-/** « 18:30 » → « 18 h 30 » ; « 18:00 » → « 18 h ». */
-export const heure = (hhmm: string) => {
-  const [h = '', m = ''] = hhmm.split(':')
-  return m === '00' ? `${Number(h)} h` : `${Number(h)} h ${m}`
-}
+export { heure } from './heures'
 
 /** Cours triés par jour de la semaine puis par heure. */
 export const coursTries = (cours: Cours[]) =>

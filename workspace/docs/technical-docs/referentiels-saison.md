@@ -25,6 +25,7 @@ type Referentiel = {
   tarifs: Tarifs                             // groupes de formules, passeport, hors commune, réduction famille, modes, provisoire
   echeances3Fois: { dates: [string, string]; provisoire: boolean }
   horaires: { cours: Cours[]; provisoire: boolean }  // jour, début, fin (HH:MM), cours, public
+  garderie: ReglagesGarderie                 // spec 012a : lieux, période, mercredis fermés, délai (garderie.md)
 }
 ```
 

@@ -11,6 +11,7 @@ import { RGPD } from '../../../web/src/content/rgpd';
 import { categorieDe, eligible } from '../../../web/src/content/categories';
 import { saisonCourante, saisonPourDate } from '../saison';
 import { saisons } from './saisons';
+import { garderie } from './garderie';
 import { aujourdhuiParis, COLONNES_COMPETITION, inscriptionsOuvertes, lireCompetition, versCompetition } from './competitions';
 import {
   calculerMontant,
@@ -779,3 +780,7 @@ admin.get('/journal', roleRequis('admin'), async (c) => {
 // --- Saisons et référentiels (spec 003) ---
 
 admin.route('/saisons', saisons);
+
+// --- Garderie du mercredi (spec 012a) ---
+
+admin.route('/garderie', garderie);

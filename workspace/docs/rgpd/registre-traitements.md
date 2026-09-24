@@ -58,6 +58,17 @@
 | Durée | Sur le site : comme le dossier d'adhésion. Pièces comptables tenues par le trésorier hors du site : 10 ans (obligation comptable) |
 | Qualif | Référence des chèques remplacée par une valeur fictive (spec 008) |
 
+## 1 quater. Garderie du mercredi
+
+| Rubrique | Contenu |
+| --- | --- |
+| Finalités | Savoir quels enfants récupérer chaque mercredi (garderie → goûter et cours), et où |
+| Base légale | Exécution du contrat d'adhésion (art. 6.1.b), à la demande du responsable |
+| Personnes concernées | Enfants adhérents ; responsable ou membre du bureau auteur de la demande |
+| Données | Enfant, mercredi, lieu de récupération, auteur et date de la demande — **aucune donnée de santé** (allergies : arbitrage du club attendu) |
+| Accès | Le responsable qui peut inscrire l'enfant (ses demandes) ; le bureau (liste de chaque mercredi) |
+| Durée | Un an après le mercredi (purge hebdomadaire) ; effacées à l'anonymisation de l'adhérent |
+
 ## 2. Autorisations et consentements
 
 | Rubrique | Contenu |
@@ -112,3 +123,4 @@
 | 2026-09-24 | Ajout du traitement « Compétitions » (spec 009) |
 | 2026-09-24 | Ajout du traitement « Cotisations et paiements » (spec 011) |
 | 2026-09-24 | Purge automatique, journal des accès, export et accords depuis l’espace (spec 019) |
+| 2026-09-24 | Ajout du traitement « Garderie du mercredi » (spec 012a) |

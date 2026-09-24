@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
-import { CalendarRange, ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, ShieldCheck, Trophy, Users, UsersRound, Wallet } from 'lucide-react'
+import { Baby, CalendarRange, ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, ShieldCheck, Trophy, Users, UsersRound, Wallet } from 'lucide-react'
 import { useSaisonCourante } from '../../lib/saison'
 import { Espace } from '../../components/espace/Garde'
 import { Bouton } from '../../components/formulaire'
@@ -25,6 +25,14 @@ export function EspaceAccueilPage() {
             <Tuile to="/espace/famille" icone={<UsersRound className="size-6" />} titre="Mes enfants">
               Leurs fiches, leurs responsables et les personnes autorisées à les récupérer.
             </Tuile>
+            <Tuile to="/espace/mercredis" icone={<Baby className="size-6" />} titre="Garderie du mercredi">
+              Demander que le club récupère votre enfant à la garderie, un mercredi ou tous les mercredis.
+            </Tuile>
+            {aUnRole(me, 'bureau', 'admin') && (
+              <Tuile to="/espace/garderie" icone={<Baby className="size-6" />} titre="Garderie : liste du mercredi">
+                Les enfants à récupérer chaque mercredi, par lieu ; ajouter ou retirer un enfant.
+              </Tuile>
+            )}
             {aUnRole(me, 'bureau', 'admin') ? (
               <Tuile to="/espace/competitions" icone={<Trophy className="size-6" />} titre="Compétitions">
                 Créer une compétition, partager son lien, suivre les inscrits et les ressaisir sur le site fédéral.
@@ -90,7 +98,7 @@ function Tuile({
   titre,
   children,
 }: {
-  to: '/espace/famille' | '/espace/adherents' | '/espace/adhesions' | '/espace/comptes' | '/espace/aide' | '/espace/competitions' | '/competitions' | '/espace/tresorerie' | '/espace/rgpd' | '/espace/saisons'
+  to: '/espace/famille' | '/espace/adherents' | '/espace/adhesions' | '/espace/comptes' | '/espace/aide' | '/espace/competitions' | '/competitions' | '/espace/tresorerie' | '/espace/rgpd' | '/espace/saisons' | '/espace/mercredis' | '/espace/garderie'
   icone: ReactNode
   titre: string
   children: ReactNode

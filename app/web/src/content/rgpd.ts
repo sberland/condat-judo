@@ -60,6 +60,12 @@ export const TRAITEMENTS: Traitement[] = [
     base: 'Exécution de l’adhésion à l’association ; obligations comptables de l’association.',
   },
   {
+    titre: 'Garderie du mercredi',
+    donnees: ['Demande : enfant, mercredi, lieu de récupération, qui l’a faite et quand'],
+    finalite: 'Savoir quels enfants récupérer chaque mercredi, et où.',
+    base: 'Exécution de l’adhésion à l’association, à votre demande. Demandes effacées un an après le mercredi.',
+  },
+  {
     titre: 'Compétitions',
     donnees: [
       'Inscription : compétition, qui a inscrit l’enfant et quand',
