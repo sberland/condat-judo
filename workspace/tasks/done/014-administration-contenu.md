@@ -27,12 +27,12 @@ site à jour lui-même**, avec un compte admin ou celui de la personne qui gère
 
 ## Critères d'acceptation
 
-- [ ] Une personne avec le rôle `contenu` modifie le téléphone du club depuis son téléphone, et le
+- [x] Une personne avec le rôle `contenu` modifie le téléphone du club depuis son téléphone, et le
   changement est visible sur le site public sans mise en production
-- [ ] Une personne sans ce rôle ne peut rien modifier (contrôlé côté API)
-- [ ] Chaque modification est tracée et réversible
-- [ ] Un contenu passé « à compléter » disparaît de la production et réapparaît avec son badge en qualif
-- [ ] Les pages publiques restent rapides (contenu mis en cache) et lisibles si l'API est lente
+- [x] Une personne sans ce rôle ne peut rien modifier (contrôlé côté API)
+- [x] Chaque modification est tracée et réversible
+- [x] Un contenu passé « à compléter » disparaît de la production et réapparaît avec son badge en qualif
+- [x] Les pages publiques restent rapides (contenu mis en cache) et lisibles si l'API est lente
 
 ## Hors périmètre
 

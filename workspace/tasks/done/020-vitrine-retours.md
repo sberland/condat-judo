@@ -21,11 +21,11 @@ visuels ; la page « Le club » doit dire ce qu'est le club (convivial, familial
 
 ## Critères d'acceptation
 
-- [ ] Chaque discipline a son illustration, sur l'accueil, la page Disciplines, les horaires et les tarifs
-- [ ] L'accueil ne présente plus le code moral ; la page Disciplines présente code moral et principes du yoga
-- [ ] La page « Le club » présente l'esprit du club, modifiable dans « Contenu du site »
-- [ ] Le menu suit le nouvel ordre
-- [ ] Utilisable à 360 px
+- [x] Chaque discipline a son illustration, sur l'accueil, la page Disciplines, les horaires et les tarifs
+- [x] L'accueil ne présente plus le code moral ; la page Disciplines présente code moral et principes du yoga
+- [x] La page « Le club » présente l'esprit du club, modifiable dans « Contenu du site »
+- [x] Le menu suit le nouvel ordre
+- [x] Utilisable à 360 px
 
 ## Revue (2026-09-24) — décisions
 

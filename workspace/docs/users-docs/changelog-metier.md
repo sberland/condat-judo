@@ -4,6 +4,57 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.17.0 — 24 septembre 2026
+
+Chaque discipline a désormais sa petite illustration, reprise sur l'accueil, la page Disciplines,
+les horaires et les tarifs. Le yoga est présenté plus complètement, comme les autres disciplines.
+Les valeurs trouvent leur place sur la page Disciplines : le code moral pour le judo, le jujitsu
+et le taïso, et les principes de vie du yoga ; l'accueil ne met plus en avant le seul judo. La
+page « Le club » présente l'esprit du club — convivial, familial et ouvert à tous —, un texte que
+le club peut modifier lui-même. Le menu suit un nouvel ordre : Accueil, Le club, Disciplines,
+Horaires & tarifs, puis Règlement et Contact.
+
+---
+
+## v0.16.0 — 24 septembre 2026
+
+Le club tient désormais son site à jour lui-même : la personne qui gère le site (ou
+l'administrateur) modifie depuis son espace, y compris sur téléphone, les coordonnées du club,
+l'adresse du dojo et la période des cours, l'équipe, la présentation des disciplines, les
+partenaires, le règlement intérieur, les liens utiles et l'identité de l'association. La
+modification est en ligne aussitôt, sans attendre une mise à jour du site. Un contenu peut être
+préparé « à compléter » : il reste masqué sur le site public et se relit sur le site de test.
+Chaque modification est conservée avec sa date et son auteur, et l'on peut revenir à une version
+précédente en un geste. Le site reste rapide : le contenu est gardé dans le navigateur entre deux
+visites.
+
+---
+
+## v0.15.0 — 24 septembre 2026
+
+La garderie du mercredi est désormais complète sur le site. Le mercredi, l'encadrant pointe
+chaque enfant « Récupéré » à la garderie (ou « Absent », et il prévient la famille), puis, à la
+fin du cours, « Parti avec » la personne venue le chercher, choisie parmi les seules personnes
+autorisées. Les parents suivent l'état de leur enfant en direct dans « Garderie du mercredi »
+(récupéré à quelle heure, parti avec qui), sans rien avoir à demander ; le bureau le voit dans la
+liste du mercredi.
+
+---
+
+## v0.14.0 — 24 septembre 2026
+
+Le mercredi, l'encadrant qui va chercher les enfants à la garderie ouvre « Mercredi du jour » sur
+son téléphone : les enfants à récupérer, par lieu, avec leur photo pour les reconnaître, et qui
+peut venir les chercher au dojo, avec leur téléphone pour appeler en un geste. Cette liste n'est
+visible que le mercredi même, et chaque consultation est enregistrée. Les parents déposent
+eux-mêmes la photo de leur enfant depuis leur espace (réduite sur le téléphone avant l'envoi),
+avec leur accord, retirable à tout moment ; le bureau peut aussi la prendre au dojo si l'accord
+figure au dossier. La photo est effacée au bout d'un an. Les parents gèrent aussi la liste des
+personnes autorisées à venir chercher leur enfant (grands-parents, nounou…) : l'encadrant ne
+confie un enfant qu'aux personnes de cette liste.
+
+---
+
 ## v0.13.0 — 24 septembre 2026
 
 Les parents demandent eux-mêmes, depuis leur téléphone, que le club récupère leur enfant à la
