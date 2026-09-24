@@ -6,6 +6,25 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+### Tarifs de la saison 2026/2027
+
+#### Notes client
+
+Les tarifs de la saison 2026/2027 sont en ligne : judo (par âge), taïso et yoga, licence France
+Judo comprise, avec le détail du paiement en 3 fois, les suppléments (passeport, hors commune) et
+la réduction famille. Les horaires des cours suivront dès qu'ils seront confirmés.
+
+#### Ajouts
+
+- Page « Tarifs » : une carte par formule (total, participation, licence, échéancier en 3 fois),
+  suppléments et réductions, modes de paiement
+- Discipline yoga préparée (présentation à fournir par le club, visible en qualification seulement)
+
+#### Modifications
+
+- Passeport sportif présenté comme recommandé pour les compétiteurs (et non plus obligatoire),
+  conformément aux textes officiels France Judo 2026/2027
+
 ## [0.2.1] — 2026-09-24
 
 ### Menu mobile lisible

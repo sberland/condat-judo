@@ -1,22 +1,26 @@
-import { ArrowRight, Clock, Euro } from 'lucide-react'
-import { HORAIRES, SAISON, TARIFS } from '../content/club'
+import type { ReactNode } from 'react'
+import { ArrowRight, BadgeEuro, BadgeMinus, BadgePlus, Clock, CreditCard } from 'lucide-react'
+import { HORAIRES, SAISON, TARIFS, type Formule } from '../content/club'
 import { Provisoire, useProvisoireVisible } from '../components/Provisoire'
 import { BoutonLien, Card, Container, PageHeader } from '../components/ui'
+import { euros, totalFormule } from '../lib/tarifs'
 import { usePageMeta } from '../lib/usePageMeta'
 
 export function HorairesTarifsPage() {
-  usePageMeta('Horaires et tarifs', 'Horaires des cours et tarifs des cotisations du club Judo Condat-sur-Vienne.')
   const provisoireVisible = useProvisoireVisible()
   const horairesVisibles = !HORAIRES.provisoire || provisoireVisible
   const tarifsVisibles = !TARIFS.provisoire || provisoireVisible
+  const titre = horairesVisibles ? 'Horaires et tarifs' : 'Tarifs'
+
+  usePageMeta(titre, `Tarifs de la saison ${TARIFS.saison} du club Judo Condat-sur-Vienne : judo, taïso et yoga, licence comprise, paiement en 3 fois.`)
 
   return (
     <div className="animate-apparition">
-      <PageHeader surtitre="Infos pratiques" titre="Horaires et tarifs">
-        {SAISON.resume}, hors vacances scolaires et jours fériés.
+      <PageHeader surtitre={`Saison ${TARIFS.saison}`} titre={titre}>
+        {SAISON.resume}, hors vacances scolaires et jours fériés. Licence France Judo comprise.
       </PageHeader>
 
-      <Container className="space-y-12 py-12 sm:py-16">
+      <Container className="space-y-14 py-12 sm:py-16">
         {!horairesVisibles && !tarifsVisibles && (
           <Card className="text-center">
             <p className="text-lg font-bold">Horaires et tarifs bientôt en ligne</p>
@@ -32,9 +36,9 @@ export function HorairesTarifsPage() {
         {horairesVisibles && (
           <BlocProvisoire provisoire={HORAIRES.provisoire}>
             <section aria-labelledby="titre-horaires">
-              <h2 id="titre-horaires" className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-                <Clock className="size-6 text-brand" aria-hidden /> Horaires des cours
-              </h2>
+              <TitreBloc id="titre-horaires" icone={<Clock className="size-6 text-brand" aria-hidden />}>
+                Horaires des cours
+              </TitreBloc>
               <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {HORAIRES.creneaux.map((c) => (
                   <li key={`${c.jour}-${c.horaire}`} className="rounded-2xl border bg-white p-5 shadow-sm">
@@ -51,30 +55,60 @@ export function HorairesTarifsPage() {
 
         {tarifsVisibles && (
           <BlocProvisoire provisoire={TARIFS.provisoire}>
-            <section aria-labelledby="titre-tarifs">
-              <h2 id="titre-tarifs" className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-                <Euro className="size-6 text-brand" aria-hidden /> Tarifs de la saison
-              </h2>
-              <div className="mt-6 overflow-hidden rounded-2xl border bg-white shadow-sm">
-                <table className="w-full text-left">
-                  <tbody className="divide-y">
-                    {TARIFS.lignes.map((t) => (
-                      <tr key={t.formule}>
-                        <th scope="row" className="px-5 py-4 font-medium">
-                          {t.formule}
-                        </th>
-                        <td className="px-5 py-4 text-right text-lg font-bold whitespace-nowrap">{t.prix}</td>
-                      </tr>
+            <div className="space-y-12">
+              {TARIFS.groupes.map((g) => (
+                <section key={g.titre} aria-labelledby={`tarifs-${g.titre}`}>
+                  <TitreBloc id={`tarifs-${g.titre}`} icone={<BadgeEuro className="size-6 text-brand" aria-hidden />}>
+                    {g.titre}
+                  </TitreBloc>
+                  <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {g.formules.map((f) => (
+                      <li key={f.id}>
+                        <CarteFormule formule={f} />
+                      </li>
                     ))}
-                  </tbody>
-                </table>
+                  </ul>
+                </section>
+              ))}
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <Card>
+                  <h2 className="flex items-center gap-2 text-lg font-bold">
+                    <BadgePlus className="size-5 text-brand" aria-hidden /> Suppléments et réductions
+                  </h2>
+                  <ul className="mt-4 divide-y">
+                    {TARIFS.supplements.map((a) => (
+                      <LigneAjustement key={a.libelle} libelle={a.libelle} precision={a.precision} montant={`+ ${euros(a.montant)}`} />
+                    ))}
+                    {TARIFS.reductions.map((a) => (
+                      <LigneAjustement
+                        key={a.libelle}
+                        libelle={a.libelle}
+                        precision={a.precision}
+                        montant={`− ${euros(a.montant)}`}
+                        reduction
+                      />
+                    ))}
+                  </ul>
+                </Card>
+                <Card>
+                  <h2 className="flex items-center gap-2 text-lg font-bold">
+                    <CreditCard className="size-5 text-brand" aria-hidden /> Paiement
+                  </h2>
+                  <ul className="mt-4 flex flex-wrap gap-2">
+                    {TARIFS.modesPaiement.map((m) => (
+                      <li key={m} className="rounded-full bg-surface px-3 py-1.5 text-sm font-medium">
+                        {m}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-4 text-muted-foreground">
+                    Paiement possible en <strong className="text-foreground">3 fois</strong> : le premier versement
+                    comprend la licence, les deux suivants le reste de l’activité (détail sur chaque formule).
+                  </p>
+                </Card>
               </div>
-              <ul className="mt-4 space-y-1 text-sm text-muted-foreground">
-                {TARIFS.notes.map((n) => (
-                  <li key={n}>• {n}</li>
-                ))}
-              </ul>
-            </section>
+            </div>
           </BlocProvisoire>
         )}
       </Container>
@@ -82,6 +116,65 @@ export function HorairesTarifsPage() {
   )
 }
 
-function BlocProvisoire({ provisoire, children }: { provisoire: boolean; children: React.ReactNode }) {
+function CarteFormule({ formule: f }: { formule: Formule }) {
+  const [premier, deuxieme, troisieme] = f.echeancier
+  return (
+    <Card className="flex h-full flex-col">
+      <p className="text-lg font-bold">{f.nom}</p>
+      <p className="text-sm text-muted-foreground">{f.public}</p>
+      <p className="mt-4 text-4xl font-extrabold tracking-tight">{euros(totalFormule(f))}</p>
+      <p className="text-sm text-muted-foreground">par saison, licence comprise</p>
+      <dl className="mt-4 space-y-1 border-t pt-4 text-sm">
+        <div className="flex justify-between gap-4">
+          <dt className="text-muted-foreground">Participation à l’activité</dt>
+          <dd className="font-medium">{euros(f.participation)}</dd>
+        </div>
+        <div className="flex justify-between gap-4">
+          <dt className="text-muted-foreground">Licence France Judo</dt>
+          <dd className="font-medium">{euros(f.licence)}</dd>
+        </div>
+      </dl>
+      <p className="mt-auto pt-4 text-sm">
+        <span className="font-semibold text-brand">En 3 fois :</span> {euros(premier)} + {euros(deuxieme)} +{' '}
+        {euros(troisieme)}
+      </p>
+    </Card>
+  )
+}
+
+function LigneAjustement({
+  libelle,
+  precision,
+  montant,
+  reduction = false,
+}: {
+  libelle: string
+  precision: string
+  montant: string
+  reduction?: boolean
+}) {
+  return (
+    <li className="flex items-start justify-between gap-4 py-3">
+      <span>
+        <span className="flex items-center gap-2 font-semibold">
+          {reduction && <BadgeMinus className="size-4 text-brand" aria-hidden />}
+          {libelle}
+        </span>
+        <span className="block text-sm text-muted-foreground">{precision}</span>
+      </span>
+      <span className={`shrink-0 font-bold whitespace-nowrap ${reduction ? 'text-brand' : ''}`}>{montant}</span>
+    </li>
+  )
+}
+
+function TitreBloc({ id, icone, children }: { id: string; icone: ReactNode; children: ReactNode }) {
+  return (
+    <h2 id={id} className="flex items-center gap-2 text-2xl font-bold tracking-tight">
+      {icone} {children}
+    </h2>
+  )
+}
+
+function BlocProvisoire({ provisoire, children }: { provisoire: boolean; children: ReactNode }) {
   return provisoire ? <Provisoire className="p-1">{children}</Provisoire> : <>{children}</>
 }
