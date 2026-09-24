@@ -20,8 +20,9 @@ WhatsApp, on ne le sait pas (parents séparés, numéros changés…). Il faut u
   - plusieurs responsables par enfant (parents séparés), plusieurs enfants par responsable.
 - **Personnes autorisées à récupérer** un enfant (sans compte : nom, lien, téléphone) — utile à
   la garderie (012).
-- **Rôles club** (sur `users.id`) : `admin`, `bureau`, `tresorier`, `encadrant`, et par défaut
-  « famille » (droits dérivés des liens). Un compte peut cumuler des rôles.
+- **Rôles club** (sur `users.id`) : `admin`, `bureau`, `tresorier`, `encadrant`, `contenu`
+  (gestion du contenu du site, spec 014), et par défaut « famille » (droits dérivés des liens). Un
+  compte peut cumuler des rôles.
 - **Administration** (bureau) : créer / modifier adhérents et responsables, lier, désactiver ;
   **inviter** un responsable (e-mail → lien d'activation, cf. 005) ; saisie des adhérents de la
   saison en cours depuis les dossiers papier.
