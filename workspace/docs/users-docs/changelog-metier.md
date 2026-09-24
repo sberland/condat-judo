@@ -4,6 +4,17 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.4.0 — 24 septembre 2026
+
+Le site sait désormais qui est responsable de quel enfant. Le bureau peut enregistrer les
+adhérents, leurs parents ou tuteurs (deux parents séparés peuvent chacun avoir leur accès), les
+personnes autorisées à venir chercher l'enfant, et choisir pour chaque parent s'il peut inscrire
+l'enfant, le récupérer et être prévenu. Les membres du bureau reçoivent des rôles (bureau,
+trésorier, encadrant, gestion du site). Chaque parent verra uniquement ses propres enfants.
+Ces écrans ouvriront aux familles et au bureau avec la connexion au site, prochaine étape.
+
+---
+
 ## v0.3.0 — 24 septembre 2026
 
 Les tarifs de la saison 2026/2027 sont en ligne : judo (par âge), taïso et yoga, licence France

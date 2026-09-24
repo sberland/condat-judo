@@ -61,7 +61,6 @@
 | Fichier | Scope | Type | Impact utilisateur | Effort estimé | Priorité | Date cible | Notes |
 |---|---|---|---|---|---|---|---|
 | [003-referentiels-saison.md](pending/003-referentiels-saison.md) | Référentiels | feature | Élevé — socle de toutes les fonctionnalités | M | P1 | — | Catégories calculées par date de naissance, cours, grades, grille tarifaire ; copie de saison |
-| [004-comptes-foyers-roles.md](pending/004-comptes-foyers-roles.md) | Comptes | feature | Élevé — prérequis de tout l'espace familles | L | P1 | — | Adhérents, responsables multiples (parents séparés), capacités par lien, rôles club, saisie bureau |
 | [005-CHT-authentification.md](pending/005-CHT-authentification.md) | Auth | technique | Élevé — « connexion simple = clé du succès » | L | P1 | — | Chantier (a=invitation + session, b=code e-mail, c=passkey) ; 5 arbitrages au démarrage |
 | [006-rgpd-socle.md](pending/006-rgpd-socle.md) | RGPD | feature | Élevé — obligatoire avant les données des familles | M | P1 | — | Registre, mentions, consentements opt-in, durées, droits, pas de donnée de santé |
 | [007-sauvegarde-d1.md](pending/007-sauvegarde-d1.md) | Données | technique | Moyen — sécurité des données | S | P1 | — | Avant données réelles ; lieu de stockage chiffré à arbitrer (dépôt public exclu) |
@@ -71,6 +70,7 @@
 | [011-cotisations-paiements.md](pending/011-cotisations-paiements.md) | Paiements | feature | Moyen — travail du trésorier | M | P2 | — | Dû / encaissé / restant, paiement en 3 fois, modes, export ; pas de paiement en ligne |
 | [012-CHT-garderie-mercredi.md](pending/012-CHT-garderie-mercredi.md) | Garderie | feature | Élevé — remplace un fil WhatsApp confus | M | P2 | — | Chantier (a=demande, b=liste du jour + photo, c=pointage) |
 | [013-communication.md](pending/013-communication.md) | Communication | feature | Moyen — actualités et calendrier | M | P3 | — | WhatsApp / Facebook relaient des liens ; abonnement agenda |
+| [014-administration-contenu.md](pending/014-administration-contenu.md) | Contenu | feature | Élevé — le club tient son site à jour sans développeur | M | P2 | — | Rôle `contenu` ; coordonnées, équipe, disciplines, partenaires, règlement, mentions ; historique ; horaires / tarifs dans 003 |
 | — | Import des adhérents | proposition | Moyen — gain de saisie | S | P3 | — | Import depuis un tableur existant (si le club en a un), sinon saisie bureau (004) |
 | — | Nom de domaine du club | proposition | Moyen — image, e-mails d'envoi | S | P3 | — | Ex. judo-condat.fr (~10 €/an) ; utile pour l'envoi des e-mails de connexion (005, arbitrage A3) |
 | — | Résultats et palmarès | proposition | Faible | S | P4 | — | Résultats des compétitions par enfant (suite de 009) |
@@ -84,7 +84,7 @@
 | Phase | Specs | Pourquoi dans cet ordre |
 | --- | --- | --- |
 | 0 — Tout de suite | ~~002~~ (livrée en v0.3.0) | Gain rapide, sans dépendance |
-| 1 — Fondations (bureau d'abord) | **004** → **005-CHT** → **003** | On ne peut inviter que des personnes connues (004) ; les écrans bureau exigent la connexion (005) |
+| 1 — Fondations (bureau d'abord) | ~~004~~ (livrée en v0.4.0) → **005-CHT** → **003** → **014** | On ne peut inviter que des personnes connues (004) ; les écrans bureau exigent la connexion (005) ; puis le club administre référentiels et contenu lui-même |
 | 2 — Avant toute donnée réelle | **006**, **007**, **008** | Obligations RGPD et sécurité avant d'héberger des données de mineurs |
 | 3 — Valeur pour les familles | **009** puis **012-CHT** | Besoin d'origine d'abord ; la garderie ensuite (hebdomadaire) — pour la saison en cours, le bureau saisit les adhérents depuis les dossiers papier |
 | 4 — Gestion du club | **011** puis **010** | Le trésorier dès que les adhérents existent ; l'adhésion en ligne pour les inscriptions 2027/2028 |
@@ -97,7 +97,6 @@
 ### P1 — Critique
 
 - **#003** — [Saisons et référentiels](pending/003-referentiels-saison.md)
-- **#004** — [Comptes, adhérents, responsables légaux et rôles](pending/004-comptes-foyers-roles.md)
 - **#005-CHT** — [Authentification applicative](pending/005-CHT-authentification.md)
 - **#006** — [Conformité RGPD : socle](pending/006-rgpd-socle.md)
 - **#007** — [Sauvegarde de la base hors Cloudflare](pending/007-sauvegarde-d1.md)
@@ -111,6 +110,7 @@
 - **#010** — [Adhésion en ligne (dossier d'inscription)](pending/010-adhesion-en-ligne.md)
 - **#011** — [Cotisations : suivi des paiements](pending/011-cotisations-paiements.md)
 - **#012-CHT** — [Garderie du mercredi](pending/012-CHT-garderie-mercredi.md)
+- **#014** — [Administration du contenu du site](pending/014-administration-contenu.md)
 
 ---
 
