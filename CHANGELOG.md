@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.14.0] — 2026-09-24
+
 ### Garderie du mercredi : liste du jour de l'encadrant, photos
 
 #### Notes client

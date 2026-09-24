@@ -24,13 +24,13 @@ reconstitue la liste depuis WhatsApp et ne connaît pas toujours les enfants de 
 
 ## Critères d'acceptation
 
-- [ ] Un encadrant voit, le mercredi même, la liste des enfants à récupérer par lieu, avec photo et contacts
-- [ ] Hors du mercredi, ni la liste ni les photos ne sont accessibles à l'encadrant (contrôlé côté API)
-- [ ] Un parent dépose, remplace ou retire la photo de son enfant depuis son téléphone
-- [ ] Sans accord « photo pour la garderie », aucune photo ne peut être déposée ni montrée ; retirer l'accord efface la photo
-- [ ] Un parent ajoute une personne autorisée à récupérer son enfant ; elle apparaît dans la liste de l'encadrant
-- [ ] Chaque consultation de la liste du jour est inscrite au journal des accès
-- [ ] Utilisable à 360 px
+- [x] Un encadrant voit, le mercredi même, la liste des enfants à récupérer par lieu, avec photo et contacts
+- [x] Hors du mercredi, ni la liste ni les photos ne sont accessibles à l'encadrant (contrôlé côté API)
+- [x] Un parent dépose, remplace ou retire la photo de son enfant depuis son téléphone
+- [x] Sans accord « photo pour la garderie », aucune photo ne peut être déposée ni montrée ; retirer l'accord efface la photo
+- [x] Un parent ajoute une personne autorisée à récupérer son enfant ; elle apparaît dans la liste de l'encadrant
+- [x] Chaque consultation de la liste du jour est inscrite au journal des accès
+- [x] Utilisable à 360 px
 
 ## Hors périmètre
 
