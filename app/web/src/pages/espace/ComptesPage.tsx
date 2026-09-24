@@ -21,7 +21,7 @@ export function ComptesPage() {
   const liste = (data ?? []).filter((c) => `${c.prenom} ${c.nom} ${c.nom} ${c.email ?? ''}`.toLowerCase().includes(terme))
 
   return (
-    <Espace titre="Comptes" retour={{ to: '/espace', libelle: 'Mon espace' }} roles={['bureau', 'admin']}>
+    <Espace titre="Comptes" retour={{ to: '/espace', libelle: 'Mon espace' }} roles={['bureau', 'admin']} aide="comptes">
       {(me) => (
         <div className="grid gap-4">
           <p className="text-muted-foreground">

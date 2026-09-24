@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
-import { ChevronRight, Contact, LogOut, Users, UsersRound } from 'lucide-react'
+import { ChevronRight, CircleHelp, Contact, LogOut, Users, UsersRound } from 'lucide-react'
 import { Espace } from '../../components/espace/Garde'
 import { Bouton } from '../../components/formulaire'
 import { aUnRole, ROLES, seDeconnecter } from '../../lib/api'
@@ -33,6 +33,9 @@ export function EspaceAccueilPage() {
                 </Tuile>
               </>
             )}
+            <Tuile to="/espace/aide" icone={<CircleHelp className="size-6" />} titre="Aide">
+              Les réponses aux questions courantes{aUnRole(me, 'bureau', 'admin') ? ', y compris pour le bureau' : ''}.
+            </Tuile>
           </div>
           {/* L'utilisateur simulé du dev local n'a pas de session à fermer. */}
           {me.provider === 'app' && (
@@ -60,7 +63,7 @@ function Tuile({
   titre,
   children,
 }: {
-  to: '/espace/famille' | '/espace/adherents' | '/espace/comptes'
+  to: '/espace/famille' | '/espace/adherents' | '/espace/comptes' | '/espace/aide'
   icone: ReactNode
   titre: string
   children: ReactNode

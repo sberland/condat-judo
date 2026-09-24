@@ -4,6 +4,16 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.6.0 — 24 septembre 2026
+
+L'espace membres a désormais sa propre aide, adaptée à chacun : un parent y trouve comment se
+connecter, ce que signifient les droits sur ses enfants et comment corriger une information ; le
+bureau y ajoute la saisie des adhérents, des responsables et l'envoi des liens de connexion ;
+l'administrateur y trouve en plus la gestion des rôles. Un bouton « Aide » en haut de chaque écran
+mène directement à la bonne réponse.
+
+---
+
 ## v0.5.1 — 24 septembre 2026
 
 Le yoga figure désormais partout sur le site, au même titre que le judo, le jujitsu et le taïso :
