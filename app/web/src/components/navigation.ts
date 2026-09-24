@@ -14,10 +14,20 @@ export type Route =
 
 type Entree = { to: Route; libelle: string; provisoire?: boolean }
 
-/** Entrées du menu, sans les pages provisoires en production ; « Mon espace » si l'utilisateur est reconnu. */
+/**
+ * Accès à l'espace membres (bouton de l'en-tête, lien du pied de page) : « Mon espace » si
+ * l'utilisateur est reconnu, sinon « Espace membres » vers la page de connexion.
+ */
+export function useAccesEspace(): { to: '/espace' | '/connexion'; libelle: string; connecte: boolean } {
+  const { data: me } = useMe()
+  return me?.etat === 'ok'
+    ? { to: '/espace', libelle: 'Mon espace', connecte: true }
+    : { to: '/connexion', libelle: 'Espace membres', connecte: false }
+}
+
+/** Entrées du menu (pages publiques), sans les pages provisoires en production. */
 export function useNavigation(): Entree[] {
   const provisoireVisible = useProvisoireVisible()
-  const { data: me } = useMe()
   const horairesVisibles = !HORAIRES.provisoire || provisoireVisible
 
   const navigation: Entree[] = [
@@ -33,6 +43,5 @@ export function useNavigation(): Entree[] {
     { to: '/reglement', libelle: 'Règlement' },
     { to: '/contact', libelle: 'Contact' },
   ]
-  if (me?.etat === 'ok') navigation.push({ to: '/espace', libelle: 'Mon espace' })
   return navigation.filter((e) => !e.provisoire || provisoireVisible)
 }

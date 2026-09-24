@@ -44,6 +44,7 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
         r: [
           'Le bureau du club vous envoie un lien personnel (WhatsApp ou SMS). Touchez-le depuis votre téléphone, puis « Me connecter sur cet appareil ». Pas de mot de passe à retenir.',
           'Le lien ne fonctionne qu’une fois et pendant 7 jours. Il est personnel : ne le transférez à personne, il ouvre une session sur votre compte.',
+          'Ensuite, le bouton « Mon espace », en haut à droite de chaque page, vous y ramène directement.',
         ],
       },
       {
@@ -60,7 +61,7 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
       },
       {
         q: 'Comment me déconnecter ?',
-        r: ['Mon espace → « Se déconnecter », en bas de page. Utile sur un appareil partagé : les informations affichées sont effacées de l’appareil.'],
+        r: ['Bouton « Mon espace » (en haut à droite) → « Se déconnecter », en bas de la page. Utile sur un appareil partagé : les informations affichées sont effacées de l’appareil.'],
       },
     ],
   },

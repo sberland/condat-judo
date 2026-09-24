@@ -4,6 +4,15 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.7.2 — 24 septembre 2026
+
+Un bouton en haut de chaque page mène directement à l'espace membres, y compris sur téléphone
+sans ouvrir le menu : « Mon espace » quand on est connecté, « Espace membres » sinon (la page
+explique alors comment se connecter). Sur le site de qualification, le badge en bas à droite
+indique la version testée et ne masque plus le bas de page.
+
+---
+
 ## v0.7.1 — 24 septembre 2026
 
 Les données du site sont désormais sauvegardées chaque nuit en dehors de l'hébergeur, et

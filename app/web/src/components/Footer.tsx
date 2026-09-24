@@ -1,13 +1,12 @@
 import { Link } from '@tanstack/react-router'
 import { MapPin } from 'lucide-react'
 import { CLUB, DISCIPLINES_PUBLIQUES, ITINERAIRE, SAISON } from '../content/club'
-import { useMe } from '../lib/api'
-import { useNavigation } from './navigation'
+import { useAccesEspace, useNavigation } from './navigation'
 import { Container, FacebookIcon } from './ui'
 
 export function Footer() {
   const navigation = useNavigation()
-  const { data: me } = useMe()
+  const acces = useAccesEspace()
   return (
     <footer className="bg-ink text-white/75">
       <Container className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
@@ -45,14 +44,11 @@ export function Footer() {
                 </Link>
               </li>
             ))}
-            {/* Connecté : « Mon espace » figure déjà dans la navigation. */}
-            {me?.etat !== 'ok' && (
-              <li>
-                <Link to="/connexion" className="hover:text-white">
-                  Espace membres
-                </Link>
-              </li>
-            )}
+            <li>
+              <Link to={acces.to} className="hover:text-white">
+                {acces.libelle}
+              </Link>
+            </li>
             <li>
               <Link to="/mentions-legales" className="hover:text-white">
                 Mentions légales
