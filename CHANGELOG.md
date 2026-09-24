@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.1] — 2026-09-24
+
 ### Sauvegarde de la base hors Cloudflare
 
 #### Notes client

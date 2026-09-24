@@ -44,7 +44,12 @@ function Invoke-Native {
     }
 }
 
-if (-not (Get-Command age -ErrorAction SilentlyContinue)) { throw "age introuvable : winget install FiloSottile.age (puis rouvrir le terminal)" }
+# age : dans le PATH, ou à son emplacement WinGet (terminal ouvert avant l'installation).
+$Age = (Get-Command age -ErrorAction SilentlyContinue).Source
+if (-not $Age) {
+    $Age = @(Get-ChildItem "$env:LOCALAPPDATA\Microsoft\WinGet\Packages" -Filter 'age.exe' -Recurse -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName)[0]
+}
+if (-not $Age) { throw "age introuvable : winget install FiloSottile.age" }
 $Cle = (Resolve-Path -LiteralPath $Cle -ErrorAction Stop).Path
 
 $Travail = Join-Path ([System.IO.Path]::GetTempPath()) ("condat-judo-restauration-" + [guid]::NewGuid().ToString('N'))
@@ -60,7 +65,7 @@ try {
 
     Write-Host "2/4  Déchiffrement..." -ForegroundColor Yellow
     $Gz = Join-Path $Travail 'base.sql.gz'
-    Invoke-Native -Description "Déchiffrement" -Command { age -d -i $Cle -o $Gz $Chiffre[0].FullName }
+    Invoke-Native -Description "Déchiffrement" -Command { & $Age -d -i $Cle -o $Gz $Chiffre[0].FullName }
 
     Write-Host "3/4  Décompression..." -ForegroundColor Yellow
     $Sql = Join-Path $Travail 'base.sql'
@@ -75,7 +80,13 @@ try {
     & (Join-Path $RepoRoot 'deploy\refresh-preview-db.ps1') -SnapshotPath $Sql
 }
 finally {
-    Remove-Item -LiteralPath $Travail -Recurse -Force -ErrorAction SilentlyContinue
+    # Données réelles déchiffrées : suppression impérative. [IO.Directory]::Delete gère les chemins
+    # courts Windows (« S9E2F~1 ») sur lesquels Remove-Item -Recurse échoue.
+    try {
+        [System.IO.Directory]::Delete($Travail, $true)
+    } catch {
+        Write-Host "⚠️  Impossible de supprimer $Travail (données déchiffrées) : le supprimer à la main !" -ForegroundColor Red
+    }
 }
 
 Write-Host ""
