@@ -4,6 +4,13 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.2.1 — 24 septembre 2026
+
+Sur téléphone et sur les écrans étroits, le menu s'affiche de nouveau correctement : les rubriques
+apparaissent sur un fond blanc, bien lisibles, au lieu de se superposer à la page.
+
+---
+
 ## v0.2.0 — 23 septembre 2026
 
 Le nouveau site du club remplace l'ancien site : il présente le club, ses trois disciplines

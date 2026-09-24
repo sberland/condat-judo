@@ -6,6 +6,20 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.1] — 2026-09-24
+
+### Menu mobile lisible
+
+#### Notes client
+
+Sur téléphone et sur les écrans étroits, le menu s'affiche de nouveau correctement : les rubriques
+apparaissent sur un fond blanc, bien lisibles, au lieu de se superposer à la page.
+
+#### Corrections
+
+- Menu du téléphone : panneau plein écran sur fond blanc (il s'affichait en transparence par-dessus
+  la page), marges alignées sur l'en-tête en tablette
+
 ## [0.2.0] — 2026-09-23
 
 ### Site vitrine du club
