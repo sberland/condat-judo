@@ -4,6 +4,17 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.13.0 — 24 septembre 2026
+
+Les parents demandent eux-mêmes, depuis leur téléphone, que le club récupère leur enfant à la
+garderie le mercredi : pour un mercredi, ou pour tous les mercredis jusqu’à une date, en un geste.
+Ils peuvent annuler jusqu’au délai fixé par le club (par défaut la veille au soir). Le bureau voit
+chaque mercredi la liste des enfants à récupérer, par lieu, et peut ajouter ou retirer un enfant
+à tout moment. Lieux, calendrier (mercredis sans garderie) et délai se règlent dans la saison ;
+tant que le club ne les a pas confirmés, les demandes ne sont pas ouvertes sur le site public.
+
+---
+
 ## v0.12.0 — 24 septembre 2026
 
 Le bureau gère lui-même, saison par saison, les catégories d’âge, la grille tarifaire, les dates

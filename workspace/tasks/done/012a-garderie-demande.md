@@ -21,12 +21,12 @@ doit être récupéré, et le bureau avoir la liste propre de chaque mercredi.
 
 ## Critères d'acceptation
 
-- [ ] Un parent demande la récupération de son enfant pour un mercredi en un geste, depuis son téléphone
-- [ ] « Tous les mercredis jusqu'au … » crée les demandes des mercredis ouverts, chacun annulable
-- [ ] Une demande ou une annulation après le délai est refusée côté API (sauf bureau)
-- [ ] Un parent ne voit et ne demande que pour ses enfants, s'il a le droit de les inscrire
-- [ ] Le bureau voit la liste d'un mercredi, par lieu
-- [ ] Utilisable à 360 px
+- [x] Un parent demande la récupération de son enfant pour un mercredi en un geste, depuis son téléphone
+- [x] « Tous les mercredis jusqu'au … » crée les demandes des mercredis ouverts, chacun annulable
+- [x] Une demande ou une annulation après le délai est refusée côté API (sauf bureau)
+- [x] Un parent ne voit et ne demande que pour ses enfants, s'il a le droit de les inscrire
+- [x] Le bureau voit la liste d'un mercredi, par lieu
+- [x] Utilisable à 360 px
 
 ## Hors périmètre
 
