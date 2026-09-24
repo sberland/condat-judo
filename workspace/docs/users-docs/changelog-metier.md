@@ -4,6 +4,41 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.12.0 — 24 septembre 2026
+
+Le bureau gère lui-même, saison par saison, les catégories d’âge, la grille tarifaire, les dates
+du paiement en 3 fois et les horaires des cours : plus besoin d’un développeur pour les changer.
+Pour la rentrée suivante, il prépare la nouvelle saison en un clic (copie de la précédente, années
+et dates décalées d’un an), l’ajuste tranquillement, puis la rend « courante » quand il le décide :
+dossiers d’adhésion, trésorerie, compétitions et page publique « Horaires & tarifs » passent
+alors dessus. Rien ne change pour la saison 2026/2027 : ses valeurs sont reprises à l’identique.
+
+---
+
+## v0.11.0 — 24 septembre 2026
+
+Les familles exercent elles-mêmes leurs droits depuis leur espace : elles téléchargent en un geste
+tout ce que le club enregistre sur elles et leurs enfants, et répondent oui ou non, à tout
+moment, pour les photos et vidéos et pour le groupe WhatsApp — ce qui règle aussi le recueil de
+ces accords cette saison. Une fois la durée de conservation confirmée par le club, les données
+d'un adhérent qui ne se réinscrit plus sont rendues anonymes automatiquement chaque semaine.
+Chaque consultation ou modification des coordonnées d'une famille par le bureau est enregistrée
+et consultable par l'administrateur pendant un an.
+
+---
+
+## v0.10.0 — 24 septembre 2026
+
+Le trésorier suit les cotisations de la saison sur le site : ce que chaque famille doit, ce
+qu'elle a payé, ce qui reste et les versements en retard. Il enregistre un chèque en quelques
+secondes depuis son téléphone ; un chèque pour deux enfants est réparti automatiquement entre
+eux, et les trois chèques d'un paiement en 3 fois s'enregistrent d'un coup avec leurs dates
+d'encaissement. Le site liste les chèques à remettre en banque chaque mois et fournit les exports
+pour la comptabilité. Chaque famille voit, dans son espace, ce qu'elle a payé et ce qui reste ;
+seuls le trésorier et l'administrateur voient l'ensemble des paiements.
+
+---
+
 ## v0.9.0 — 24 septembre 2026
 
 Le bureau publie chaque compétition sur le site (date, lieu, catégories, date limite, informations

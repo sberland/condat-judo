@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.13.0] — 2026-09-24
+
 ### Garderie du mercredi : les parents demandent en ligne
 
 #### Notes client
@@ -22,6 +24,8 @@ tant que le club ne les a pas confirmés, les demandes ne sont pas ouvertes sur 
 - Espace famille : « Garderie du mercredi » (demander, annuler, tous les mercredis jusqu’au …)
 - Bureau : liste de chaque mercredi par lieu, ajout et retrait d’un enfant
 - Saisons et tarifs : réglages de la garderie (lieux, période, mercredis fermés, délai)
+
+## [0.12.0] — 2026-09-24
 
 ### Saisons et tarifs gérés par le bureau
 
@@ -45,6 +49,8 @@ alors dessus. Rien ne change pour la saison 2026/2027 : ses valeurs sont reprise
 
 - Page publique « Horaires & tarifs », dossiers d’adhésion, trésorerie et compétitions lisent la
   saison courante (compétitions : la saison de leur date, si elle est préparée)
+
+## [0.11.0] — 2026-09-24
 
 ### Données personnelles : droits des familles et effacement automatique
 
@@ -72,6 +78,8 @@ et consultable par l'administrateur pendant un an.
 
 - Page « Données personnelles » : droits exerçables depuis l'espace, effacement automatique,
   journal des accès
+
+## [0.10.0] — 2026-09-24
 
 ### Cotisations : suivi des paiements par le trésorier
 
