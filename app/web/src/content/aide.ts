@@ -830,6 +830,7 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
         q: 'Journal des accès',
         r: [
           'Chaque consultation de la fiche d’un adhérent (coordonnées des responsables), de la liste des comptes ou de la fiche d’une famille en trésorerie, et chaque modification, est enregistrée : qui, quoi, quand. Conservé un an.',
+          'Filtrez par période (du … au …), par membre du bureau et par type d’action (consultation, modification, export…), et recherchez une famille ou un adhérent. Le nombre d’entrées trouvées s’affiche ; au-delà de 300, seules les plus récentes sont listées : affinez les filtres.',
         ],
       },
       {

@@ -6,6 +6,24 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+### Mon espace rangé par rubriques, journal des accès filtrable
+
+#### Notes client
+
+Avec les nouvelles fonctionnalités, l'accueil de l'espace membres devenait une longue suite de
+cartes. Les écrans sont désormais rangés en rubriques : Ma famille, Mercredi (encadrement),
+Adhérents, Vie du club, Gestion. Chacun ne voit que les rubriques de son rôle — un parent
+retrouve simplement sa famille. L'aide est accessible par le bouton « Aide » en haut de l'écran,
+comme partout ailleurs, et les membres du bureau qui sont aussi parents retrouvent « Événements »
+pour inscrire leurs enfants. Côté administrateur, le journal des accès aux coordonnées des
+familles se filtre par période, par membre du bureau et par type d'action.
+
+#### Modifications
+
+- Mon espace : rubriques, une carte par rubrique ; bouton « Aide » dans l'en-tête
+- Données personnelles : journal filtrable (du / au, membre du bureau, action), nombre d'entrées
+- Aide intégrée
+
 ## [0.22.0] — 2026-09-25
 
 ### Inscriptions en ligne : le dossier rempli par les familles

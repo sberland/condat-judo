@@ -22,8 +22,8 @@ export function Espace({
   titre: string
   retour?: { to: '/espace' | '/espace/adherents' | '/espace/comptes' | '/espace/evenements' | '/espace/tresorerie' | '/espace/saisons' | '/espace/contenu' | '/espace/actualites' | '/espace/inscriptions'; libelle: string }
   roles?: Role[]
-  /** Rubrique de l'aide intégrée liée à cet écran (lien « Aide » à côté du titre). */
-  aide?: IdRubrique
+  /** Rubrique de l'aide intégrée liée à cet écran (lien « Aide » à côté du titre) ; « toutes » : toute l'aide (accueil). */
+  aide?: IdRubrique | 'toutes'
   /** Message si l'utilisateur n'a pas l'un des rôles (par défaut : réservé au bureau). */
   refus?: string
   children: (me: Me) => ReactNode
@@ -71,7 +71,7 @@ export function Espace({
           {aide && data?.etat === 'ok' && (
             <Link
               to="/espace/aide"
-              hash={aide}
+              hash={aide === 'toutes' ? undefined : aide}
               className="mt-1 inline-flex shrink-0 items-center gap-1.5 rounded-full border bg-white px-3.5 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:border-brand hover:text-brand"
             >
               <CircleHelp className="size-4" aria-hidden /> Aide

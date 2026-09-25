@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { Bloc, Espace } from '../../components/espace/Garde'
-import { Alerte, Champ } from '../../components/formulaire'
+import { Alerte, Champ, Selection } from '../../components/formulaire'
 import { Pastille } from '../../components/ui'
 import { texteConservation } from '../../content/rgpd'
 import { appel, dateHeureFr } from '../../lib/api'
-import { LIBELLES_ACTION, type AdherentEchu, type EntreeJournal, type EtatRgpd } from '../../lib/rgpd'
+import { LIBELLES_ACTION, TYPES_ACTION, type AdherentEchu, type EntreeJournal, type EtatRgpd, type JournalFiltre } from '../../lib/rgpd'
 
 const saison = (debut: number) => `${debut}/${debut + 1}`
 
@@ -112,33 +112,86 @@ function ListeEchus({ titre, vide, adherents, explication }: { titre: string; vi
   )
 }
 
-/** Journal des accès sensibles : qui a consulté ou modifié les coordonnées d'une famille (un an). */
+type FiltresJournal = { du: string; au: string; acteur: string; action: EntreeJournal['action'] | ''; q: string }
+const SANS_FILTRE: FiltresJournal = { du: '', au: '', acteur: '', action: '', q: '' }
+
+/**
+ * Journal des accès sensibles : qui a consulté ou modifié les coordonnées d'une famille (un an).
+ * Filtres (spec 023) : période, membre du bureau, type d'action, recherche texte.
+ */
 function Journal() {
+  const [filtres, setFiltres] = useState<FiltresJournal>(SANS_FILTRE)
   const [q, setQ] = useState('')
-  const [recherche, setRecherche] = useState('')
+  const parametres = new URLSearchParams(Object.entries(filtres).filter(([, v]) => v)).toString()
   const { data, isPending } = useQuery({
-    queryKey: ['admin', 'journal', recherche],
-    queryFn: () => appel<EntreeJournal[]>('GET', `/api/admin/journal?q=${encodeURIComponent(recherche)}`),
+    queryKey: ['admin', 'journal', parametres],
+    queryFn: () => appel<JournalFiltre>('GET', `/api/admin/journal?${parametres}`),
+    // La liste des membres et les entrées restent affichées pendant le rechargement.
+    placeholderData: keepPreviousData,
   })
+  const maj = <K extends keyof FiltresJournal>(champ: K) => (v: FiltresJournal[K]) => setFiltres((f) => ({ ...f, [champ]: v }))
+  const filtre = parametres !== ''
+  const entrees = data?.entrees ?? []
+
   return (
     <Bloc titre="Journal des accès">
       <p className="mb-3 text-sm text-muted-foreground">
         Consultations et modifications des coordonnées des familles par le bureau et le trésorier, conservées un an.
       </p>
+      <div className="mb-3 grid gap-3 sm:grid-cols-2">
+        <Champ id="journal-du" libelle="Du" type="date" valeur={filtres.du} onChange={maj('du')} />
+        <Champ id="journal-au" libelle="Au" type="date" valeur={filtres.au} onChange={maj('au')} />
+        <Selection
+          id="journal-acteur"
+          libelle="Membre du bureau"
+          valeur={filtres.acteur}
+          options={(data?.acteurs ?? []).map((a) => ({ valeur: String(a.id), libelle: a.nom }))}
+          onChange={maj('acteur')}
+          vide="Tous"
+        />
+        <Selection
+          id="journal-action"
+          libelle="Action"
+          valeur={filtres.action}
+          options={(Object.keys(TYPES_ACTION) as EntreeJournal['action'][]).map((a) => ({ valeur: a, libelle: TYPES_ACTION[a] }))}
+          onChange={maj('action')}
+          vide="Toutes"
+        />
+      </div>
       <form
         className="mb-3"
         onSubmit={(e) => {
           e.preventDefault()
-          setRecherche(q)
+          maj('q')(q.trim())
         }}
       >
         <Champ id="journal-recherche" libelle="Rechercher (membre du bureau, famille, adhérent)" valeur={q} onChange={setQ} />
       </form>
+      {data && (
+        <p className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+          <span>
+            {data.total} entrée{data.total > 1 ? 's' : ''}
+            {data.total > data.limite && ` — les ${data.limite} plus récentes sont affichées : affinez les filtres`}
+          </span>
+          {filtre && (
+            <button
+              type="button"
+              onClick={() => {
+                setFiltres(SANS_FILTRE)
+                setQ('')
+              }}
+              className="font-semibold text-brand"
+            >
+              Effacer les filtres
+            </button>
+          )}
+        </p>
+      )}
       {isPending && <p className="text-muted-foreground">Chargement…</p>}
-      {data && data.length === 0 && <p className="text-muted-foreground">Aucune entrée.</p>}
-      {data && data.length > 0 && (
+      {data && entrees.length === 0 && <p className="text-muted-foreground">Aucune entrée.</p>}
+      {entrees.length > 0 && (
         <ul className="divide-y rounded-xl border text-sm">
-          {data.map((e) => (
+          {entrees.map((e) => (
             <li key={e.id} className="px-4 py-2.5">
               <span className="text-muted-foreground">{dateHeureFr(e.cree_le)} · </span>
               <strong>{e.acteur ?? 'Compte supprimé'}</strong> {LIBELLES_ACTION[e.action]} <strong>{e.cible_libelle ?? 'une fiche supprimée'}</strong>

@@ -5,7 +5,7 @@ import { aUnRole, connexionRequise, roleRequis, type AppEnv } from '../droits';
 import { ROLES, type Role } from '../identite';
 import { couperAcces, creerLien } from '../session';
 import { donneesDuCompte } from '../export';
-import { journaliser } from '../journal';
+import { filtresJournal, journaliser } from '../journal';
 import { critere, DERNIERE_SAISON, seuilPurge } from '../purge';
 import { RGPD } from '../../../web/src/content/rgpd';
 import { categorieDe, eligible } from '../../../web/src/content/categories';
@@ -846,30 +846,50 @@ admin.get('/rgpd', roleRequis('admin'), async (c) => {
   });
 });
 
-// Journal des accès sensibles (conservé un an), le plus récent d'abord ; recherche sur l'auteur ou la cible.
+// Journal des accès sensibles (conservé un an), le plus récent d'abord. Filtres (spec 023) : période
+// en jours de Paris, membre du bureau (users.id), type d'action, et recherche sur l'auteur, la cible
+// ou le détail. Au plus LIMITE_JOURNAL entrées, avec le nombre total trouvé.
+const LIMITE_JOURNAL = 300;
+const CIBLE_JOURNAL = `CASE j.cible
+      WHEN 'adherent' THEN (SELECT a.prenom || ' ' || a.nom FROM adherents a WHERE a.id = j.cible_id)
+      WHEN 'compte' THEN (SELECT x.prenom || ' ' || x.nom FROM users x WHERE x.id = j.cible_id)
+      WHEN 'famille' THEN (SELECT a.nom FROM adhesions d JOIN adherents a ON a.id = d.adherent_id WHERE d.id = j.cible_id)
+    END`;
+const FILTRE_JOURNAL = `FROM journal_acces j LEFT JOIN users u ON u.id = j.user_id
+   WHERE (?2 IS NULL OR j.cree_le >= ?2) AND (?3 IS NULL OR j.cree_le < ?3)
+     AND (?4 IS NULL OR j.user_id = ?4) AND (?5 IS NULL OR j.action = ?5)
+     AND (lower(COALESCE(u.prenom || ' ' || u.nom, '')) LIKE ?1
+       OR lower(COALESCE(${CIBLE_JOURNAL}, '')) LIKE ?1
+       OR lower(COALESCE(j.detail, '')) LIKE ?1)`;
+
 admin.get('/journal', roleRequis('admin'), async (c) => {
-  const { results } = await c.env.DB.prepare(
-    `SELECT j.id, j.cree_le, j.action, j.cible, j.cible_id, j.detail, u.prenom || ' ' || u.nom AS acteur,
-            CASE j.cible
-              WHEN 'adherent' THEN CASE WHEN j.cible_id IS NULL THEN 'la liste des enfants'
-                ELSE (SELECT a.prenom || ' ' || a.nom FROM adherents a WHERE a.id = j.cible_id) END
-              WHEN 'compte' THEN (SELECT x.prenom || ' ' || x.nom FROM users x WHERE x.id = j.cible_id)
-              WHEN 'famille' THEN (SELECT 'Famille ' || a.nom FROM adhesions d JOIN adherents a ON a.id = d.adherent_id WHERE d.id = j.cible_id)
-              ELSE 'Liste des comptes'
-            END AS cible_libelle
-     FROM journal_acces j LEFT JOIN users u ON u.id = j.user_id
-     WHERE lower(COALESCE(u.prenom || ' ' || u.nom, '')) LIKE ?1
-        OR lower(COALESCE(CASE j.cible
-              WHEN 'adherent' THEN (SELECT a.prenom || ' ' || a.nom FROM adherents a WHERE a.id = j.cible_id)
-              WHEN 'compte' THEN (SELECT x.prenom || ' ' || x.nom FROM users x WHERE x.id = j.cible_id)
-              WHEN 'famille' THEN (SELECT a.nom FROM adhesions d JOIN adherents a ON a.id = d.adherent_id WHERE d.id = j.cible_id)
-            END, '')) LIKE ?1
-        OR lower(COALESCE(j.detail, '')) LIKE ?1
-     ORDER BY j.id DESC LIMIT 300`,
-  )
-    .bind(recherche(c.req.query('q')))
-    .all();
-  return c.json(results);
+  const f = filtresJournal(c.req.query());
+  const params = [recherche(c.req.query('q')), f.depuis, f.avant, f.acteur, f.action];
+  const [entrees, total, acteurs] = await c.env.DB.batch([
+    c.env.DB.prepare(
+      `SELECT j.id, j.cree_le, j.action, j.cible, j.cible_id, j.detail, u.prenom || ' ' || u.nom AS acteur,
+              CASE j.cible
+                WHEN 'adherent' THEN CASE WHEN j.cible_id IS NULL THEN 'la liste des enfants'
+                  ELSE (SELECT a.prenom || ' ' || a.nom FROM adherents a WHERE a.id = j.cible_id) END
+                WHEN 'compte' THEN (SELECT x.prenom || ' ' || x.nom FROM users x WHERE x.id = j.cible_id)
+                WHEN 'famille' THEN (SELECT 'Famille ' || a.nom FROM adhesions d JOIN adherents a ON a.id = d.adherent_id WHERE d.id = j.cible_id)
+                ELSE 'Liste des comptes'
+              END AS cible_libelle
+       ${FILTRE_JOURNAL}
+       ORDER BY j.id DESC LIMIT ${LIMITE_JOURNAL}`,
+    ).bind(...params),
+    c.env.DB.prepare(`SELECT count(*) AS n ${FILTRE_JOURNAL}`).bind(...params),
+    // Membres du bureau présents dans le journal : la liste du filtre.
+    c.env.DB.prepare(
+      `SELECT DISTINCT u.id, u.prenom || ' ' || u.nom AS nom FROM journal_acces j JOIN users u ON u.id = j.user_id ORDER BY u.nom, u.prenom`,
+    ),
+  ]);
+  return c.json({
+    entrees: entrees?.results ?? [],
+    total: (total?.results[0] as { n: number } | undefined)?.n ?? 0,
+    limite: LIMITE_JOURNAL,
+    acteurs: acteurs?.results ?? [],
+  });
 });
 
 // --- Saisons et référentiels (spec 003) ---

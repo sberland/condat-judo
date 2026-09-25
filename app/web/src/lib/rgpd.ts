@@ -49,6 +49,24 @@ export type EntreeJournal = {
   cible_libelle: string | null
 }
 
+/** Journal filtré (spec 023) : entrées (au plus `limite`), nombre trouvé, membres du bureau présents. */
+export type JournalFiltre = {
+  entrees: EntreeJournal[]
+  total: number
+  limite: number
+  acteurs: { id: number; nom: string }[]
+}
+
+/** Types d'action, pour le filtre du journal. */
+export const TYPES_ACTION: Record<EntreeJournal['action'], string> = {
+  consultation: 'Consultation',
+  modification: 'Modification',
+  suppression: 'Suppression',
+  export: 'Export des données',
+  lien_connexion: 'Lien de connexion',
+  deconnexion: 'Déconnexion des appareils',
+}
+
 export const LIBELLES_ACTION: Record<EntreeJournal['action'], string> = {
   consultation: 'a consulté',
   modification: 'a modifié',

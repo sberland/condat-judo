@@ -59,3 +59,33 @@ export const journaliser: MiddlewareHandler<AppEnv> = async (c, next) => {
     .bind(c.get('utilisateur').id, e.action, e.cible, e.cible_id, e.detail)
     .run();
 };
+
+// --- Consultation du journal (spec 023) : filtres par période, membre du bureau, type d'action ---
+
+export const ACTIONS_JOURNAL: readonly ActionJournal[] = ['consultation', 'modification', 'suppression', 'export', 'lien_connexion', 'deconnexion'];
+
+/** Début d'un jour en heure de Paris, exprimé en UTC au format de stockage (« AAAA-MM-JJ HH:MM:SS »). */
+export function debutJourParis(date: string): string {
+  // Décalage de Paris ce jour-là (1 h en hiver, 2 h en été), lu à midi UTC.
+  const heureParis = Number(new Date(`${date}T12:00:00Z`).toLocaleString('en-GB', { timeZone: 'Europe/Paris', hour: '2-digit', hour12: false }));
+  return new Date(Date.parse(`${date}T00:00:00Z`) - (heureParis - 12) * 3_600_000).toISOString().slice(0, 19).replace('T', ' ');
+}
+
+export type FiltresJournal = { depuis: string | null; avant: string | null; acteur: number | null; action: ActionJournal | null };
+
+const dateValide = (v: string | undefined): v is string => !!v && /^\d{4}-\d{2}-\d{2}$/.test(v) && !Number.isNaN(Date.parse(`${v}T00:00:00Z`));
+
+/**
+ * Filtres de la requête (`du`, `au` en jours de Paris inclus, `acteur` = users.id, `action`) ;
+ * une valeur invalide est ignorée. `depuis` / `avant` : bornes UTC [depuis, avant[.
+ */
+export function filtresJournal(q: { du?: string; au?: string; acteur?: string; action?: string }): FiltresJournal {
+  const lendemain = (d: string) => new Date(Date.parse(`${d}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10);
+  const acteur = Number(q.acteur);
+  return {
+    depuis: dateValide(q.du) ? debutJourParis(q.du) : null,
+    avant: dateValide(q.au) ? debutJourParis(lendemain(q.au)) : null,
+    acteur: Number.isInteger(acteur) && acteur > 0 ? acteur : null,
+    action: ACTIONS_JOURNAL.includes(q.action as ActionJournal) ? (q.action as ActionJournal) : null,
+  };
+}

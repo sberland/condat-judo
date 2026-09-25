@@ -40,8 +40,12 @@ Face ID / empreinte**. Le visage ou l'empreinte restent dans le téléphone.
 
 ## Mon espace
 
-**Aide intégrée** : dans l'espace, **Mon espace → Aide** (ou le bouton « Aide » en haut de chaque
-écran) répond aux questions courantes, écran par écran. Elle s'adapte au profil : un parent voit
+**Accueil de l'espace** : les écrans sont rangés en rubriques — Ma famille, Mercredi
+(encadrement), Adhérents, Vie du club, Gestion — selon le rôle de chacun ; un parent ne voit que
+sa rubrique « Ma famille » (inscriptions quand elles sont ouvertes, mes enfants, garderie,
+événements).
+
+**Aide intégrée** : dans l'espace, le bouton **« Aide »** en haut de chaque écran (et de l'accueil) répond aux questions courantes, écran par écran. Elle s'adapte au profil : un parent voit
 l'aide famille, le bureau y ajoute la sienne, l'administrateur voit tout. C'est la référence
 détaillée, mise à jour à chaque évolution de l'espace ; ce qui suit en donne un aperçu.
 
@@ -95,7 +99,8 @@ copie complète de ce que le club enregistre sur vous et vos enfants.
 **Pour l'administrateur — Données personnelles** : durée de conservation, état de la purge
 automatique (chaque lundi, en production, une fois la durée confirmée par le club), adhérents
 concernés à la prochaine purge et à la rentrée suivante, historique, et journal des consultations
-et modifications des coordonnées des familles. Comptes → Modifier → « Exporter ses données » pour
+et modifications des coordonnées des familles, filtrable par période, par membre du bureau et par
+type d'action. Comptes → Modifier → « Exporter ses données » pour
 répondre à une demande écrite.
 
 **Pour le bureau et la personne qui gère le site — Actualités** : Mon espace → « Actualités » →
