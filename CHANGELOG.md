@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.23.0] — 2026-09-25
+
 ### Mon espace rangé par rubriques, journal des accès filtrable
 
 #### Notes client
