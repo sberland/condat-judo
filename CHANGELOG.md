@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.21.0] — 2026-09-25
+
 ### Connexion par Face ID ou empreinte
 
 #### Notes client
@@ -23,6 +25,8 @@ sa connexion depuis « Mes enfants », ou le bureau coupe tous les accès du com
 - Mes enfants : « Connexion par Face ID / empreinte » (appareils, activer, retirer)
 - Comptes (bureau) : nombre de passkeys ; « Déconnecter tous ses appareils » les retire aussi
 - Aide intégrée, page « Données personnelles », registre des traitements
+
+## [0.20.0] — 2026-09-25
 
 ### Actualités du club et abonnement agenda
 
@@ -44,6 +48,8 @@ jour tout seul.
 - Espace « Actualités » (bureau, gestion du site) : rédiger, publier, photo, partager, supprimer
 - Page « Événements » : « S'abonner au calendrier » (iPhone, Mac, Outlook, Google Agenda)
 - Aide intégrée ; registre des traitements
+
+## [0.19.0] — 2026-09-25
 
 ### Tarifs du yoga séparés, icônes du règlement
 

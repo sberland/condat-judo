@@ -4,6 +4,29 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.20.0 — 25 septembre 2026
+
+Le club publie ses actualités sur le site : résultats, sorties, informations aux familles, avec
+une photo. Le bureau ou la personne qui gère le site les rédige depuis son téléphone, les garde en
+brouillon le temps de les relire, puis les publie et partage leur lien dans le groupe WhatsApp en
+un geste. Une actualité peut être réservée aux familles connectées. Avant d'ajouter une photo,
+l'auteur confirme que les enfants reconnaissables ont l'accord droit à l'image. L'accueil présente
+les trois dernières actualités et les trois prochains événements. Les familles peuvent aussi
+s'abonner au calendrier des événements du club depuis l'agenda de leur téléphone : il se met à
+jour tout seul.
+
+---
+
+## v0.19.0 — 25 septembre 2026
+
+La page « Horaires & tarifs » présente désormais trois groupes de formules — Judo, Taïso et
+Yoga —, chacun avec l'illustration de sa discipline : chaque activité a sa propre grille, même
+lorsque les montants se ressemblent. Chaque article du règlement intérieur est accompagné d'une
+icône (licence, santé, tenue, ponctualité…) qui le rend plus facile à repérer ; le club peut la
+changer dans « Contenu du site ».
+
+---
+
 ## v0.18.0 — 24 septembre 2026
 
 « Compétitions » devient « Événements » : le bureau y annonce toute la vie du club — compétitions,
