@@ -28,6 +28,8 @@ import { RgpdPage } from './pages/espace/RgpdPage'
 import { GarderieBureauPage } from './pages/espace/GarderieBureauPage'
 import { GarderieJourPage } from './pages/espace/GarderieJourPage'
 import { ContenuPage } from './pages/espace/ContenuPage'
+import { ActualitePage, ActualitesPage } from './pages/ActualitesPage'
+import { ActualiteGestionPage, ActualitesGestionPage } from './pages/espace/ActualitesGestionPage'
 import { ContenusPage } from './pages/espace/ContenusPage'
 import { GarderiePage } from './pages/espace/GarderiePage'
 import { SaisonPage } from './pages/espace/SaisonPage'
@@ -65,6 +67,9 @@ const routeTree = rootRoute.addChildren([
       throw redirect({ to: '/evenements/$id', params })
     },
   }),
+  // Actualités (spec 013) : publiques, ou réservées aux familles connectées.
+  createRoute({ getParentRoute, path: '/actualites', component: ActualitesPage }),
+  createRoute({ getParentRoute, path: '/actualites/$id', component: ActualitePage }),
   // Connexion par lien personnel (spec 005a) : /connexion#<jeton>.
   createRoute({ getParentRoute, path: '/connexion', component: ConnexionPage }),
   // Espace connecté (spec 004) — les droits sont vérifiés par l'API, les pages ne font que masquer.
@@ -88,6 +93,9 @@ const routeTree = rootRoute.addChildren([
   // Saisons et référentiels (spec 003) : bureau.
   createRoute({ getParentRoute, path: '/espace/saisons', component: SaisonsPage }),
   createRoute({ getParentRoute, path: '/espace/saisons/$id', component: SaisonPage }),
+  // Actualités (spec 013) : bureau, gestion du site, admin.
+  createRoute({ getParentRoute, path: '/espace/actualites', component: ActualitesGestionPage }),
+  createRoute({ getParentRoute, path: '/espace/actualites/$id', component: ActualiteGestionPage }),
   // Contenu du site (spec 014) : rôles contenu et admin.
   createRoute({ getParentRoute, path: '/espace/contenu', component: ContenusPage }),
   createRoute({ getParentRoute, path: '/espace/contenu/$cle', component: ContenuPage }),

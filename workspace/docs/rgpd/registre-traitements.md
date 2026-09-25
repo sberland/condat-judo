@@ -105,9 +105,9 @@
 
 | Rubrique | Contenu |
 | --- | --- |
-| Finalités | Présenter le club : équipe, coordonnées, partenaires (spec 014) |
+| Finalités | Présenter le club : équipe, coordonnées, partenaires (spec 014) ; actualités du club, avec photo (spec 013) |
 | Base légale | Consentement des personnes nommées (professeur, membres du bureau), intérêt légitime de l'association |
-| Données | Nom et rôle du professeur et des membres du bureau, publiés avec leur accord ; coordonnées **du club** (jamais un contact personnel sans consentement) ; auteur et date de chaque modification |
+| Données | Nom et rôle du professeur et des membres du bureau, publiés avec leur accord ; coordonnées **du club** (jamais un contact personnel sans consentement) ; auteur et date de chaque modification ; photos des actualités : enfants reconnaissables seulement avec l'accord droit à l'image (confirmé par l'auteur), actualité éventuellement réservée aux familles connectées |
 | Durée | Tant que la personne est en fonction ; historique : 30 dernières versions par contenu |
 | Accès | Public (site) ; modification : rôles « contenu » et administrateur |
 
@@ -139,3 +139,4 @@
 | 2026-09-24 | Garderie : photo d'identification sur accord, liste du jour de l'encadrant, personnes autorisées gérées par les familles (spec 012b) |
 | 2026-09-24 | Garderie : pointage de l'encadrant, suivi par les parents (spec 012c) |
 | 2026-09-24 | Site public : contenu administré par le club, historique des modifications (spec 014) |
+| 2026-09-25 | Site public : actualités avec photo (accord droit à l'image), abonnement agenda aux événements (spec 013) |

@@ -6,6 +6,27 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+### Actualités du club et abonnement agenda
+
+#### Notes client
+
+Le club publie ses actualités sur le site : résultats, sorties, informations aux familles, avec
+une photo. Le bureau ou la personne qui gère le site les rédige depuis son téléphone, les garde en
+brouillon le temps de les relire, puis les publie et partage leur lien dans le groupe WhatsApp en
+un geste. Une actualité peut être réservée aux familles connectées. Avant d'ajouter une photo,
+l'auteur confirme que les enfants reconnaissables ont l'accord droit à l'image. L'accueil présente
+les trois dernières actualités et les trois prochains événements. Les familles peuvent aussi
+s'abonner au calendrier des événements du club depuis l'agenda de leur téléphone : il se met à
+jour tout seul.
+
+#### Ajouts
+
+- Page « Actualités » et page de chaque actualité (partage WhatsApp) ; accueil : « À la une » et
+  « Prochains événements »
+- Espace « Actualités » (bureau, gestion du site) : rédiger, publier, photo, partager, supprimer
+- Page « Événements » : « S'abonner au calendrier » (iPhone, Mac, Outlook, Google Agenda)
+- Aide intégrée ; registre des traitements
+
 ### Tarifs du yoga séparés, icônes du règlement
 
 #### Notes client

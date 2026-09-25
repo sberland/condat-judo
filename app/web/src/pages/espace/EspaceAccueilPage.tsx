@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
-import { Baby, CalendarCheck, CalendarDays, CalendarRange, FilePenLine, ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, ShieldCheck, Users, UsersRound, Wallet } from 'lucide-react'
+import { Baby, CalendarCheck, CalendarDays, Megaphone, CalendarRange, FilePenLine, ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, ShieldCheck, Users, UsersRound, Wallet } from 'lucide-react'
 import { useSaisonCourante } from '../../lib/saison'
 import { Espace } from '../../components/espace/Garde'
 import { Bouton } from '../../components/formulaire'
@@ -68,6 +68,11 @@ export function EspaceAccueilPage() {
                 </Tuile>
               </>
             )}
+            {aUnRole(me, 'bureau', 'contenu', 'admin') && (
+              <Tuile to="/espace/actualites" icone={<Megaphone className="size-6" />} titre="Actualités">
+                Rédiger et publier les nouvelles du club, avec une photo, puis les partager sur WhatsApp.
+              </Tuile>
+            )}
             {aUnRole(me, 'contenu', 'admin') && (
               <Tuile to="/espace/contenu" icone={<FilePenLine className="size-6" />} titre="Contenu du site">
                 Coordonnées, équipe, disciplines, partenaires, règlement, liens : les modifier sans attendre une mise à jour du site.
@@ -108,7 +113,7 @@ function Tuile({
   titre,
   children,
 }: {
-  to: '/espace/famille' | '/espace/adherents' | '/espace/adhesions' | '/espace/comptes' | '/espace/aide' | '/espace/evenements' | '/evenements' | '/espace/tresorerie' | '/espace/rgpd' | '/espace/saisons' | '/espace/mercredis' | '/espace/garderie' | '/espace/garderie-du-jour' | '/espace/contenu'
+  to: '/espace/famille' | '/espace/adherents' | '/espace/adhesions' | '/espace/comptes' | '/espace/aide' | '/espace/evenements' | '/evenements' | '/espace/tresorerie' | '/espace/rgpd' | '/espace/saisons' | '/espace/mercredis' | '/espace/garderie' | '/espace/garderie-du-jour' | '/espace/contenu' | '/espace/actualites'
   icone: ReactNode
   titre: string
   children: ReactNode

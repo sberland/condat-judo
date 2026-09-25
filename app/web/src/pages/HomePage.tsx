@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
 import { ArrowRight, CalendarDays, IdCard, MapPin } from 'lucide-react'
 import { enLettres, enumerer, majuscule } from '../content/club'
 import { disciplinesPubliques, itineraire, listeDisciplines } from '../content/contenu'
@@ -7,6 +8,11 @@ import { IllustrationDiscipline } from '../components/IllustrationDiscipline'
 import { Provisoire, useProvisoireVisible } from '../components/Provisoire'
 import { BoutonExterne, BoutonLien, Card, Container, FacebookIcon, Section, SectionTitle } from '../components/ui'
 import { usePageMeta } from '../lib/usePageMeta'
+import { appel, useMe } from '../lib/api'
+import type { Actualite } from '../lib/actualites'
+import { heureFr, libelleType, paveDate, type CompetitionDetail } from '../lib/competitions'
+import { IconeEvenement } from '../components/IconeEvenement'
+import { CarteActualite } from './ActualitesPage'
 
 export function HomePage() {
   const c = useContenu()
@@ -49,6 +55,8 @@ export function HomePage() {
           })}
         </div>
       </Section>
+
+      <ALaUne />
 
       <Section>
         <SectionTitle surtitre="Infos pratiques" titre="Le club en bref" />
@@ -162,5 +170,79 @@ function Hero() {
         </div>
       </Container>
     </div>
+  )
+}
+
+/** À la une (spec 013) : trois dernières actualités et trois prochains événements ; rien s'il n'y en a pas. */
+function ALaUne() {
+  const { data: me } = useMe()
+  const { data: actualites } = useQuery({
+    queryKey: ['actualites', 'accueil', me?.etat === 'ok'],
+    queryFn: () => appel<Actualite[]>('GET', '/api/actualites?limite=3'),
+  })
+  const { data: evenements } = useQuery({ queryKey: ['competitions'], queryFn: () => appel<CompetitionDetail[]>('GET', '/api/competitions') })
+  const prochains = (evenements ?? []).filter((e) => e.statut !== 'annulee').slice(0, 3)
+  if (!actualites?.length && !prochains.length) return null
+  return (
+    <section className="bg-surface py-14 sm:py-20">
+      <Container className="grid gap-12">
+        {!!actualites?.length && (
+          <div>
+            <SectionTitle surtitre="À la une" titre="Les nouvelles du club" />
+            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {actualites.map((a) => (
+                <li key={a.id}>
+                  <CarteActualite actualite={a} />
+                </li>
+              ))}
+            </ul>
+            <div className="mt-6">
+              <BoutonLien to="/actualites" variante="contour">
+                Toutes les actualités <ArrowRight className="size-4" />
+              </BoutonLien>
+            </div>
+          </div>
+        )}
+        {prochains.length > 0 && (
+          <div>
+            <SectionTitle surtitre="Agenda" titre="Prochains événements" />
+            <ul className="grid gap-3 sm:grid-cols-3">
+              {prochains.map((e) => {
+                const d = paveDate(e.date)
+                return (
+                  <li key={e.id}>
+                    <Link
+                      to="/evenements/$id"
+                      params={{ id: String(e.id) }}
+                      className="group flex h-full items-center gap-4 rounded-2xl border bg-white p-4 shadow-sm transition hover:border-brand/40 hover:shadow-md"
+                    >
+                      <span className="flex w-14 shrink-0 flex-col items-center rounded-xl bg-ink py-2 text-white">
+                        <span className="text-xs uppercase opacity-80">{d.mois}</span>
+                        <span className="text-xl leading-tight font-extrabold">{d.jour}</span>
+                      </span>
+                      <span className="min-w-0">
+                        <span className="flex items-center gap-1.5 text-xs font-semibold tracking-wide text-brand uppercase">
+                          <IconeEvenement type={e.type} className="size-3.5" /> {libelleType(e.type)}
+                        </span>
+                        <span className="block leading-snug font-bold">{e.nom}</span>
+                        <span className="block truncate text-sm text-muted-foreground">
+                          {e.heure ? `${heureFr(e.heure)} · ` : ''}
+                          {e.lieu}
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+            <div className="mt-6">
+              <BoutonLien to="/evenements" variante="contour">
+                Tous les événements <ArrowRight className="size-4" />
+              </BoutonLien>
+            </div>
+          </div>
+        )}
+      </Container>
+    </section>
   )
 }

@@ -7,6 +7,7 @@ export type Route =
   | '/disciplines'
   | '/horaires-tarifs'
   | '/evenements'
+  | '/actualites'
   | '/club'
   | '/reglement'
   | '/contact'

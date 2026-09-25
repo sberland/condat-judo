@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { ChevronRight, MapPin, Settings } from 'lucide-react'
+import { CalendarPlus, Check, ChevronRight, Copy, MapPin, Settings } from 'lucide-react'
 import { IconeEvenement } from '../components/IconeEvenement'
 import { Container, PageHeader, Pastille } from '../components/ui'
 import { TYPES_EVENEMENT, type TypeEvenement } from '../content/evenements'
@@ -83,6 +83,7 @@ export function CompetitionsPage() {
             </li>
           ))}
         </ul>
+        <Abonnement />
       </Container>
     </div>
   )
@@ -133,5 +134,39 @@ function CarteEvenement({ competition: c, concerne }: { competition: Competition
       </span>
       <ChevronRight className="size-5 shrink-0 self-center text-muted-foreground transition-transform group-hover:translate-x-0.5" aria-hidden />
     </Link>
+  )
+}
+
+/** Abonnement agenda (spec 013) : le calendrier des événements dans le téléphone, mis à jour tout seul. */
+function Abonnement() {
+  const [copie, setCopie] = useState(false)
+  const https = `${window.location.origin}/api/calendrier.ics`
+  const webcal = https.replace(/^https?:/, 'webcal:')
+  const bouton = 'inline-flex min-h-11 items-center justify-center gap-2 rounded-full border bg-white px-4 text-sm font-semibold hover:border-brand/40 hover:text-brand'
+  return (
+    <section aria-labelledby="abonnement" className="mt-4 grid gap-3 rounded-2xl border bg-white p-5 shadow-sm">
+      <h2 id="abonnement" className="flex items-center gap-2 text-lg font-bold">
+        <CalendarPlus className="size-5 text-brand" aria-hidden /> S’abonner au calendrier
+      </h2>
+      <p className="text-sm text-muted-foreground">Les événements du club dans l’agenda de votre téléphone, mis à jour automatiquement.</p>
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+        <a href={webcal} className={bouton}>
+          Calendrier (iPhone, Mac, Outlook)
+        </a>
+        <a href={`https://calendar.google.com/calendar/render?cid=${encodeURIComponent(webcal)}`} target="_blank" rel="noopener noreferrer" className={bouton}>
+          Google Agenda
+        </a>
+        <button
+          type="button"
+          className={bouton}
+          onClick={async () => {
+            await navigator.clipboard.writeText(https)
+            setCopie(true)
+          }}
+        >
+          {copie ? <Check className="size-4" aria-hidden /> : <Copy className="size-4" aria-hidden />} {copie ? 'Adresse copiée' : 'Copier l’adresse'}
+        </button>
+      </div>
+    </section>
   )
 }

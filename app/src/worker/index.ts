@@ -5,6 +5,8 @@ import { admin } from './routes/admin';
 import { auth } from './routes/auth';
 import { competitions } from './routes/competitions';
 import { contenu } from './routes/contenu';
+import { actualites } from './routes/actualites';
+import { calendrierIcs, type EvenementAgenda } from './calendrier';
 import { encadrant } from './routes/encadrant';
 import { famille } from './routes/famille';
 import { tresorerie } from './routes/tresorerie';
@@ -49,6 +51,22 @@ api.route('/competitions', competitions);
 // --- Contenu du site (spec 014) — lecture publique, gestion par les rôles contenu / admin ---
 
 api.route('/contenu', contenu);
+
+// --- Actualités et abonnement agenda aux événements (spec 013) — publics ---
+
+api.route('/actualites', actualites);
+
+api.get('/calendrier.ics', async (c) => {
+  const { results } = await c.env.DB.prepare(
+    `SELECT id, type, nom, date, heure, lieu, adresse, infos, statut, updated_at FROM competitions
+     WHERE date >= date('now', '-90 days') ORDER BY date, id`,
+  ).all<EvenementAgenda>();
+  return c.body(calendrierIcs(results, new URL(c.req.url).origin), 200, {
+    'Content-Type': 'text/calendar; charset=utf-8',
+    'Content-Disposition': 'inline; filename="judo-condat.ics"',
+    'Cache-Control': 'public, max-age=3600',
+  });
+});
 
 // --- Saison courante (spec 003) — publique : tarifs, horaires, catégories de la vitrine ---
 
