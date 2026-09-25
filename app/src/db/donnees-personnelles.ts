@@ -67,6 +67,7 @@ export const TABLES: Record<string, Table> = {
       updated_at: 'conservee',
       supprime_le: 'conservee',
       anonymise_le: 'conservee',
+      propose_par: 'conservee', // fiche ajoutée par une famille, à vérifier (010b)
     },
   },
   liens: {
@@ -99,12 +100,14 @@ export const TABLES: Record<string, Table> = {
         'id', 'adherent_id', 'saison', 'formule', 'passeport', 'hors_commune', 'reduction_famille',
         'montant_participation', 'montant_licence', 'montant_supplements', 'montant_reduction', 'montant_total',
         'paiement_mode', 'paiement_3_fois', 'echeance_1', 'echeance_2', 'echeance_3',
-        'formalite_type', 'formalite_recue_le',
+        'formalite_type', 'formalite_recue_le', 'formalite_par',
         'soins_urgence', 'soins_urgence_le', 'soins_urgence_par',
         'droit_image', 'droit_image_le', 'droit_image_par',
         'whatsapp', 'whatsapp_le', 'whatsapp_par',
         'photo_garderie', 'photo_garderie_le', 'photo_garderie_par',
         'valide_le', 'valide_par', 'cree_par', 'created_at', 'updated_at',
+        // Dossier rempli en ligne (010b) : dates et auteurs.
+        'engagements_le', 'engagements_par', 'envoye_le', 'envoye_par',
       ].map((c) => [c, 'conservee' as const]),
     ),
   },

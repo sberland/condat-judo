@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
-import { Baby, CalendarCheck, CalendarDays, Megaphone, CalendarRange, FilePenLine, ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, ShieldCheck, Users, UsersRound, Wallet } from 'lucide-react'
+import { Baby, CalendarCheck, ClipboardPen, CalendarDays, Megaphone, CalendarRange, FilePenLine, ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, ShieldCheck, Users, UsersRound, Wallet } from 'lucide-react'
 import { useSaisonCourante } from '../../lib/saison'
 import { Espace } from '../../components/espace/Garde'
 import { PropositionPasskey } from '../../components/espace/Passkeys'
@@ -24,6 +24,11 @@ export function EspaceAccueilPage() {
           </p>
           <PropositionPasskey />
           <div className="grid gap-4 sm:grid-cols-2">
+            {saison?.inscriptions && (
+              <Tuile to="/espace/inscriptions" icone={<ClipboardPen className="size-6" />} titre={`Inscriptions ${saison.inscriptions.libelle}`}>
+                Remplir en ligne le dossier d’inscription de vos enfants — ou le vôtre.
+              </Tuile>
+            )}
             <Tuile to="/espace/famille" icone={<UsersRound className="size-6" />} titre="Mes enfants">
               Leurs fiches, leurs responsables et les personnes autorisées à les récupérer.
             </Tuile>
@@ -115,7 +120,7 @@ function Tuile({
   titre,
   children,
 }: {
-  to: '/espace/famille' | '/espace/adherents' | '/espace/adhesions' | '/espace/comptes' | '/espace/aide' | '/espace/evenements' | '/evenements' | '/espace/tresorerie' | '/espace/rgpd' | '/espace/saisons' | '/espace/mercredis' | '/espace/garderie' | '/espace/garderie-du-jour' | '/espace/contenu' | '/espace/actualites'
+  to: '/espace/famille' | '/espace/inscriptions' | '/espace/adherents' | '/espace/adhesions' | '/espace/comptes' | '/espace/aide' | '/espace/evenements' | '/evenements' | '/espace/tresorerie' | '/espace/rgpd' | '/espace/saisons' | '/espace/mercredis' | '/espace/garderie' | '/espace/garderie-du-jour' | '/espace/contenu' | '/espace/actualites'
   icone: ReactNode
   titre: string
   children: ReactNode

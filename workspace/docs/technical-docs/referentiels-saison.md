@@ -13,7 +13,8 @@ bureau prépare la saison suivante sans développement.
 
 Table `saisons` (remplace la table d'exemple de `0001`) : `id` (« 2026-2027 », la valeur de
 `adhesions.saison` et `paiements.saison`), `libelle`, `debut`, `fin`, `courante` (une seule,
-index unique partiel), `inscriptions_ouvertes` (pour le dossier en ligne, 010b), `referentiel`
+index unique partiel), `inscriptions_ouvertes` (dossier en ligne des familles, 010b — cf.
+[`comptes-adherents.md`](comptes-adherents.md)), `referentiel`
 (JSON), `modifie_le`, `modifie_par`. La migration insère 2026/2027 avec exactement les valeurs qui
 étaient dans le code (`content/referentiel-initial.ts` ; test `src/db/referentiel.test.ts`).
 

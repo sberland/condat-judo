@@ -121,3 +121,29 @@ export function estMineur(dateNaissance: string, aujourdhui = new Date()): boole
   const majorite = new Date(`${Number(dateNaissance.slice(0, 4)) + 18}${dateNaissance.slice(4)}T00:00:00`)
   return aujourdhui < majorite
 }
+
+// --- Dossier rempli en ligne par la famille (spec 010b) ---
+
+/** Formalité médicale côté famille : attestation cochée en ligne, ou certificat médical à fournir au club. */
+export const SANTE_FAMILLE = { attestation: 'attestation', certificat: 'certificat' } as const
+export type SanteFamille = keyof typeof SANTE_FAMILLE
+
+/** Pièce enregistrée pour la réponse de la famille (mineur : questionnaire mineur ; majeur : QS-SPORT). */
+export const formaliteDeLaFamille = (sante: SanteFamille, mineur: boolean): Formalite =>
+  sante === 'certificat' ? 'certificat' : mineur ? 'attestation_qs_mineur' : 'attestation_qs_sport'
+
+/**
+ * Formule proposée à la réinscription : celle de l'an dernier si ce n'est pas du judo et qu'elle
+ * existe encore ; judo (ou nouvel adhérent) → d'après l'âge, la tranche changeant avec les années.
+ * '' si l'ancienne formule a disparu de la grille : la famille choisit.
+ */
+export function formuleProposee(t: Tarifs, anneeNaissance: number, precedente: string | null): string {
+  if (!precedente) return formuleJudoSuggeree(t, anneeNaissance)
+  const f = formuleParId(t, precedente)
+  if (!f) return ''
+  return f.judo ? formuleJudoSuggeree(t, anneeNaissance) || f.id : f.id
+}
+
+/** Information assurance due aux adhérents (Code du sport, art. L321-4), rappelée dans le dossier. */
+export const INFORMATION_ASSURANCE =
+  'La licence France Judo comprend une assurance responsabilité civile et une garantie individuelle accident de base. Le club vous informe de l’intérêt de souscrire, en plus, une assurance de personne couvrant les dommages corporels (Code du sport, article L321-4) : renseignez-vous auprès de votre assureur.'

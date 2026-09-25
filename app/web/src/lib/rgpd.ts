@@ -14,6 +14,8 @@ export type AccordsFamille = {
   saison: { id: string; libelle: string }
   accords: {
     adhesion_id: number
+    /** « 2027/2028 » : saison courante ou saison des inscriptions (010b). */
+    saison: string
     prenom: string
     droit_image: Recueil
     droit_image_le: string | null

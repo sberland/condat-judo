@@ -2,12 +2,11 @@ import { useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { ChevronRight, Plus } from 'lucide-react'
-import { StatutDossier } from '../../components/espace/BlocAdhesion'
+import { ChoixSaison, StatutDossier, useSaisonDossiers } from '../../components/espace/BlocAdhesion'
 import { Espace } from '../../components/espace/Garde'
 import { Bouton } from '../../components/formulaire'
 import { formuleParId, LIBELLES_STATUT, type EtatDossier } from '../../content/adhesion'
-import { appel, type ListeDossiers } from '../../lib/api'
-import { useReferentiel } from '../../lib/saison'
+import { appel, dateFr, type ListeDossiers } from '../../lib/api'
 import { euros } from '../../lib/tarifs'
 
 type Filtre = 'tous' | 'sans' | EtatDossier['statut']
@@ -15,11 +14,13 @@ type Filtre = 'tous' | 'sans' | EtatDossier['statut']
 export function AdhesionsPage() {
   const navigate = useNavigate()
   const [filtre, setFiltre] = useState<Filtre>('tous')
-  const tarifs = useReferentiel()?.tarifs
+  // Saison courante, ou celle des inscriptions en ligne (010b).
+  const { saison, requete, choixPossibles, choisir } = useSaisonDossiers()
   const { data, isPending, isError } = useQuery({
-    queryKey: ['admin', 'adhesions'],
-    queryFn: () => appel<ListeDossiers>('GET', '/api/admin/adhesions'),
+    queryKey: ['admin', 'adhesions', saison],
+    queryFn: () => appel<ListeDossiers>('GET', `/api/admin/adhesions${requete}`),
   })
+  const tarifs = data?.tarifs
 
   const lignes = data?.lignes ?? []
   const compte = (f: Filtre) => lignes.filter((l) => correspond(l.etat, f)).length
@@ -37,6 +38,7 @@ export function AdhesionsPage() {
     <Espace titre={`Dossiers ${data?.saison.libelle ?? ''}`.trim()} retour={{ to: '/espace', libelle: 'Mon espace' }} roles={['bureau', 'admin']} aide="adhesions">
       {() => (
         <div className="grid gap-4">
+          <ChoixSaison choix={choixPossibles} valeur={saison} onChange={choisir} />
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             {data && (
               <p className="text-muted-foreground">
@@ -79,10 +81,12 @@ export function AdhesionsPage() {
                         {a.prenom} {a.nom}
                       </span>
                       <StatutDossier etat={etat} />
+                      {a.aVerifier && <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-900">Fiche à vérifier</span>}
                     </span>
                     <span className="block truncate text-sm text-muted-foreground">
                       {dossier ? `${(tarifs ? formuleParId(tarifs, dossier.formule)?.nom : undefined) ?? dossier.formule} · ${euros(dossier.montant_total)}` : 'Aucun dossier pour cette saison'}
                     </span>
+                    {dossier?.envoye_le && <span className="block text-sm text-sky-800">Envoyé en ligne le {dateFr(dossier.envoye_le.slice(0, 10))}</span>}
                     {etat && etat.manques.length > 0 && <span className="block text-sm font-medium text-brand">Manque : {etat.manques.join(', ')}</span>}
                     {etat && etat.manques.length === 0 && etat.aRecueillir.length > 0 && (
                       <span className="block text-sm text-amber-800">À recueillir : {etat.aRecueillir.join(', ')}</span>

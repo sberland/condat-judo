@@ -51,6 +51,14 @@ responsables et les personnes autorisées à le récupérer. Vous pouvez y mettr
 téléphone ; pour toute autre correction, adressez-vous au bureau. En bas de chaque fiche : les
 compétitions auxquelles l'enfant a été inscrit.
 
+**Pour les parents — Inscriptions en ligne** : quand le club ouvre les inscriptions de la saison
+suivante, **Mon espace → « Inscriptions 2027/2028 »** (par exemple) : un dossier par enfant (et le
+vôtre si vous pratiquez), rempli en quelques étapes depuis le téléphone — adresse, formule
+(celle de l'an dernier est proposée), paiement, formalité médicale (attestation du questionnaire
+de santé, ou certificat à remettre), autorisations (à redonner chaque saison), engagements —
+puis **« Envoyer au club »**. Modifiable tant que le bureau ne l'a pas validé. « Inscrire un autre
+enfant » pour un enfant nouveau au club.
+
 **Pour les parents — Événements** : touchez le lien posté dans le groupe WhatsApp du club (ou
 menu « Événements »), puis **« Inscrire »** à côté du prénom de votre enfant — ou, pour un repas
 ou une fête, indiquez le nombre d'adultes et d'enfants et **« Inscrire ma famille »**. Jusqu'à la
@@ -124,6 +132,7 @@ et des familles pour la comptabilité. Le rôle « bureau » seul ne voit pas le
 | **Fiche d'un adhérent** | Identité (modifier, supprimer — une fiche supprimée reste restaurable ; ceinture dans la liste officielle), responsables légaux, **dossier d'adhésion de la saison** (formule, montant calculé, paiement, formalité médicale, autorisations et consentements, validation), personnes autorisées à récupérer l'enfant, **photo pour la garderie** (si l'accord figure au dossier) |
 | **Ajouter un responsable** | Chercher un parent déjà enregistré (ex. pour un deuxième enfant) ou en créer un nouveau (nom, e-mail et/ou téléphone), puis choisir son lien avec l'enfant et ses droits : *peut inscrire*, *peut récupérer*, *prévenu par le club*. Si l'e-mail est déjà connu, le site propose de relier le compte existant |
 | **Comptes** | Tous les adultes enregistrés : coordonnées, nombre d'adhérents liés, « compte activé » dès la première connexion. L'administrateur y attribue les rôles (bureau, trésorier, encadrant, gestion du site) |
+| **Dossiers en ligne** (Saisons → « Inscriptions ouvertes », puis Dossiers → saison des inscriptions) | Les familles remplissent leurs dossiers depuis leur espace ; « Envoyé en ligne le … » les signale, « Fiche à vérifier » un enfant ajouté par sa famille. Vérifier puis « Valider le dossier » ; la famille peut modifier tant que ce n'est pas validé |
 | **Connexion au site** (Comptes → Modifier, ou « Lien de connexion » sur un responsable) | « Créer un lien de connexion » puis « Envoyer sur WhatsApp » (au numéro du compte) ou « Copier le lien ». Un nouveau lien annule le précédent. « Déconnecter tous ses appareils » coupe l'accès d'un téléphone perdu (sessions et Face ID / empreinte). Seul un administrateur crée un lien pour un membre du bureau |
 
 Deux parents séparés ont chacun leur propre compte et leurs propres droits sur l'enfant : aucun

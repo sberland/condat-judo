@@ -9,12 +9,15 @@ import { etatPointage, libelleLimite, maintenantParis, mercredisOuverts, modifia
 import { connexionRequise, type AppEnv } from '../droits';
 import { aujourdhuiParis, COLONNES_COMPETITION, inscriptionsOuvertes, lireCompetition, versCompetition } from './competitions';
 import { donneesDuCompte } from '../export';
-import { saisonCourante, saisonPourDate } from '../saison';
+import { saisonCourante, saisonInscriptions, saisonPourDate } from '../saison';
+import { inscriptions } from './inscriptions';
 import { accordPhoto, effacerPhoto, enregistrerPhoto, lirePhoto, PHOTO_RECENTE, reponsePhoto } from '../photos';
 import { validerPersonneAutorisee, validerPhoto, validerTelephoneSeul } from '../validation';
 
 export const famille = new Hono<AppEnv>();
 famille.use('*', connexionRequise);
+// Dossier d'adhésion rempli en ligne (spec 010b).
+famille.route('/inscriptions', inscriptions);
 
 type Enfant = {
   id: number;
@@ -381,6 +384,7 @@ famille.get('/export', async (c) => {
 
 type Accords = {
   adhesion_id: number;
+  saison: string;
   prenom: string;
   qualite: string | null;
   droit_image: string;
@@ -394,16 +398,27 @@ type Accords = {
 
 // Accords de la saison (droit à l'image, groupe WhatsApp, photo pour la garderie) pour mes enfants — et moi, adhérent majeur.
 // Répondent : les responsables légaux (mère, père, tuteur), ou l'adhérent majeur pour lui-même.
-const ACCORDS = `SELECT d.id AS adhesion_id, d.adherent_id, a.prenom, l.qualite, d.droit_image, d.droit_image_le, d.whatsapp, d.whatsapp_le,
+// Saison courante, et saison des inscriptions en ligne si c'en est une autre (010b) : ?1 et ?3.
+const ACCORDS = `SELECT d.id AS adhesion_id, d.saison, d.adherent_id, a.prenom, l.qualite, d.droit_image, d.droit_image_le, d.whatsapp, d.whatsapp_le,
     d.photo_garderie, d.photo_garderie_le
   FROM adhesions d JOIN adherents a ON a.id = d.adherent_id AND a.supprime_le IS NULL
   LEFT JOIN liens l ON l.adherent_id = a.id AND l.user_id = ?2
-  WHERE d.saison = ?1 AND (l.qualite IN ('mere', 'pere', 'tuteur') OR a.user_id = ?2)`;
+  WHERE d.saison IN (?1, ?3) AND (l.qualite IN ('mere', 'pere', 'tuteur') OR a.user_id = ?2)`;
+
+const saisonsAccords = async (c: Context<AppEnv>) => {
+  const courante = await saisonCourante(c);
+  return [courante, (await saisonInscriptions(c)) ?? courante] as const;
+};
 
 famille.get('/accords', async (c) => {
-  const saison = await saisonCourante(c);
-  const { results } = await c.env.DB.prepare(`${ACCORDS} ORDER BY a.date_naissance DESC`).bind(saison.id, c.get('utilisateur').id).all<Accords>();
-  return c.json({ saison: { id: saison.id, libelle: saison.libelle }, accords: results.map(({ qualite: _, adherent_id: __, ...a }) => a) });
+  const [saison, inscriptions] = await saisonsAccords(c);
+  const { results } = await c.env.DB.prepare(`${ACCORDS} ORDER BY a.date_naissance DESC, d.saison`)
+    .bind(saison.id, c.get('utilisateur').id, inscriptions.id)
+    .all<Accords>();
+  return c.json({
+    saison: { id: saison.id, libelle: saison.libelle },
+    accords: results.map(({ qualite: _, adherent_id: __, ...a }) => ({ ...a, saison: a.saison.replace('-', '/') })),
+  });
 });
 
 famille.put('/accords/:adhesionId', async (c) => {
@@ -412,7 +427,10 @@ famille.put('/accords/:adhesionId', async (c) => {
   const valeur = corps.valeur;
   if ((champ !== 'droit_image' && champ !== 'whatsapp' && champ !== 'photo_garderie') || (valeur !== 'oui' && valeur !== 'non')) return c.json({ error: 'Saisie invalide' }, 400);
   const moi = c.get('utilisateur').id;
-  const dossier = await c.env.DB.prepare(`${ACCORDS} AND d.id = ?3`).bind((await saisonCourante(c)).id, moi, Number(c.req.param('adhesionId')) || 0).first<Accords>();
+  const [saison, inscriptions] = await saisonsAccords(c);
+  const dossier = await c.env.DB.prepare(`${ACCORDS} AND d.id = ?4`)
+    .bind(saison.id, moi, inscriptions.id, Number(c.req.param('adhesionId')) || 0)
+    .first<Accords>();
   if (!dossier) return c.json({ error: 'Vous ne pouvez pas répondre pour cet adhérent' }, 403);
   // Colonnes choisies dans une liste fermée (jamais la saisie) : pas d'injection possible.
   await c.env.DB.batch([
@@ -421,8 +439,8 @@ famille.put('/accords/:adhesionId', async (c) => {
       moi,
       dossier.adhesion_id,
     ),
-    // Accord « photo pour la garderie » retiré : la photo est effacée aussitôt (spec 012b).
-    ...(champ === 'photo_garderie' && valeur === 'non' ? [effacerPhoto(c.env, dossier.adherent_id)] : []),
+    // Accord « photo pour la garderie » de la saison courante retiré : la photo est effacée aussitôt (spec 012b).
+    ...(champ === 'photo_garderie' && valeur === 'non' && dossier.saison === saison.id ? [effacerPhoto(c.env, dossier.adherent_id)] : []),
   ]);
   return c.json({ ok: true });
 });

@@ -4,7 +4,10 @@
 import { useQuery } from '@tanstack/react-query'
 import type { Referentiel, Saison } from '../content/referentiel'
 
-export type SaisonPublique = Pick<Saison, 'id' | 'libelle' | 'debut' | 'fin' | 'referentiel'>
+export type SaisonPublique = Pick<Saison, 'id' | 'libelle' | 'debut' | 'fin' | 'referentiel'> & {
+  /** Saison dont les inscriptions en ligne sont ouvertes (spec 010b), s'il y en a une. */
+  inscriptions: { id: string; libelle: string } | null
+}
 
 export function useSaisonCourante() {
   return useQuery<SaisonPublique>({
