@@ -4,6 +4,16 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.21.0 — 25 septembre 2026
+
+Après une première connexion par lien, le site propose d'activer Face ID (ou l'empreinte) sur le
+téléphone. Ensuite, un simple déverrouillage suffit pour ouvrir son espace : plus besoin de
+redemander un lien au bureau. C'est facultatif : « Non merci », et le site ne le redemande plus sur
+ce téléphone. Le visage ou l'empreinte ne quittent jamais le téléphone. Téléphone perdu : on retire
+sa connexion depuis « Mes enfants », ou le bureau coupe tous les accès du compte en un geste.
+
+---
+
 ## v0.20.0 — 25 septembre 2026
 
 Le club publie ses actualités sur le site : résultats, sorties, informations aux familles, avec
