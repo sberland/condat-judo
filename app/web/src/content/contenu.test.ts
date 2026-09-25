@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { DEFINITIONS, itineraire, validerChamps, validerContenu } from './contenu'
+import { DEFINITIONS, iconeArticle, itineraire, validerChamps, validerContenu } from './contenu'
 import { CONTENU_INITIAL } from './contenu-initial'
 
 describe('validation du contenu du site', () => {
@@ -52,5 +52,22 @@ describe('validation du contenu du site', () => {
   it('itinéraire depuis l’adresse du dojo', () => {
     expect(itineraire(CONTENU_INITIAL.club).adresse).toBe('9 rue Jules Ferry, 87920 Condat-sur-Vienne')
     expect(itineraire(CONTENU_INITIAL.club).googleMaps).toContain('9%20rue%20Jules%20Ferry')
+  })
+})
+
+describe('icônes du règlement (spec 022)', () => {
+  it('chaque article initial a une icône déduite de son titre, jamais « autre »', () => {
+    for (const a of CONTENU_INITIAL.reglement.articles) expect(iconeArticle(a), a.titre).not.toBe('autre')
+  })
+  it('le choix du club prime, un titre inconnu donne « autre »', () => {
+    expect(iconeArticle({ titre: 'Licence', icone: 'image' })).toBe('image')
+    expect(iconeArticle({ titre: 'Divers' })).toBe('autre')
+    expect(iconeArticle({ titre: 'Hygiène et sécurité' })).toBe('hygiene')
+  })
+  it('valide l’icône choisie', () => {
+    const article = { titre: 'Tenue', paragraphes: ['Judogi obligatoire.'] }
+    const base = { miseAJour: 'septembre 2026', sources: [] }
+    expect(validerContenu('reglement', { ...base, articles: [{ ...article, icone: 'tenue' }] }).ok).toBe(true)
+    expect(validerContenu('reglement', { ...base, articles: [{ ...article, icone: 'licorne' }] })).toEqual({ ok: false, erreurs: { 'articles.0.icone': 'Valeur inconnue' } })
   })
 })

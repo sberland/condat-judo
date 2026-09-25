@@ -650,6 +650,12 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
         ],
       },
       {
+        q: 'Changer l’icône d’un article du règlement',
+        r: [
+          'Contenu du site → Règlement intérieur → l’article → « Icône ». Par défaut, l’icône est choisie d’après le titre de l’article.',
+        ],
+      },
+      {
         q: 'Revenir en arrière après une erreur',
         r: ['En bas de la page du contenu, « Historique » : « Revenir à cette version » puis « Confirmer » republie la version choisie. Les 30 dernières versions sont gardées, avec leur date et leur auteur.'],
       },

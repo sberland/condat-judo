@@ -6,6 +6,24 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.19.0] — 2026-09-25
+
+### Tarifs du yoga séparés, icônes du règlement
+
+#### Notes client
+
+La page « Horaires & tarifs » présente désormais trois groupes de formules — Judo, Taïso et
+Yoga —, chacun avec l'illustration de sa discipline : chaque activité a sa propre grille, même
+lorsque les montants se ressemblent. Chaque article du règlement intérieur est accompagné d'une
+icône (licence, santé, tenue, ponctualité…) qui le rend plus facile à repérer ; le club peut la
+changer dans « Contenu du site ».
+
+#### Modifications
+
+- Tarifs : « Taïso et yoga » devient deux groupes, « Taïso » et « Yoga » ; illustration de la
+  discipline au titre de chaque groupe
+- Règlement : une icône par article, choisie d'après le titre ou par le club
+
 ## [0.18.0] — 2026-09-24
 
 ### Événements du club : compétitions, stages, rencontres, repas…

@@ -26,7 +26,8 @@ Un **document JSON par type de contenu** (même choix que les saisons, spec 003)
 | `liens` | Liens utiles | oui |
 
 Chaque document est **décrit champ par champ** (`DEFINITIONS` : texte, texte long, URL https,
-e-mail, téléphone, case, identifiant caché, liste de textes, objet facultatif, liste d'objets).
+e-mail, téléphone, case, choix dans une liste, identifiant caché, liste de textes, objet
+facultatif, liste d'objets).
 Cette description sert à la fois à la **validation** (`validerContenu`, Worker et écran : champs
 inconnus ignorés, espaces nettoyés, erreurs indexées par chemin, ex. `bureau.1.nom`) et à
 l'**éditeur générique** (`components/espace/EditeurContenu.tsx`).
@@ -66,6 +67,12 @@ discipline ; `disciplineDe` retrouve la discipline d'un cours ou d'une formule p
 
 `/espace/contenu` (liste) et `/espace/contenu/$cle` (formulaire, statut, « Enregistrer et
 publier », « Voir sur le site », historique avec « Revenir à cette version » confirmé).
+
+### Icônes du règlement (spec 022)
+
+Champ facultatif `icone` des articles (choix parmi `ICONES_REGLEMENT`) ; sans choix, `iconeArticle`
+la déduit du titre (licence, santé, parents, ponctualité, tenue, dossier, hygiène, compétition,
+saison…, sinon « autre »). Correspondance clé → icône : `components/IconeArticle.tsx`.
 
 ## Points de vigilance
 

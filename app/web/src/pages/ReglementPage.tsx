@@ -1,4 +1,5 @@
 import { ChevronDown } from 'lucide-react'
+import { IconeArticle } from '../components/IconeArticle'
 import { SelonStatut } from '../components/Provisoire'
 import { Container, PageHeader } from '../components/ui'
 import { useAffichable, useContenu } from '../lib/contenu'
@@ -33,8 +34,8 @@ export function ReglementPage() {
                 >
                   <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-lg font-bold [&::-webkit-details-marker]:hidden">
                     <span className="flex items-center gap-3">
-                      <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-soft text-sm text-brand">
-                        {i + 1}
+                      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
+                        <IconeArticle article={article} />
                       </span>
                       {article.titre}
                     </span>
