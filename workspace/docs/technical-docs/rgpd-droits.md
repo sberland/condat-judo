@@ -64,14 +64,15 @@ compétitions. JSON aux clés lisibles, généré à la demande (rien n'est stoc
 | `PUT /api/famille/accords/:adhesionId` | responsable légal (mère, père, tuteur) ou l'adhérent majeur | `{ accord: 'droit_image' \| 'whatsapp', valeur: 'oui' \| 'non' }`, daté, à son nom |
 | `GET /api/admin/comptes/:id/export` | admin | Export pour une demande écrite (journalisé) |
 | `GET /api/admin/rgpd` | admin | Durée, purge active ou non, adhérents concernés (prochaine purge, rentrée suivante), historique |
-| `GET /api/admin/journal?q=` | admin | 300 dernières entrées, recherche sur l'auteur ou la cible |
+| `GET /api/admin/journal?q=&du=&au=&acteur=&action=` | admin | Filtres (spec 023) : période en jours de Paris inclus (bornes converties en UTC, `filtresJournal`), membre du bureau (`users.id`), type d'action, recherche sur l'auteur, la cible ou le détail. Renvoie `{ entrees (300 plus récentes), total, limite, acteurs }` — `acteurs` : les membres présents dans le journal, pour le filtre |
 
 ### Écrans
 
 - « Mes enfants » : blocs **Autorisations** (oui / non par enfant et par accord) et **Mes données**
   (« Télécharger mes données »).
 - **Mon espace → Données personnelles** (admin) : durée, état de la purge, listes des adhérents
-  concernés, historique, journal des accès.
+  concernés, historique, journal des accès (filtres : du / au, membre du bureau, action, recherche ;
+  nombre d'entrées trouvées, « Effacer les filtres »).
 - Comptes → Modifier (admin) : « Exporter ses données ».
 
 ## Points de vigilance

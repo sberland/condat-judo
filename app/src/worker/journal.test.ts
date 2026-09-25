@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { Hono } from 'hono';
 import type { AppEnv } from './droits';
-import { entreeJournal, journaliser } from './journal';
+import { debutJourParis, entreeJournal, filtresJournal, journaliser } from './journal';
 
 describe('journal des accès sensibles', () => {
   it('consultation de la fiche d’un adhérent (coordonnées des responsables)', () => {
@@ -44,5 +44,22 @@ describe('middleware du journal', () => {
     await app.request('/api/admin/adherents/3', {}, env as never);
     await app.request('/api/admin/adherents/3/absent', {}, env as never);
     expect(lignes).toEqual([[7, 'consultation', 'adherent', 3, null]]);
+  });
+});
+
+describe('filtres du journal (spec 023)', () => {
+  it('jour de Paris converti en UTC : 2 h de décalage l’été, 1 h l’hiver', () => {
+    expect(debutJourParis('2026-09-25')).toBe('2026-09-24 22:00:00');
+    expect(debutJourParis('2026-12-01')).toBe('2026-11-30 23:00:00');
+  });
+
+  it('période incluse, membre du bureau et action ; valeurs invalides ignorées', () => {
+    expect(filtresJournal({ du: '2026-09-01', au: '2026-09-25', acteur: '7', action: 'export' })).toEqual({
+      depuis: '2026-08-31 22:00:00',
+      avant: '2026-09-25 22:00:00',
+      acteur: 7,
+      action: 'export',
+    });
+    expect(filtresJournal({ du: 'hier', au: '2026-13-45', acteur: 'x', action: 'drop table' })).toEqual({ depuis: null, avant: null, acteur: null, action: null });
   });
 });

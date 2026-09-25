@@ -4,6 +4,18 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.23.0 — 25 septembre 2026
+
+Avec les nouvelles fonctionnalités, l'accueil de l'espace membres devenait une longue suite de
+cartes. Les écrans sont désormais rangés en rubriques : Ma famille, Mercredi (encadrement),
+Adhérents, Vie du club, Gestion. Chacun ne voit que les rubriques de son rôle — un parent
+retrouve simplement sa famille. L'aide est accessible par le bouton « Aide » en haut de l'écran,
+comme partout ailleurs, et les membres du bureau qui sont aussi parents retrouvent « Événements »
+pour inscrire leurs enfants. Côté administrateur, le journal des accès aux coordonnées des
+familles se filtre par période, par membre du bureau et par type d'action.
+
+---
+
 ## v0.22.0 — 25 septembre 2026
 
 Fini les formulaires papier : quand le bureau ouvre les inscriptions de la saison suivante, chaque
