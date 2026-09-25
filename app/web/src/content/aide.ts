@@ -67,12 +67,23 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
         r: ['6 mois, et chaque visite prolonge ce délai : si vous venez régulièrement, vous n’aurez presque jamais à vous reconnecter.'],
       },
       {
+        q: 'Me reconnecter avec Face ID ou l’empreinte',
+        r: [
+          'Après une connexion, le site propose « Activer Face ID » (ou l’empreinte) : acceptez, et la prochaine fois, sur la page Connexion, touchez « Se connecter avec Face ID ». Plus besoin de lien sur ce téléphone.',
+          'C’est facultatif : « Non merci » et le site ne vous le redemande plus sur ce téléphone. Vous pouvez l’activer plus tard depuis « Mes enfants » → « Connexion par Face ID / empreinte ».',
+          'Votre visage ou votre empreinte ne quittent pas le téléphone : le club ne les reçoit jamais.',
+        ],
+      },
+      {
         q: 'J’ai changé de téléphone, ou mon lien a expiré',
         r: ['Demandez un nouveau lien au bureau du club. Il remplace le précédent.'],
       },
       {
         q: 'J’ai perdu mon téléphone',
-        r: ['Prévenez le bureau : il peut déconnecter tous vos appareils à distance, puis vous envoyer un nouveau lien.'],
+        r: [
+          'Prévenez le bureau : il peut déconnecter tous vos appareils à distance (et retirer Face ID / l’empreinte), puis vous envoyer un nouveau lien.',
+          'Depuis un autre appareil connecté, vous pouvez aussi retirer vous-même la connexion par Face ID du téléphone perdu : « Mes enfants » → « Connexion par Face ID / empreinte » → « Retirer ».',
+        ],
       },
       {
         q: 'Comment me déconnecter ?',
@@ -557,7 +568,7 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
       },
       {
         q: 'Un parent a perdu son téléphone',
-        r: ['Comptes → « Modifier » sur la personne → « Déconnecter tous ses appareils », puis envoyez-lui un nouveau lien.'],
+        r: ['Comptes → « Modifier » sur la personne → « Déconnecter tous ses appareils » : ses sessions sont fermées et sa connexion par Face ID / empreinte retirée. Envoyez-lui ensuite un nouveau lien.'],
       },
     ],
   },

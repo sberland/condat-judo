@@ -15,6 +15,7 @@ import { telechargerJson } from '../../lib/csv'
 import { ACCORDS, type AccordsFamille } from '../../lib/rgpd'
 import { GestionPhoto, PhotoEnfant } from '../../components/espace/Photo'
 import { PersonnesAutorisees } from '../../components/espace/PersonnesAutorisees'
+import { MesPasskeys } from '../../components/espace/Passkeys'
 
 export function FamillePage() {
   const { data, isPending, isError } = useQuery({
@@ -42,6 +43,7 @@ export function FamillePage() {
           <MesAccords />
           <MesCotisations />
           <MesCoordonnees me={me} />
+          <MesPasskeys me={me} />
           <MesDonnees />
         </div>
       )}

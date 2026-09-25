@@ -35,7 +35,7 @@ feature/NNN ─PR▶ preview ─(preview.yml)▶ deploy --env preview + copie D1
 - **Access obligatoire sur le host de preview** : sinon la preview est une copie publique des
   données des familles.
 - **Saisies preview écrasées** à chaque push sur `preview` (D1 jetable) — voulu.
-- **Liste des tables à purger codée en dur** (`actualites_images_morceaux`, `actualites_images`, `actualites`, `contenus_versions`, `contenus`, `photos_adherents`, `garderie_demandes`, `journal_acces`, `purges`, `paiement_parts`, `paiements`, `inscriptions_famille`, `inscriptions_competition`, `competitions`, `adhesions`, `sessions`, `liens_connexion`, `liens`, `personnes_autorisees`, `identites`, `user_roles`, `adherents`, `saisons`, `users`, `d1_migrations`) à
+- **Liste des tables à purger codée en dur** (`defis_passkey`, `passkeys`, `actualites_images_morceaux`, `actualites_images`, `actualites`, `contenus_versions`, `contenus`, `photos_adherents`, `garderie_demandes`, `journal_acces`, `purges`, `paiement_parts`, `paiements`, `inscriptions_famille`, `inscriptions_competition`, `competitions`, `adhesions`, `sessions`, `liens_connexion`, `liens`, `personnes_autorisees`, `identites`, `user_roles`, `adherents`, `saisons`, `users`, `d1_migrations`) à
   trois endroits (`app/package.json`, `deploy/refresh-preview-db.ps1`, `preview.yml`) — à mettre
   à jour à chaque nouvelle table, ordre = dépendances FK (enfants d'abord).
 - **Copie anonymisée** (spec 008) après import + migrations : `app/src/db/anonymisation-qualif.sql`

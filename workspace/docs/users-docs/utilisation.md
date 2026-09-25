@@ -32,6 +32,12 @@ personnel : ne le transférez pas, il ouvre une session sur votre compte. Pour v
 **Mon espace → Se déconnecter**. Non connecté, ce même bouton s'intitule « Espace membres »
 (« Connexion » sur les petits écrans) et rappelle la marche à suivre.
 
+**Face ID / empreinte (facultatif)** : après une connexion, « Mon espace » propose « Activer
+Face ID » (ou l'empreinte). Ensuite, sur la page Connexion, « Se connecter avec Face ID » suffit :
+plus besoin de lien sur ce téléphone. « Non merci » : le site ne le redemande plus sur ce
+téléphone. Activer plus tard ou retirer (téléphone perdu, changé) : **Mes enfants → Connexion par
+Face ID / empreinte**. Le visage ou l'empreinte restent dans le téléphone.
+
 ## Mon espace
 
 **Aide intégrée** : dans l'espace, **Mon espace → Aide** (ou le bouton « Aide » en haut de chaque
@@ -118,7 +124,7 @@ et des familles pour la comptabilité. Le rôle « bureau » seul ne voit pas le
 | **Fiche d'un adhérent** | Identité (modifier, supprimer — une fiche supprimée reste restaurable ; ceinture dans la liste officielle), responsables légaux, **dossier d'adhésion de la saison** (formule, montant calculé, paiement, formalité médicale, autorisations et consentements, validation), personnes autorisées à récupérer l'enfant, **photo pour la garderie** (si l'accord figure au dossier) |
 | **Ajouter un responsable** | Chercher un parent déjà enregistré (ex. pour un deuxième enfant) ou en créer un nouveau (nom, e-mail et/ou téléphone), puis choisir son lien avec l'enfant et ses droits : *peut inscrire*, *peut récupérer*, *prévenu par le club*. Si l'e-mail est déjà connu, le site propose de relier le compte existant |
 | **Comptes** | Tous les adultes enregistrés : coordonnées, nombre d'adhérents liés, « compte activé » dès la première connexion. L'administrateur y attribue les rôles (bureau, trésorier, encadrant, gestion du site) |
-| **Connexion au site** (Comptes → Modifier, ou « Lien de connexion » sur un responsable) | « Créer un lien de connexion » puis « Envoyer sur WhatsApp » (au numéro du compte) ou « Copier le lien ». Un nouveau lien annule le précédent. « Déconnecter tous ses appareils » coupe l'accès d'un téléphone perdu. Seul un administrateur crée un lien pour un membre du bureau |
+| **Connexion au site** (Comptes → Modifier, ou « Lien de connexion » sur un responsable) | « Créer un lien de connexion » puis « Envoyer sur WhatsApp » (au numéro du compte) ou « Copier le lien ». Un nouveau lien annule le précédent. « Déconnecter tous ses appareils » coupe l'accès d'un téléphone perdu (sessions et Face ID / empreinte). Seul un administrateur crée un lien pour un membre du bureau |
 
 Deux parents séparés ont chacun leur propre compte et leurs propres droits sur l'enfant : aucun
 n'a besoin de connaître l'e-mail ou le téléphone de l'autre.

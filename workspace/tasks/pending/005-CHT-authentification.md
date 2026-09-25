@@ -14,7 +14,7 @@ Cloudflare Access n'est qu'un verrou de la qualification, jamais l'authentificat
   livrable sans attendre le nom de domaine
 - [ ] [`005b-auth-code-email.md`](005b-auth-code-email.md) — reconnexion autonome par code à 6
   chiffres reçu par e-mail ; envoi d'e-mails. **Attend la décision du club** sur le domaine (A3)
-- [ ] [`005c-auth-passkey.md`](005c-auth-passkey.md) — passkey (Face ID / empreinte) proposée
+- [x] [`005c-auth-passkey.md`](005c-auth-passkey.md) — passkey (Face ID / empreinte) proposée
   après la première connexion (optionnelle)
 
 ## Ordre et dépendances

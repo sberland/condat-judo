@@ -293,6 +293,7 @@ type CompteLigne = {
   compte_active: number;
   enfants: number;
   sessions: number;
+  passkeys: number;
 };
 
 admin.get('/comptes', async (c) => {
@@ -302,7 +303,8 @@ admin.get('/comptes', async (c) => {
             EXISTS (SELECT 1 FROM identites i WHERE i.user_id = u.id) AS compte_active,
             (SELECT count(*) FROM liens l JOIN adherents a ON a.id = l.adherent_id
               WHERE l.user_id = u.id AND a.supprime_le IS NULL) AS enfants,
-            (SELECT count(*) FROM sessions s WHERE s.user_id = u.id AND s.expire_le > datetime('now')) AS sessions
+            (SELECT count(*) FROM sessions s WHERE s.user_id = u.id AND s.expire_le > datetime('now')) AS sessions,
+            (SELECT count(*) FROM passkeys p WHERE p.user_id = u.id) AS passkeys
      FROM users u
      WHERE u.supprime_le IS NULL
        AND lower(u.prenom || ' ' || u.nom || ' ' || u.nom || ' ' || coalesce(u.email, '')) LIKE ?
@@ -408,10 +410,15 @@ admin.post('/comptes/:id/lien', async (c) => {
   return c.json(await creerLien(c.env, compteId as number, moi.id), 201);
 });
 
-// Téléphone perdu, départ du club… : ferme toutes les sessions du compte.
+// Téléphone perdu, départ du club… : ferme toutes les sessions du compte et retire ses passkeys
+// (spec 005c : le téléphone perdu ne peut plus se reconnecter par Face ID / empreinte).
 admin.delete('/comptes/:id/sessions', async (c) => {
-  const res = await c.env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(id(c, 'id')).run();
-  return c.json({ ok: true, fermees: res.meta.changes });
+  const compteId = id(c, 'id');
+  const [sessions, passkeys] = await c.env.DB.batch([
+    c.env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(compteId),
+    c.env.DB.prepare('DELETE FROM passkeys WHERE user_id = ?').bind(compteId),
+  ]);
+  return c.json({ ok: true, fermees: sessions?.meta.changes ?? 0, passkeys: passkeys?.meta.changes ?? 0 });
 });
 
 // --- Dossiers d'adhésion (spec 010a) ---

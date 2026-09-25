@@ -538,6 +538,20 @@ famille.post('/garderie/:adherentId/serie', async (c) => {
   return c.json({ ok: true, mercredis: dates.length });
 });
 
+// --- Passkeys de mon compte (spec 005c) : liste et retrait ---
+
+famille.get('/passkeys', async (c) => {
+  const { results } = await c.env.DB.prepare('SELECT id, appareil, created_at, derniere_utilisation FROM passkeys WHERE user_id = ? ORDER BY created_at DESC')
+    .bind(c.get('utilisateur').id)
+    .all();
+  return c.json(results);
+});
+
+famille.delete('/passkeys/:id', async (c) => {
+  const res = await c.env.DB.prepare('DELETE FROM passkeys WHERE id = ? AND user_id = ?').bind(c.req.param('id'), c.get('utilisateur').id).run();
+  return res.meta.changes ? c.json({ ok: true }) : c.json({ error: 'Passkey introuvable' }, 404);
+});
+
 famille.put('/moi', async (c) => {
   let corps: Record<string, unknown> = {};
   try {

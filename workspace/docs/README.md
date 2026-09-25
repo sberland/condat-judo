@@ -16,7 +16,7 @@ Index de toute la documentation du projet.
 
 | Fichier | Contenu |
 | --- | --- |
-| [`identite-auth.md`](technical-docs/identite-auth.md) | Seam d'identité `resolveUser` et connexion applicative — lien de connexion personnel, sessions de 6 mois glissants (spec 005a), fournisseur dev, Access non utilisé comme identité |
+| [`identite-auth.md`](technical-docs/identite-auth.md) | Seam d'identité `resolveUser` et connexion applicative — lien de connexion personnel, sessions de 6 mois glissants (spec 005a), passkey Face ID / empreinte (spec 005c), fournisseur dev, Access non utilisé comme identité |
 | [`comptes-adherents.md`](technical-docs/comptes-adherents.md) | Comptes, adhérents, responsables légaux et rôles (spec 004), dossiers d'adhésion (spec 010a) — modèle de données, droits (CSRF, rôles, filtrage par liens), calcul partagé écran / Worker, écrans de l'espace connecté |
 | [`competitions.md`](technical-docs/competitions.md) | Événements et compétitions (specs 009, 021) — types d'événement, inscription au choix (aucune, enfants, famille avec nombre de participants) ; modèle, catégories partagées écran / Worker, règles d'inscription (droits, date limite, éligibilité), API publique / famille / bureau, liste à ressaisir (copie, CSV), historique |
 | [`garderie.md`](technical-docs/garderie.md) | Garderie du mercredi (specs 012a, 012b) — réglages dans la saison (lieux, période, mercredis fermés, délai), demandes des familles au mercredi ou en série, suivi du bureau ; liste du jour de l'encadrant (le mercredi même, journalisée), photos d'identification sur accord (base, 60 Ko, un an), personnes autorisées gérées par les familles ; pointage de l'encadrant et suivi en direct par les parents (012c) |
