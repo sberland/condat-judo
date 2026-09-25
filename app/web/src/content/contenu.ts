@@ -47,7 +47,8 @@ export type Discipline = {
 
 export type Partenaire = { nom: string; activite: string; adresse: string; provisoire?: boolean }
 
-export type ArticleReglement = { titre: string; paragraphes?: string[]; liste?: string[]; apresListe?: string }
+/** `icone` : choisie par le club (clé de ICONES_REGLEMENT) ; sinon déduite du titre (iconeArticle). */
+export type ArticleReglement = { titre: string; icone?: string; paragraphes?: string[]; liste?: string[]; apresListe?: string }
 
 export type Reglement = { miseAJour: string; articles: ArticleReglement[]; sources: { libelle: string; url: string }[] }
 
@@ -77,6 +78,8 @@ type Base = { cle: string; libelle: string; aide?: string }
 export type Champ =
   | (Base & { type: 'texte' | 'long' | 'url' | 'email' | 'tel'; requis?: boolean; max?: number })
   | (Base & { type: 'case' })
+  /** Valeur facultative parmi une liste ; `vide` : libellé de l'absence de choix. */
+  | (Base & { type: 'choix'; options: { valeur: string; libelle: string }[]; vide: string })
   /** Identifiant conservé tel quel, jamais affiché (liste fixe). */
   | (Base & { type: 'cache' })
   | (Base & { type: 'textes'; requis?: boolean; long?: boolean; element: string })
@@ -86,6 +89,51 @@ export type Champ =
 
 const texte = (cle: string, libelle: string, o: { aide?: string; requis?: boolean; max?: number } = {}): Champ => ({ type: 'texte', cle, libelle, requis: true, ...o })
 const long = (cle: string, libelle: string, o: { aide?: string; requis?: boolean } = {}): Champ => ({ type: 'long', cle, libelle, requis: true, ...o })
+
+// --- Icônes des articles du règlement (spec 022) ---
+
+export const ICONES_REGLEMENT = {
+  licence: 'Licence',
+  sante: 'Santé',
+  parents: 'Parents',
+  horaires: 'Horaires, ponctualité',
+  tenue: 'Tenue',
+  dossier: 'Dossier',
+  hygiene: 'Hygiène',
+  competition: 'Compétition',
+  saison: 'Saison, calendrier',
+  securite: 'Sécurité',
+  respect: 'Respect, comportement',
+  paiement: 'Cotisation',
+  image: 'Photos',
+  autre: 'Autre',
+} as const
+
+export type IconeReglement = keyof typeof ICONES_REGLEMENT
+
+/** Mots du titre qui désignent une icône, dans l'ordre de priorité. */
+const MOTS_ICONES: [RegExp, IconeReglement][] = [
+  [/licence/, 'licence'],
+  [/sante|medical|certificat/, 'sante'],
+  [/parent|responsab/, 'parents'],
+  [/ponctualite|horaire|retard|heure/, 'horaires'],
+  [/tenue|judogi|kimono/, 'tenue'],
+  [/dossier|inscription/, 'dossier'],
+  [/hygiene|proprete/, 'hygiene'],
+  [/competition|animation|tournoi/, 'competition'],
+  [/saison|calendrier|vacances/, 'saison'],
+  [/securite|accident|urgence/, 'securite'],
+  [/respect|comportement|discipline|politesse/, 'respect'],
+  [/cotisation|paiement|tarif|remboursement/, 'paiement'],
+  [/image|photo|video/, 'image'],
+]
+
+/** Icône d'un article : celle choisie par le club, sinon d'après son titre. */
+export function iconeArticle(a: Pick<ArticleReglement, 'titre' | 'icone'>): IconeReglement {
+  if (a.icone && a.icone in ICONES_REGLEMENT) return a.icone as IconeReglement
+  const t = a.titre.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase()
+  return MOTS_ICONES.find(([mots]) => mots.test(t))?.[1] ?? 'autre'
+}
 
 export type Definition = {
   titre: string
@@ -225,6 +273,13 @@ export const DEFINITIONS: Record<CleContenu, Definition> = {
         titre: 'titre',
         champs: [
           texte('titre', 'Titre'),
+          {
+            type: 'choix',
+            cle: 'icone',
+            libelle: 'Icône',
+            options: Object.entries(ICONES_REGLEMENT).map(([valeur, libelle]) => ({ valeur, libelle })),
+            vide: 'Automatique (d’après le titre)',
+          },
           { type: 'textes', cle: 'paragraphes', libelle: 'Paragraphes', element: 'un paragraphe', long: true },
           { type: 'textes', cle: 'liste', libelle: 'Liste à puces', element: 'un élément', long: true },
           long('apresListe', 'Après la liste', { requis: false }),
@@ -302,6 +357,11 @@ export function validerChamps(champs: Champ[], v: unknown, erreurs: ErreursConte
       }
       case 'case':
         if (brut === true) sortie[c.cle] = true
+        break
+      case 'choix':
+        if (brut === undefined || brut === null || brut === '') break
+        if (typeof brut === 'string' && c.options.some((o) => o.valeur === brut)) sortie[c.cle] = brut
+        else erreurs[ici] = 'Valeur inconnue'
         break
       case 'cache':
         if (typeof brut === 'string' && /^[a-z0-9-]{1,40}$/.test(brut)) sortie[c.cle] = brut

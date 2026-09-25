@@ -1,5 +1,5 @@
 import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react'
-import { Case, CHAMP, Champ as ChampSaisie, ZoneTexte } from '../formulaire'
+import { Case, CHAMP, Champ as ChampSaisie, Selection, ZoneTexte } from '../formulaire'
 import type { Champ, ErreursContenu } from '../../content/contenu'
 
 // Éditeur générique du contenu du site (spec 014) : les champs d'un document sont décrits dans
@@ -68,6 +68,18 @@ function EditeurChamp({
       return <ZoneTexte id={id} libelle={c.libelle} aide={c.aide} valeur={typeof v === 'string' ? v : ''} onChange={onChange} erreur={erreur} />
     case 'case':
       return <Case id={id} libelle={c.libelle} aide={c.aide} coche={v === true} onChange={(x) => onChange(x || undefined)} />
+    case 'choix':
+      return (
+        <Selection
+          id={id}
+          libelle={c.libelle}
+          valeur={typeof v === 'string' ? v : ''}
+          options={c.options}
+          onChange={(x) => onChange(x || undefined)}
+          vide={c.vide}
+          erreur={erreur}
+        />
+      )
     case 'cache':
       return null
     case 'textes':

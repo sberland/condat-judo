@@ -70,7 +70,16 @@ export function HorairesTarifsPage() {
             <div className="space-y-12">
               {r.tarifs.groupes.map((g) => (
                 <section key={g.titre} aria-labelledby={`tarifs-${g.titre}`}>
-                  <TitreBloc id={`tarifs-${g.titre}`} icone={<BadgeEuro className="size-6 text-brand" aria-hidden />}>
+                  <TitreBloc
+                    id={`tarifs-${g.titre}`}
+                    icone={
+                      disciplineDe(g.titre) ? (
+                        <IllustrationDiscipline id={disciplineDe(g.titre) ?? ''} className="size-12 shrink-0" />
+                      ) : (
+                        <BadgeEuro className="size-6 text-brand" aria-hidden />
+                      )
+                    }
+                  >
                     {g.titre}
                   </TitreBloc>
                   <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -131,9 +140,8 @@ export function HorairesTarifsPage() {
 function CarteFormule({ formule: f }: { formule: Formule }) {
   const [premier, deuxieme, troisieme] = f.echeancier
   return (
-    <Card className="relative flex h-full flex-col">
-      <IllustrationDiscipline id={disciplineDe(`${f.id} ${f.nom}`) ?? ''} className="absolute top-4 right-4 size-12" />
-      <p className="pr-14 text-lg font-bold">{f.nom}</p>
+    <Card className="flex h-full flex-col">
+      <p className="text-lg font-bold">{f.nom}</p>
       <p className="text-sm text-muted-foreground">{f.public}</p>
       <p className="mt-4 text-4xl font-extrabold tracking-tight">{euros(totalFormule(f))}</p>
       <p className="text-sm text-muted-foreground">par saison, licence comprise</p>
@@ -182,7 +190,7 @@ function LigneAjustement({
 
 function TitreBloc({ id, icone, children }: { id: string; icone: ReactNode; children: ReactNode }) {
   return (
-    <h2 id={id} className="flex items-center gap-2 text-2xl font-bold tracking-tight">
+    <h2 id={id} className="flex items-center gap-3 text-2xl font-bold tracking-tight">
       {icone} {children}
     </h2>
   )

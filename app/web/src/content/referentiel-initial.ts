@@ -53,10 +53,16 @@ export const REFERENTIEL_2026_2027: Referentiel = {
           },
         ],
       },
+      // « Taïso et yoga » séparés par la migration 0014 (spec 022) : mêmes montants.
       {
-        titre: 'Taïso et yoga',
+        titre: 'Taïso',
         formules: [
           { id: 'taiso', nom: 'Taïso', public: 'Tout public', participation: 7520, licence: 4380, echeancier: [6900, 2500, 2500], judo: false, annees: null },
+        ],
+      },
+      {
+        titre: 'Yoga',
+        formules: [
           {
             id: 'yoga-1',
             nom: 'Yoga — lundi ou jeudi',

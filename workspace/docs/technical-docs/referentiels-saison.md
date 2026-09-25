@@ -69,6 +69,9 @@ paiement en 3 fois, horaires — lecture puis « Modifier » (brouillon) et « E
 publique « Horaires & tarifs » et menu : lus depuis la saison courante (« à confirmer » = masqués
 en production).
 
+> Migration 0014 (spec 022) : le groupe « Taïso et yoga » de la grille devient deux groupes,
+> « Taïso » et « Yoga » (mêmes formules), dans les saisons où il existait sous ce titre.
+
 ## Points de vigilance
 
 - Un dossier garde ses montants figés : changer un tarif ne touche que les dossiers saisis ou
