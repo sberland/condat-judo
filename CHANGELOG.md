@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.19.0] — 2026-09-25
+
 ### Tarifs du yoga séparés, icônes du règlement
 
 #### Notes client
