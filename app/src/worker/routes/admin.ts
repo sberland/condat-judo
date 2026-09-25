@@ -9,7 +9,7 @@ import { journaliser } from '../journal';
 import { critere, DERNIERE_SAISON, seuilPurge } from '../purge';
 import { RGPD } from '../../../web/src/content/rgpd';
 import { categorieDe, eligible } from '../../../web/src/content/categories';
-import { saisonCourante, saisonPourDate } from '../saison';
+import { saisonCourante, saisonDemandee, saisonPourDate } from '../saison';
 import { saisons } from './saisons';
 import { garderie } from './garderie';
 import { accordPhoto, effacerPhoto, enregistrerPhoto, lirePhoto, PHOTO_RECENTE, reponsePhoto } from '../photos';
@@ -124,7 +124,9 @@ admin.get('/adherents/:id', async (c) => {
   if (!adherentId) return c.json({ error: 'Adhérent introuvable' }, 404);
   const adherent = await c.env.DB.prepare(
     `SELECT id, prenom, nom, date_naissance, sexe, grade, numero_licence, adresse, code_postal, ville,
-            user_id, created_at, updated_at, supprime_le
+            user_id, created_at, updated_at, supprime_le,
+            -- Fiche ajoutée par une famille (010b), à vérifier : par qui.
+            (SELECT u.prenom || ' ' || u.nom FROM users u WHERE u.id = adherents.propose_par) AS propose_par
      FROM adherents WHERE id = ?`,
   )
     .bind(adherentId)
@@ -170,7 +172,7 @@ admin.put('/adherents/:id', async (c) => {
   const a = r.valeur;
   const res = await c.env.DB.prepare(
     `UPDATE adherents SET prenom = ?, nom = ?, date_naissance = ?, sexe = ?, grade = ?, numero_licence = ?,
-            adresse = ?, code_postal = ?, ville = ?, updated_at = datetime('now')
+            adresse = ?, code_postal = ?, ville = ?, propose_par = NULL, updated_at = datetime('now')
      WHERE id = ? AND supprime_le IS NULL`,
   )
     .bind(a.prenom, a.nom, a.date_naissance, a.sexe, a.grade, a.numero_licence, a.adresse, a.code_postal, a.ville, adherentId)
@@ -424,6 +426,7 @@ admin.delete('/comptes/:id/sessions', async (c) => {
 // --- Dossiers d'adhésion (spec 010a) ---
 // Le Worker recalcule et FIGE les montants (grille de la saison, content/adhesion.ts) : l'écran
 // n'affiche qu'une estimation. Consentements et autorisations : datés, avec qui les a saisis.
+// Saison : la courante, ou celle demandée (`?saison=`) — la saison des inscriptions en ligne (010b).
 
 type Dossier = {
   formule: string;
@@ -439,10 +442,10 @@ type Dossier = {
 const nombre = (r: D1Result | undefined) => (r?.results[0] as { n: number } | undefined)?.n ?? 0;
 
 async function contexteDossier(c: Context<AppEnv>, adherentId: number) {
-  const saison = await saisonCourante(c);
-  const adherent = await c.env.DB.prepare('SELECT id, date_naissance, code_postal FROM adherents WHERE id = ? AND supprime_le IS NULL')
+  const saison = await saisonDemandee(c);
+  const adherent = await c.env.DB.prepare('SELECT id, date_naissance, code_postal, propose_par FROM adherents WHERE id = ? AND supprime_le IS NULL')
     .bind(adherentId)
-    .first<{ id: number; date_naissance: string; code_postal: string | null }>();
+    .first<{ id: number; date_naissance: string; code_postal: string | null; propose_par: number | null }>();
   if (!adherent) return null;
   const [responsables, famille, dossier] = await c.env.DB.batch([
     c.env.DB.prepare(
@@ -466,7 +469,13 @@ async function contexteDossier(c: Context<AppEnv>, adherentId: number) {
     formuleJudo: formuleJudoSuggeree(saison.referentiel.tarifs, Number(adherent.date_naissance.slice(0, 4))),
   };
   const adhesion = (dossier?.results[0] as Dossier | undefined) ?? null;
-  return { saison: { id: saison.id, libelle: saison.libelle }, contexte, adhesion, etat: adhesion ? etatDossier(adhesion, contexte) : null };
+  return {
+    saison: { id: saison.id, libelle: saison.libelle, courante: saison.courante },
+    tarifs: saison.referentiel.tarifs,
+    contexte: { ...contexte, aVerifier: adherent.propose_par !== null },
+    adhesion,
+    etat: adhesion ? etatDossier(adhesion, contexte) : null,
+  };
 }
 
 admin.get('/adherents/:id/adhesion', async (c) => {
@@ -476,7 +485,7 @@ admin.get('/adherents/:id/adhesion', async (c) => {
 
 admin.put('/adherents/:id/adhesion', async (c) => {
   const adherentId = id(c, 'id') ?? 0;
-  const saison = await saisonCourante(c);
+  const saison = await saisonDemandee(c);
   const r = validerAdhesion((await corps(c)) ?? {}, saison.referentiel.tarifs);
   if (!r.ok) return invalide(c, r);
   const avant = await contexteDossier(c, adherentId);
@@ -535,14 +544,20 @@ admin.post('/adherents/:id/adhesion/valider', async (c) => {
   const r = await contexteDossier(c, adherentId);
   if (!r?.adhesion || !r.etat) return c.json({ error: 'Dossier introuvable' }, 404);
   if (r.etat.manques.length) return c.json({ error: `Dossier incomplet : ${r.etat.manques.join(', ')}` }, 409);
-  await c.env.DB.prepare("UPDATE adhesions SET valide_le = datetime('now'), valide_par = ? WHERE adherent_id = ? AND saison = ?")
-    .bind(c.get('utilisateur').id, adherentId, (await saisonCourante(c)).id)
-    .run();
+  // Valider le dossier vaut vérification de la fiche d'un enfant ajouté par sa famille (010b).
+  await c.env.DB.batch([
+    c.env.DB.prepare("UPDATE adhesions SET valide_le = datetime('now'), valide_par = ? WHERE adherent_id = ? AND saison = ?").bind(
+      c.get('utilisateur').id,
+      adherentId,
+      r.saison.id,
+    ),
+    c.env.DB.prepare('UPDATE adherents SET propose_par = NULL WHERE id = ?').bind(adherentId),
+  ]);
   return c.json(await contexteDossier(c, adherentId));
 });
 
 admin.delete('/adherents/:id/adhesion', async (c) => {
-  const saison = (await saisonCourante(c)).id;
+  const saison = (await saisonDemandee(c)).id;
   // Un dossier sur lequel des paiements sont enregistrés (spec 011) ne se supprime pas.
   const paye = await c.env.DB.prepare(
     'SELECT 1 FROM paiement_parts p JOIN adhesions d ON d.id = p.adhesion_id WHERE d.adherent_id = ? AND d.saison = ? LIMIT 1',
@@ -569,15 +584,18 @@ type LigneDossiers = {
   droit_image: Recueil | null;
   whatsapp: Recueil | null;
   valide_le: string | null;
+  envoye_le: string | null;
+  a_verifier: number;
 };
 
 // Tous les adhérents actifs, avec leur dossier de la saison s'il existe (« sans dossier » sinon).
 admin.get('/adhesions', async (c) => {
-  const saison = await saisonCourante(c);
+  const saison = await saisonDemandee(c);
   const { results } = await c.env.DB.prepare(
     `SELECT a.id, a.prenom, a.nom, a.date_naissance,
             (SELECT count(*) FROM liens l JOIN users u ON u.id = l.user_id WHERE l.adherent_id = a.id AND u.supprime_le IS NULL) AS responsables,
-            d.formule, d.montant_total, d.paiement_mode, d.formalite_recue_le, d.soins_urgence, d.droit_image, d.whatsapp, d.valide_le
+            d.formule, d.montant_total, d.paiement_mode, d.formalite_recue_le, d.soins_urgence, d.droit_image, d.whatsapp, d.valide_le,
+            d.envoye_le, a.propose_par IS NOT NULL AS a_verifier
      FROM adherents a LEFT JOIN adhesions d ON d.adherent_id = a.id AND d.saison = ?
      WHERE a.supprime_le IS NULL
      ORDER BY a.nom, a.prenom`,
@@ -585,8 +603,8 @@ admin.get('/adhesions', async (c) => {
     .bind(saison.id)
     .all<LigneDossiers>();
   const lignes = results.map((l) => ({
-    adherent: { id: l.id, prenom: l.prenom, nom: l.nom, date_naissance: l.date_naissance },
-    dossier: l.formule ? { formule: l.formule, montant_total: l.montant_total ?? 0 } : null,
+    adherent: { id: l.id, prenom: l.prenom, nom: l.nom, date_naissance: l.date_naissance, aVerifier: l.a_verifier === 1 },
+    dossier: l.formule ? { formule: l.formule, montant_total: l.montant_total ?? 0, envoye_le: l.envoye_le } : null,
     etat: l.formule
       ? etatDossier(
           {
@@ -601,7 +619,7 @@ admin.get('/adhesions', async (c) => {
         )
       : null,
   }));
-  return c.json({ saison: { id: saison.id, libelle: saison.libelle }, lignes });
+  return c.json({ saison: { id: saison.id, libelle: saison.libelle, courante: saison.courante }, tarifs: saison.referentiel.tarifs, lignes });
 });
 
 // --- Événements (specs 009, 021) : compétitions, stages, rencontres, repas… ---

@@ -12,7 +12,7 @@ import { famille } from './routes/famille';
 import { tresorerie } from './routes/tresorerie';
 import type { Env } from './env';
 import { purgerRgpd } from './purge';
-import { saisonCourante, saisonPublique } from './saison';
+import { saisonCourante, saisonInscriptions, saisonPublique } from './saison';
 import { cookieSession, jetonSession, prolongerSession } from './session';
 
 const app = new Hono<AppEnv>();
@@ -70,7 +70,11 @@ api.get('/calendrier.ics', async (c) => {
 
 // --- Saison courante (spec 003) — publique : tarifs, horaires, catégories de la vitrine ---
 
-api.get('/saison', async (c) => c.json(saisonPublique(await saisonCourante(c))));
+// Avec la saison dont les inscriptions en ligne sont ouvertes (spec 010b), s'il y en a une.
+api.get('/saison', async (c) => {
+  const [courante, inscriptions] = [await saisonCourante(c), await saisonInscriptions(c)];
+  return c.json({ ...saisonPublique(courante), inscriptions: inscriptions ? { id: inscriptions.id, libelle: inscriptions.libelle } : null });
+});
 
 // --- Espaces connectés (spec 004) ---
 

@@ -167,7 +167,7 @@ function Entete({ saison: s, enregistrer, rafraichir }: { saison: Saison; enregi
         <Case
           id="inscriptions-ouvertes"
           libelle="Inscriptions ouvertes"
-          aide="Pour le dossier d’inscription en ligne des familles (à venir)."
+          aide="Les familles remplissent en ligne leur dossier d’inscription pour cette saison, avec ses tarifs (Mon espace → Inscriptions)."
           coche={s.inscriptions_ouvertes}
           onChange={(v) => agir(() => enregistrer(s.referentiel, v))}
         />

@@ -41,7 +41,7 @@ export async function donneesDuCompte(env: Env, userId: number): Promise<Ligne |
       env.DB.prepare(
         `SELECT saison, formule, passeport, hors_commune, reduction_famille, montant_total, paiement_mode, paiement_3_fois,
                 echeance_1, echeance_2, echeance_3, formalite_type, formalite_recue_le, soins_urgence, soins_urgence_le,
-                droit_image, droit_image_le, whatsapp, whatsapp_le, photo_garderie, photo_garderie_le, valide_le, created_at
+                droit_image, droit_image_le, whatsapp, whatsapp_le, photo_garderie, photo_garderie_le, engagements_le, envoye_le, valide_le, created_at
          FROM adhesions WHERE adherent_id = ? ORDER BY saison`,
       ).bind(a.id),
       env.DB.prepare(

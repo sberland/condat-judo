@@ -1,6 +1,7 @@
 import { useQuery, type QueryClient } from '@tanstack/react-query'
 import type { EtatDossier, Formalite, ModePaiement, Recueil } from '../content/adhesion'
 import type { CompetitionEnfant } from './competitions'
+import type { Tarifs } from '../content/tarifs'
 
 export type Environnement = 'production' | 'preview' | 'local'
 
@@ -118,6 +119,8 @@ export type Adherent = {
   code_postal: string | null
   ville: string | null
   supprime_le: string | null
+  /** Fiche ajoutée par une famille (010b), à vérifier : prénom et nom de ce responsable. */
+  propose_par?: string | null
 }
 
 export type Responsable = {
@@ -211,6 +214,8 @@ export type Adhesion = {
   photo_garderie: Recueil
   photo_garderie_le: string | null
   valide_le: string | null
+  /** Dossier envoyé en ligne par la famille (010b). */
+  envoye_le: string | null
 }
 
 export type ContexteDossier = {
@@ -220,20 +225,26 @@ export type ContexteDossier = {
   autresDossiersFamille: number
   horsCommune: boolean
   formuleJudo: string
+  /** Fiche ajoutée par une famille (010b), pas encore vérifiée. */
+  aVerifier: boolean
 }
 
 export type DossierAdhesion = {
-  saison: { id: string; libelle: string }
+  saison: { id: string; libelle: string; courante: boolean }
+  /** Grille de cette saison (la courante, ou celle des inscriptions — 010b). */
+  tarifs: Tarifs
   contexte: ContexteDossier
   adhesion: Adhesion | null
   etat: EtatDossier | null
 }
 
 export type ListeDossiers = {
-  saison: { id: string; libelle: string }
+  saison: { id: string; libelle: string; courante: boolean }
+  tarifs: Tarifs
   lignes: {
-    adherent: { id: number; prenom: string; nom: string; date_naissance: string }
-    dossier: { formule: string; montant_total: number } | null
+    adherent: { id: number; prenom: string; nom: string; date_naissance: string; aVerifier: boolean }
+    /** envoye_le : dossier envoyé en ligne par la famille (010b). */
+    dossier: { formule: string; montant_total: number; envoye_le: string | null } | null
     etat: EtatDossier | null
   }[]
 }

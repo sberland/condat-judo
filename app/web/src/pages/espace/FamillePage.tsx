@@ -81,15 +81,20 @@ function MesAccords() {
     ['whatsapp', 'Groupe WhatsApp du club'],
     ['photo_garderie', 'Photo pour la garderie du mercredi'],
   ]
+  // Saison courante et, pendant les inscriptions, saison suivante (010b) : chaque réponse vaut pour sa saison.
+  const plusieursSaisons = new Set(data.accords.map((a) => a.saison)).size > 1
   return (
-    <Bloc titre={`Autorisations ${data.saison.libelle}`}>
+    <Bloc titre={plusieursSaisons ? 'Autorisations' : `Autorisations ${data.saison.libelle}`}>
       <p className="mb-4 text-sm text-muted-foreground">
         Vous pouvez donner ou retirer votre accord à tout moment ; votre réponse est datée et enregistrée à votre nom.
       </p>
       <ul className="grid gap-4">
         {data.accords.map((a) => (
           <li key={a.adhesion_id} className="grid gap-2">
-            <p className="font-semibold">{a.prenom}</p>
+            <p className="font-semibold">
+              {a.prenom}
+              {plusieursSaisons && <span className="font-normal text-muted-foreground"> · saison {a.saison}</span>}
+            </p>
             {LIBELLES.map(([accord, libelle]) => {
               const valeur = a[accord]
               const le = a[`${accord}_le`]

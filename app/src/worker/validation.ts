@@ -6,9 +6,11 @@ import {
   formuleParId,
   MODES_PAIEMENT,
   RECUEILS,
+  SANTE_FAMILLE,
   type Formalite,
   type ModePaiement,
   type Recueil,
+  type SanteFamille,
 } from '../../web/src/content/adhesion';
 import { categorieParId, type Categorie } from '../../web/src/content/categories';
 import type { Tarifs } from '../../web/src/content/tarifs';
@@ -218,6 +220,70 @@ export function validerAdhesion(corps: Corps, tarifs: Tarifs, aujourdhui = new D
     droit_image: recueil('droit_image', 'Droit à l’image'),
     whatsapp: recueil('whatsapp', 'Groupe WhatsApp'),
     photo_garderie: corps.photo_garderie === undefined ? null : recueil('photo_garderie', 'Photo pour la garderie'),
+  });
+}
+
+// --- Dossier rempli en ligne par la famille (spec 010b) ---
+
+export type DossierFamilleSaisi = {
+  formule: string;
+  passeport: 0 | 1;
+  paiement_mode: ModePaiement;
+  paiement_3_fois: 0 | 1;
+  sante: SanteFamille;
+  /** Mineur : réponse explicite ; majeur : sans objet (« non recueilli »). */
+  soins_urgence: Recueil;
+  droit_image: 'oui' | 'non';
+  whatsapp: 'oui' | 'non';
+  photo_garderie: Recueil;
+  adresse: string;
+  code_postal: string;
+  ville: string;
+};
+
+/**
+ * Dossier envoyé par la famille : tout est obligatoire, et chaque consentement est une réponse
+ * explicite (oui ou non) — jamais « non recueilli », jamais une case pré-cochée côté écran.
+ */
+export function validerDossierFamille(corps: Corps, tarifs: Tarifs, mineur: boolean): Resultat<DossierFamilleSaisi> {
+  const c = new Collecteur();
+  const bool = (v: unknown): 0 | 1 => (v === true ? 1 : 0);
+  const formule = texte(corps.formule);
+  if (!formuleParId(tarifs, formule)) c.erreurs.formule = 'Choisissez une formule';
+  const mode = corps.paiement_mode;
+  if (!dansListe(MODES_PAIEMENT, mode)) c.erreurs.paiement_mode = 'Choisissez un mode de paiement';
+  const sante = corps.sante;
+  if (!dansListe(SANTE_FAMILLE, sante)) c.erreurs.sante = 'Répondez pour la formalité médicale';
+  const reponse = (champ: string): 'oui' | 'non' => {
+    const v = corps[champ];
+    if (v !== 'oui' && v !== 'non') {
+      c.erreurs[champ] = 'Répondez oui ou non';
+      return 'non';
+    }
+    return v;
+  };
+  const soins = mineur ? reponse('soins_urgence') : 'non_recueilli';
+  const droitImage = reponse('droit_image');
+  const whatsapp = reponse('whatsapp');
+  const photo = mineur ? reponse('photo_garderie') : 'non_recueilli';
+  if (corps.engagements !== true) c.erreurs.engagements = 'Acceptez les engagements pour envoyer le dossier';
+  const adresse = c.requis(corps, 'adresse', 'Adresse', 160);
+  const codePostal = c.requis(corps, 'code_postal', 'Code postal', 5);
+  if (codePostal && !/^\d{5}$/.test(codePostal)) c.erreurs.code_postal = 'Code postal à 5 chiffres';
+  const ville = c.requis(corps, 'ville', 'Ville', 80);
+  return c.resultat({
+    formule,
+    passeport: bool(corps.passeport),
+    paiement_mode: mode as ModePaiement,
+    paiement_3_fois: bool(corps.paiement_3_fois),
+    sante: sante as SanteFamille,
+    soins_urgence: soins,
+    droit_image: droitImage,
+    whatsapp,
+    photo_garderie: photo,
+    adresse,
+    code_postal: codePostal,
+    ville,
   });
 }
 

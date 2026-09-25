@@ -20,7 +20,7 @@ export function Espace({
   children,
 }: {
   titre: string
-  retour?: { to: '/espace' | '/espace/adherents' | '/espace/comptes' | '/espace/evenements' | '/espace/tresorerie' | '/espace/saisons' | '/espace/contenu' | '/espace/actualites'; libelle: string }
+  retour?: { to: '/espace' | '/espace/adherents' | '/espace/comptes' | '/espace/evenements' | '/espace/tresorerie' | '/espace/saisons' | '/espace/contenu' | '/espace/actualites' | '/espace/inscriptions'; libelle: string }
   roles?: Role[]
   /** Rubrique de l'aide intégrée liée à cet écran (lien « Aide » à côté du titre). */
   aide?: IdRubrique

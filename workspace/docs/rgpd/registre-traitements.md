@@ -24,8 +24,8 @@
 | Finalités | Inscriptions, licence, suivi des paiements, sécurité des enfants (qui peut les récupérer, qui prévenir) |
 | Base légale | Exécution du contrat d'adhésion (art. 6.1.b) |
 | Personnes concernées | Adhérents (dont mineurs), responsables légaux, personnes autorisées à récupérer un enfant |
-| Données | Adhérent : identité, date de naissance, sexe, ceinture, n° de licence, adresse. Responsables : identité, e-mail, téléphone, lien et droits sur l'enfant. Personnes autorisées : identité, lien, téléphone. Dossier : formule, montant, mode et échéancier de paiement, type et date de réception de la formalité médicale |
-| Données sensibles | **Aucune** : pas de donnée de santé (seulement « attestation reçue le … ») |
+| Données | Adhérent : identité, date de naissance, sexe, ceinture, n° de licence, adresse. Responsables : identité, e-mail, téléphone, lien et droits sur l'enfant. Personnes autorisées : identité, lien, téléphone. Dossier : formule, montant, mode et échéancier de paiement, type et date de réception de la formalité médicale. Dossier rempli en ligne par un responsable légal (spec 010b) : date d'envoi, acceptation datée du règlement, de l'information assurance et de la mention d'information, auteur de l'attestation de santé ; enfant ajouté par sa famille : fiche marquée à vérifier par le bureau |
+| Données sensibles | **Aucune** : pas de donnée de santé (seulement « attestation reçue le … », ou « certificat à fournir » ; le questionnaire de santé reste chez la famille) |
 | Destinataires | Bureau du club (selon les rôles) ; responsables liés à l'enfant (fiche de l'enfant, nom des autres responsables) ; **À COMPLÉTER** (ex. France Judo pour la licence) |
 | Sous-traitants | Cloudflare (hébergement, D1 en juridiction UE) ; GitHub (sauvegardes **chiffrées**, clé détenue par le club) |
 | Transferts hors UE | Cloudflare et GitHub sont des sociétés américaines : données du site stockées dans l'UE ; sauvegardes illisibles sans la clé du club |
@@ -76,7 +76,7 @@
 | --- | --- |
 | Finalités | Soins d'urgence ; droit à l'image (site, réseaux sociaux, presse) ; ajout au groupe WhatsApp du club ; photo pour la garderie du mercredi (spec 012b) |
 | Base légale | Consentement (art. 6.1.a), donné par un responsable légal pour un mineur, retirable à tout moment ; soins d'urgence : intérêt vital (art. 6.1.d) |
-| Données | Réponse (oui / non / non recueilli), date, auteur de la saisie |
+| Données | Réponse (oui / non / non recueilli), date, auteur de la saisie ; en ligne (spec 010b), réponse explicite du responsable à chaque saison, jamais pré-cochée |
 | Durée | Jusqu'au retrait, et au plus la durée de conservation de l'adhérent |
 | Exercice | La famille répond ou retire son accord (droit à l'image, WhatsApp, photo pour la garderie) depuis son espace ; réponse datée, à son nom (spec 019) |
 | Remarque | Le formulaire papier 2026/2027 présentait le droit à l'image comme « accepté par l'inscription » : non valable, saisi « non recueilli » (spec 010) |
@@ -142,3 +142,4 @@
 | 2026-09-24 | Site public : contenu administré par le club, historique des modifications (spec 014) |
 | 2026-09-25 | Site public : actualités avec photo (accord droit à l'image), abonnement agenda aux événements (spec 013) |
 | 2026-09-25 | Espace membres : connexion facultative par passkey (Face ID / empreinte), clé publique seulement (spec 005c) |
+| 2026-09-25 | Adhésions : dossier rempli en ligne par les familles, consentements explicites à chaque saison, engagements datés (spec 010b) |

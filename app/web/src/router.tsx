@@ -22,6 +22,8 @@ import { CompetitionsGestionPage } from './pages/espace/CompetitionsGestionPage'
 import { ComptesPage } from './pages/espace/ComptesPage'
 import { EspaceAccueilPage } from './pages/espace/EspaceAccueilPage'
 import { FamillePage } from './pages/espace/FamillePage'
+import { InscriptionsPage } from './pages/espace/InscriptionsPage'
+import { DossierFamillePage } from './pages/espace/DossierFamillePage'
 import { TresorerieFamillePage } from './pages/espace/TresorerieFamillePage'
 import { TresoreriePage } from './pages/espace/TresoreriePage'
 import { RgpdPage } from './pages/espace/RgpdPage'
@@ -75,6 +77,9 @@ const routeTree = rootRoute.addChildren([
   // Espace connecté (spec 004) — les droits sont vérifiés par l'API, les pages ne font que masquer.
   createRoute({ getParentRoute, path: '/espace', component: EspaceAccueilPage }),
   createRoute({ getParentRoute, path: '/espace/famille', component: FamillePage }),
+  // Dossier d'adhésion rempli en ligne par les familles (spec 010b).
+  createRoute({ getParentRoute, path: '/espace/inscriptions', component: InscriptionsPage }),
+  createRoute({ getParentRoute, path: '/espace/inscriptions/$id', component: DossierFamillePage }),
   createRoute({ getParentRoute, path: '/espace/adherents', component: AdherentsPage }),
   createRoute({ getParentRoute, path: '/espace/adherents/nouveau', component: AdherentNouveauPage }),
   createRoute({ getParentRoute, path: '/espace/adherents/$id', component: AdherentFichePage }),

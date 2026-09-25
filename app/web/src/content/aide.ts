@@ -9,6 +9,7 @@ export type ProfilAide = 'famille' | 'encadrant' | 'bureau' | 'publication' | 't
 export type IdRubrique =
   | 'connexion'
   | 'mes-enfants'
+  | 'inscriptions'
   | 'competitions'
   | 'cotisations'
   | 'garderie'
@@ -88,6 +89,49 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
       {
         q: 'Comment me déconnecter ?',
         r: ['Bouton « Mon espace » (en haut à droite) → « Se déconnecter », en bas de la page. Utile sur un appareil partagé : les informations affichées sont effacées de l’appareil.'],
+      },
+    ],
+  },
+  {
+    id: 'inscriptions',
+    titre: 'Inscrire mes enfants en ligne',
+    profil: 'famille',
+    questions: [
+      {
+        q: 'Comment inscrire mon enfant pour la saison prochaine ?',
+        r: [
+          'Quand le club ouvre les inscriptions, Mon espace affiche « Inscriptions 2027/2028 » (par exemple). Touchez-la : un dossier par enfant (et le vôtre si vous pratiquez).',
+          '« Remplir le dossier » : adresse, formule, paiement, formalité médicale, autorisations, engagements, puis « Envoyer au club ». Vos coordonnées sont déjà connues : rien à ressaisir.',
+          'Ce que vous aviez choisi l’an dernier (formule, paiement) est proposé : vérifiez, changez si besoin.',
+        ],
+      },
+      {
+        q: 'Pourquoi dois-je répondre de nouveau aux autorisations ?',
+        r: [
+          'Photos, WhatsApp, soins d’urgence, photo pour la garderie : un accord doit être donné de façon explicite, pour chaque saison. Votre réponse de l’an dernier est rappelée, mais rien n’est coché à votre place.',
+          'Vous pouvez changer d’avis à tout moment dans « Mes enfants » → « Autorisations ».',
+        ],
+      },
+      {
+        q: 'Et le certificat médical ?',
+        r: [
+          'Pour un enfant, pas de certificat : vous remplissez avec lui le questionnaire de santé, chez vous. Si toutes les réponses sont « non », vous l’attestez dans le dossier. Sinon, un certificat médical est à remettre au club.',
+          'Le club n’enregistre que votre réponse et sa date, jamais le contenu du questionnaire.',
+        ],
+      },
+      {
+        q: 'Mon enfant n’est pas dans la liste',
+        r: [
+          'S’il est nouveau au club : « Inscrire un autre enfant » (vous devez être sa mère, son père ou son tuteur), puis remplissez son dossier. Le bureau vérifiera sa fiche.',
+          'S’il a déjà été inscrit (par l’autre parent, une autre année) : demandez au bureau de le rattacher à votre compte.',
+        ],
+      },
+      {
+        q: 'Je me suis trompé, puis-je modifier le dossier ?',
+        r: [
+          'Oui, tant que le bureau ne l’a pas validé : rouvrez-le, corrigez, renvoyez. Ensuite, adressez-vous au bureau.',
+          'Le dossier ne vaut pas paiement : le trésorier vous indique comment régler.',
+        ],
       },
     ],
   },
@@ -347,6 +391,15 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
         q: 'Suivre l’avancement',
         r: ['Écran « Dossiers » : tous les adhérents, filtrables (sans dossier, à compléter, complets, validés), avec ce qui manque pour chacun et le total des montants.'],
       },
+      {
+        q: 'Dossiers remplis en ligne par les familles',
+        r: [
+          'Ouvrez les inscriptions de la saison (Saisons et tarifs → la saison → « Inscriptions ouvertes ») : les familles remplissent alors leurs dossiers depuis leur espace.',
+          'Écran « Dossiers » : choisissez la saison des inscriptions en haut de l’écran. « Envoyé en ligne le … » signale un dossier rempli par la famille ; vérifiez-le puis « Valider le dossier ». La famille peut le modifier tant qu’il n’est pas validé.',
+          'Formalité médicale : l’attestation cochée par la famille est enregistrée comme reçue, à son nom. « Certificat médical à fournir » : notez-le reçu quand la famille vous le remet.',
+          '« Fiche à vérifier » : un enfant ajouté par sa famille. Vérifiez son identité (et l’absence de doublon) ; enregistrer sa fiche ou valider son dossier la marque vérifiée.',
+        ],
+      },
     ],
   },
   {
@@ -430,6 +483,13 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
         r: [
           '« Préparer la saison … » copie la dernière saison en décalant les années de naissance des catégories et des formules, et les dates du paiement en 3 fois, d’un an. Ajustez ensuite tarifs et horaires : rien ne change sur le site.',
           'Le moment venu (fin août en général), « Rendre cette saison courante » : les nouveaux dossiers, la trésorerie et la page publique passent sur la nouvelle saison.',
+        ],
+      },
+      {
+        q: 'Ouvrir les inscriptions en ligne',
+        r: [
+          'Sur la saison préparée, cochez « Inscriptions ouvertes » : Mon espace propose alors aux familles de remplir leurs dossiers pour cette saison, avec ses tarifs. Vérifiez la grille avant d’ouvrir.',
+          'Décochez pour fermer les inscriptions en ligne : les dossiers déjà envoyés restent.',
         ],
       },
     ],

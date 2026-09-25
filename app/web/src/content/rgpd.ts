@@ -48,6 +48,7 @@ export const TRAITEMENTS: Traitement[] = [
       'Responsables légaux : nom, prénom, e-mail, téléphone, lien avec l’enfant et droits (inscrire, récupérer, être prévenu)',
       'Personnes autorisées à récupérer l’enfant : nom, lien, téléphone',
       'Dossier : formule, montant, mode de paiement, date de réception de la formalité médicale',
+      'Dossier rempli en ligne : date d’envoi, acceptation datée du règlement, de l’information assurance et de cette information, attestation du questionnaire de santé (votre réponse et sa date seulement, jamais le questionnaire)',
     ],
     finalite: 'Gérer les inscriptions, la licence, les paiements et la sécurité des enfants (qui peut les récupérer).',
     base: 'Exécution de l’adhésion à l’association.',

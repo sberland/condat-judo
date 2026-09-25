@@ -85,6 +85,48 @@ par le bureau).
   saison ; **hors commune** si le code postal n'est pas 87920.
 - Routes (`bureau` / `admin`) : `GET|PUT|DELETE /api/admin/adherents/:id/adhesion`,
   `POST …/adhesion/valider`, `GET /api/admin/adhesions` (tous les adhérents actifs + dossier).
+  Toutes acceptent `?saison=<id>` (spec 010b) : par défaut la saison courante ; les écrans
+  proposent d'abord la saison des inscriptions en ligne quand elle est ouverte pour une autre
+  saison (`useSaisonDossiers`, `ChoixSaison`). Les réponses portent la grille (`tarifs`) de la saison.
+
+### Dossier rempli en ligne par la famille (spec 010b)
+
+Pour la **saison dont le bureau a ouvert les inscriptions** (`saisons.inscriptions_ouvertes`,
+`saisonInscriptions` : la plus récente ; `inscriptions` dans `GET /api/saison`, tuile de l'espace).
+
+```text
+Mon espace → « Inscriptions 2027/2028 » (/espace/inscriptions) : un dossier par adhérent
+  GET  /api/famille/inscriptions         mes enfants (responsable légal) + moi (adhérent majeur),
+                                         dossier de la saison, dossier précédent, proposition
+  /espace/inscriptions/$id : 7 étapes (adhérent → activité → paiement → santé → autorisations
+                             → engagements → envoi) ; brouillon en localStorage jusqu'à l'envoi
+  PUT  /api/famille/inscriptions/:id     validé en entier (validerDossierFamille), montant figé,
+                                         envoye_le / envoye_par, engagements_le / _par
+  POST /api/famille/inscriptions/enfants nouvel enfant (mineur) : adherents.propose_par + lien légal
+  PUT  /api/famille/inscriptions/enfants/:id  corriger sa fiche tant que le bureau ne l'a pas vérifiée
+Bureau : « Dossiers » (saison des inscriptions) → « Envoyé en ligne le … », « Fiche à vérifier »
+         → « Valider le dossier » (efface propose_par ; enregistrer la fiche aussi)
+```
+
+- **Qui** : responsable légal (mère, père, tuteur) de l'enfant, ou l'adhérent majeur lui-même
+  (comme les accords, spec 019). Un nouvel enfant doit être mineur ; doublon (même prénom, nom,
+  date de naissance) refusé ; 6 fiches en attente de vérification au plus par compte.
+- **Modifiable** : pas de dossier, ou dossier envoyé par la famille et pas encore validé. Un
+  dossier saisi par le bureau (`envoye_le` vide) ou validé se consulte seulement ; l'upsert porte
+  un `WHERE` qui protège un dossier validé entre-temps.
+- **Reprise d'une saison sur l'autre** (`saisieInitiale`, `formuleProposee`) : formule (l'an dernier
+  si ce n'est pas du judo, sinon d'après l'âge), passeport, paiement, adresse. **Consentements jamais
+  repris** (acte positif) : réponse de l'an dernier seulement rappelée ; le serveur exige oui ou non.
+- **Montant** : hors commune d'après le code postal saisi ; réduction famille si un frère ou une
+  sœur (même responsable) a un dossier de la saison **créé avant** (la 1ʳᵉ licence n'est jamais
+  réduite, même renvoyée ensuite).
+- **Formalité** : « attestation » → `attestation_qs_mineur` ou `attestation_qs_sport`, reçue le jour
+  même, `formalite_par` = ce responsable ; « certificat » → pièce à recevoir par le bureau (manque).
+- **Adresse** : seule partie de la fiche que la famille modifie (mise à jour de `adherents`).
+- **Accords** (`/api/famille/accords`) : saison courante **et** saison des inscriptions ; retirer
+  l'accord photo n'efface la photo que pour la saison courante.
+- Migration `0017_dossier_en_ligne.sql` : `adhesions.formalite_par`, `engagements_le/_par`,
+  `envoye_le/_par`, `adherents.propose_par`.
 
 ## Points de vigilance
 
@@ -106,7 +148,8 @@ par le bureau).
 
 ## Références
 
-- Fichiers source : `app/src/db/migrations/0002_comptes_adherents.sql`, `0004_adhesions.sql`,
+- Fichiers source : `app/src/db/migrations/0002_comptes_adherents.sql`, `0004_adhesions.sql`, `0017_dossier_en_ligne.sql`,
+  `app/src/worker/routes/inscriptions.ts`, `app/web/src/lib/inscriptions.ts`, `pages/espace/InscriptionsPage.tsx`, `DossierFamillePage.tsx`,
   `app/src/worker/droits.ts`, `app/src/worker/validation.ts`, `app/src/worker/routes/`,
   `app/web/src/content/adhesion.ts`, `app/web/src/pages/espace/`
 - Spec 010a : [`010a-dossier-saisie-bureau.md`](../../tasks/done/010a-dossier-saisie-bureau.md)

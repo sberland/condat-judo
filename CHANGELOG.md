@@ -6,6 +6,32 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+### Inscriptions en ligne : le dossier rempli par les familles
+
+#### Notes client
+
+Fini les formulaires papier : quand le bureau ouvre les inscriptions de la saison suivante, chaque
+famille remplit le dossier de ses enfants depuis son téléphone, en quelques étapes. Les
+coordonnées sont déjà connues du club et les choix de l'an dernier (formule, paiement, adresse)
+sont proposés : il suffit de vérifier. Le montant est calculé tout seul (hors commune, réduction
+famille). Pour un enfant, pas de certificat médical : le parent atteste que le questionnaire de
+santé est négatif, sans jamais transmettre ses réponses. Les autorisations (photos, WhatsApp,
+soins d'urgence, photo pour la garderie) sont redemandées chaque saison, sans rien cocher à la
+place des parents, et restent modifiables à tout moment. Un enfant nouveau au club peut être
+inscrit par ses parents : le bureau vérifie sa fiche. Le bureau retrouve les dossiers envoyés
+dans l'écran « Dossiers », sur la saison des inscriptions, et les valide. Ce dossier complète la
+ressaisie des formulaires papier par le bureau : le chantier « dossier d'adhésion » est terminé.
+
+#### Ajouts
+
+- Mon espace : « Inscriptions 2027/2028 » (quand le bureau les ouvre) — un dossier par adhérent,
+  en 7 étapes, modifiable jusqu'à la validation ; « Inscrire un autre enfant »
+- Dossiers (bureau) : choix de la saison (en cours / inscriptions), « Envoyé en ligne le … »,
+  « Fiche à vérifier » ; sur la fiche adhérent, le dossier de chaque saison
+- Mes enfants : autorisations de la saison en cours et de la saison des inscriptions
+- Saisons : « Inscriptions ouvertes » ouvre le dossier en ligne aux familles
+- Aide intégrée, page « Données personnelles », registre des traitements
+
 ### Connexion par Face ID ou empreinte
 
 #### Notes client

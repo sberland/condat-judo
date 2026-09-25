@@ -62,5 +62,32 @@ export async function saisonPourDate(c: Context<AppEnv>, date: string): Promise<
   return s;
 }
 
+/** Une saison par son identifiant, ou null. */
+async function saisonParId(c: Context<AppEnv>, id: string): Promise<Saison | null> {
+  const m = cache(c);
+  const deja = m.get(id);
+  if (deja) return deja;
+  const l = await c.env.DB.prepare(`SELECT ${COLONNES_SAISON} FROM saisons WHERE id = ?`).bind(id).first<LigneSaison>();
+  if (!l) return null;
+  const s = versSaison(l);
+  m.set(id, s);
+  return s;
+}
+
+/**
+ * Saison dont le bureau a ouvert les inscriptions en ligne (spec 010b) : la plus récente si
+ * plusieurs le sont ; null si aucune. En juin, c'est la saison suivante, préparée par copie.
+ */
+export async function saisonInscriptions(c: Context<AppEnv>): Promise<Saison | null> {
+  const l = await c.env.DB.prepare(`SELECT id FROM saisons WHERE inscriptions_ouvertes = 1 ORDER BY debut DESC LIMIT 1`).first<{ id: string }>();
+  return l ? saisonParId(c, l.id) : null;
+}
+
+/** Saison demandée par le bureau (`?saison=`, spec 010b) : une saison existante, sinon la courante. */
+export async function saisonDemandee(c: Context<AppEnv>): Promise<Saison> {
+  const id = c.req.query('saison');
+  return (id && (await saisonParId(c, id))) || saisonCourante(c);
+}
+
 /** Saison publique (vitrine) : libellé et référentiel, sans rien d'interne. */
 export const saisonPublique = (s: Saison) => ({ id: s.id, libelle: s.libelle, debut: s.debut, fin: s.fin, referentiel: s.referentiel });

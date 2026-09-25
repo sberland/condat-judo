@@ -16,7 +16,7 @@ import {
   type Recueil,
 } from '../../content/adhesion'
 import type { Tarifs } from '../../content/tarifs'
-import { useReferentiel } from '../../lib/saison'
+import { useSaisonCourante } from '../../lib/saison'
 import { appel, aUnRole, dateFr, ErreurApi, useMe, type Adhesion, type DossierAdhesion } from '../../lib/api'
 import { euros } from '../../lib/tarifs'
 import { Alerte, Bouton, Case, Champ, Selection } from '../formulaire'
@@ -52,19 +52,53 @@ export function StatutDossier({ etat }: { etat: EtatDossier | null }) {
   return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${COULEURS_STATUT[etat.statut]}`}>{LIBELLES_STATUT[etat.statut]}</span>
 }
 
+/**
+ * Saison des dossiers : la courante, ou celle des inscriptions en ligne quand le bureau les a
+ * ouvertes pour une autre saison (010b) — c'est alors elle qui est proposée d'abord.
+ */
+export function useSaisonDossiers() {
+  const { data: courante } = useSaisonCourante()
+  const inscriptions = courante?.inscriptions && courante.inscriptions.id !== courante.id ? courante.inscriptions : null
+  const [choix, setChoix] = useState<string | null>(null)
+  const saison = choix ?? inscriptions?.id ?? ''
+  const choixPossibles = courante && inscriptions ? [{ id: '', libelle: `${courante.libelle} (en cours)` }, { id: inscriptions.id, libelle: `${inscriptions.libelle} (inscriptions)` }] : []
+  return { saison, requete: saison ? `?saison=${saison}` : '', choixPossibles, choisir: setChoix }
+}
+
+export function ChoixSaison({ choix, valeur, onChange }: { choix: { id: string; libelle: string }[]; valeur: string; onChange: (id: string) => void }) {
+  if (choix.length < 2) return null
+  return (
+    <div className="flex flex-wrap gap-2" role="group" aria-label="Saison des dossiers">
+      {choix.map((c) => (
+        <button
+          key={c.id}
+          type="button"
+          aria-pressed={valeur === c.id}
+          onClick={() => onChange(c.id)}
+          className="rounded-full border bg-white px-4 py-2 text-sm font-semibold aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-white"
+        >
+          {c.libelle}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 export function BlocAdhesion({ adherentId }: { adherentId: number }) {
   const client = useQueryClient()
   const navigate = useNavigate()
-  const url = `/api/admin/adherents/${adherentId}/adhesion`
-  const cle = ['admin', 'adhesion', adherentId]
+  const { saison, requete, choixPossibles, choisir } = useSaisonDossiers()
+  const base = `/api/admin/adherents/${adherentId}/adhesion`
+  const url = `${base}${requete}`
+  const cle = ['admin', 'adhesion', adherentId, saison]
   const { data, isError } = useQuery({ queryKey: cle, queryFn: () => appel<DossierAdhesion>('GET', url) })
   const [edition, setEdition] = useState(false)
   const [enregistre, setEnregistre] = useState(false)
   const [confirmer, setConfirmer] = useState(false)
   const [message, setMessage] = useState('')
   const { data: me } = useMe()
-  // Grille de la saison courante (spec 003) : calcul affiché, formules proposées.
-  const tarifs = useReferentiel()?.tarifs
+  // Grille de la saison du dossier (spec 003) : calcul affiché, formules proposées.
+  const tarifs = data?.tarifs
 
   const mettreAJour = async (d: DossierAdhesion | null) => {
     if (d) client.setQueryData(cle, d)
@@ -74,11 +108,13 @@ export function BlocAdhesion({ adherentId }: { adherentId: number }) {
   if (isError) return <Alerte>Impossible de charger le dossier d’adhésion.</Alerte>
   if (!data || !tarifs) return null
   const titre = `Adhésion ${data.saison.libelle}`
+  const choixSaison = <ChoixSaison choix={choixPossibles} valeur={saison} onChange={choisir} />
 
   if (edition) {
     return (
       <Bloc titre={titre}>
         <FormulaireAdhesion
+          key={saison}
           dossier={data}
           tarifs={tarifs}
           annuler={() => setEdition(false)}
@@ -96,6 +132,7 @@ export function BlocAdhesion({ adherentId }: { adherentId: number }) {
   if (!a) {
     return (
       <Bloc titre={titre} action={<StatutDossier etat={null} />}>
+        <div className="mb-4">{choixSaison}</div>
         <p className="mb-4 text-muted-foreground">Pas encore de dossier pour cette saison.</p>
         <Bouton onClick={() => setEdition(true)}>Saisir le dossier</Bouton>
       </Bloc>
@@ -105,6 +142,13 @@ export function BlocAdhesion({ adherentId }: { adherentId: number }) {
   return (
     <Bloc titre={titre} action={<StatutDossier etat={data.etat} />}>
       <div id="adhesion" className="grid gap-4">
+        {choixSaison}
+        {a.envoye_le && (
+          <p className="rounded-xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900">
+            Dossier rempli en ligne par la famille, envoyé le {dateFr(a.envoye_le.slice(0, 10))}.
+            {data.contexte.aVerifier && ' Nouvel adhérent ajouté par sa famille : vérifiez sa fiche ; valider le dossier vaut vérification.'}
+          </p>
+        )}
         {enregistre && (
           <div className="flex flex-col gap-3 rounded-xl bg-emerald-50 p-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="flex items-center gap-2 font-semibold text-emerald-800">
@@ -132,7 +176,7 @@ export function BlocAdhesion({ adherentId }: { adherentId: number }) {
               onClick={async () => {
                 setMessage('')
                 try {
-                  await mettreAJour(await appel<DossierAdhesion>('POST', `${url}/valider`))
+                  await mettreAJour(await appel<DossierAdhesion>('POST', `${base}/valider${requete}`))
                 } catch (err) {
                   setMessage(err instanceof ErreurApi ? err.message : 'Validation impossible.')
                 }

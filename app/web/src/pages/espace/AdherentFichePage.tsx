@@ -47,6 +47,12 @@ export function AdherentFichePage() {
         if (isError) return <Alerte>Adhérent introuvable.</Alerte>
         return (
           <div className="grid gap-6">
+            {data.adherent.propose_par && (
+              <p className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                Fiche ajoutée en ligne par {data.adherent.propose_par} : vérifiez-la (identité, doublon éventuel). Elle est considérée comme
+                vérifiée dès que vous l’enregistrez ou validez son dossier d’adhésion.
+              </p>
+            )}
             <Identite fiche={data} rafraichir={rafraichir} />
             <Responsables fiche={data} rafraichir={rafraichir} />
             {!data.adherent.supprime_le && <BlocAdhesion adherentId={data.adherent.id} />}
