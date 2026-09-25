@@ -33,8 +33,13 @@ describe('aide intégrée — filtrage par profil', () => {
   })
 
   it('la personne qui gère le contenu voit l’aide famille et celle du contenu du site', () => {
-    expect(ids(['contenu'])).toEqual([...ids([]), 'contenu'])
+    expect(ids(['contenu'])).toEqual([...ids([]), 'actualites', 'contenu'])
     expect(ids(['bureau'])).not.toContain('contenu')
+  })
+
+  it('les actualités : bureau et gestion du site, pas le trésorier', () => {
+    expect(ids(['bureau'])).toContain('actualites')
+    expect(ids(['tresorier'])).not.toContain('actualites')
   })
 
   it('rubriques et questions : identifiants uniques, contenu non vide', () => {

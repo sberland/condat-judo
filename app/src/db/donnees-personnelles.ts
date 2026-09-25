@@ -164,6 +164,16 @@ export const TABLES: Record<string, Table> = {
   contenus_versions: {
     colonnes: { id: 'conservee', cle: 'conservee', valeur: 'conservee', statut: 'conservee', modifie_le: 'conservee', modifie_par: 'conservee' },
   },
+  // Actualités (013) : contenu public du club ; auteur ; photo publiée avec l'accord droit à l'image.
+  actualites: {
+    colonnes: Object.fromEntries(
+      ['id', 'titre', 'texte', 'visibilite', 'statut', 'publiee_le', 'auteur', 'created_at', 'updated_at'].map((c) => [c, 'conservee' as const]),
+    ),
+  },
+  actualites_images: {
+    colonnes: { actualite_id: 'conservee', type: 'conservee', accord: 'conservee', deposee_par: 'conservee', deposee_le: 'conservee' },
+  },
+  actualites_images_morceaux: { colonnes: { actualite_id: 'conservee', rang: 'conservee', donnees: 'conservee' } },
   // Photos d'identification de la garderie (012b) : visages d'enfants — jamais dans la qualif.
   photos_adherents: { colonnes: { adherent_id: 'purgee', image: 'purgee', type: 'purgee', deposee_le: 'purgee', deposee_par: 'purgee' } },
   // Journal des accès (019) : qui a consulté quelle famille en prod — vidé dans la qualif.

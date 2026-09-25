@@ -84,6 +84,13 @@ concernés à la prochaine purge et à la rentrée suivante, historique, et jour
 et modifications des coordonnées des familles. Comptes → Modifier → « Exporter ses données » pour
 répondre à une demande écrite.
 
+**Pour le bureau et la personne qui gère le site — Actualités** : Mon espace → « Actualités » →
+« Nouvelle actualité » : titre, texte, publique ou réservée aux familles, brouillon ou publiée ;
+une photo (après avoir confirmé l'accord droit à l'image des enfants reconnaissables) ;
+« Envoyer sur WhatsApp » pour relayer le lien. Les trois dernières actualités et les trois
+prochains événements apparaissent sur l'accueil. Page « Événements » → « S'abonner au calendrier »
+pour retrouver les événements du club dans son agenda.
+
 **Pour la personne qui gère le site — Contenu du site** (rôle « gestion du site » ou
 administrateur) : Mon espace → « Contenu du site » : coordonnées du club, dojo et période des
 cours, identité de l'association, équipe, disciplines, partenaires, règlement intérieur, liens

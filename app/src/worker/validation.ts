@@ -14,6 +14,7 @@ import { categorieParId, type Categorie } from '../../web/src/content/categories
 import type { Tarifs } from '../../web/src/content/tarifs';
 import { MODES_ENCAISSEMENT, type ModeEncaissement } from '../../web/src/content/paiements';
 import { TAILLE_MAX_PHOTO, TYPES_PHOTO, type TypePhoto } from '../../web/src/content/photos';
+import { MAX_TEXTE_ACTUALITE, MAX_TITRE_ACTUALITE, VISIBILITES, type StatutActualite, type Visibilite } from '../../web/src/content/actualites';
 import { MODES_INSCRIPTION, TYPES_EVENEMENT, type ModeInscription, type TypeEvenement } from '../../web/src/content/evenements';
 
 export type Resultat<T> = { ok: true; valeur: T } | { ok: false; erreurs: Record<string, string> };
@@ -336,14 +337,14 @@ export function validerPaiement(corps: Corps): Resultat<PaiementSaisi> {
 export type PhotoSaisie = { image: string; type: TypePhoto };
 
 /** Photo déjà réduite par le navigateur, en base64 : format, poids et signature du fichier contrôlés. */
-export function validerPhoto(corps: Corps): Resultat<PhotoSaisie> {
+export function validerPhoto(corps: Corps, tailleMax = TAILLE_MAX_PHOTO): Resultat<PhotoSaisie> {
   const refus = (message: string): Resultat<PhotoSaisie> => ({ ok: false, erreurs: { image: message } });
   const type = corps.type;
   if (typeof type !== 'string' || !(TYPES_PHOTO as readonly string[]).includes(type)) return refus('Format de photo non pris en charge (JPEG ou WebP)');
   const image = typeof corps.image === 'string' ? corps.image.replace(/\s/g, '') : '';
   if (!image || image.length % 4 !== 0 || !/^[A-Za-z0-9+/]+={0,2}$/.test(image)) return refus('Photo illisible');
   const octets = (image.length / 4) * 3 - (image.endsWith('==') ? 2 : image.endsWith('=') ? 1 : 0);
-  if (octets > TAILLE_MAX_PHOTO) return refus(`Photo trop lourde (${Math.round(TAILLE_MAX_PHOTO / 1024)} Ko au plus)`);
+  if (octets > tailleMax) return refus(`Photo trop lourde (${Math.round(tailleMax / 1024)} Ko au plus)`);
   // Signature : JPEG (FF D8 FF) ou WebP (« RIFF » … « WEBP »).
   const debut = atob(image.slice(0, 16));
   const signature =
@@ -352,4 +353,30 @@ export function validerPhoto(corps: Corps): Resultat<PhotoSaisie> {
       : debut.startsWith('RIFF') && debut.slice(8, 12) === 'WEBP';
   if (!signature) return refus('Le fichier n’est pas une photo');
   return { ok: true, valeur: { image, type: type as TypePhoto } };
+}
+
+// --- Actualités (spec 013) ---
+
+export type ActualiteSaisie = { titre: string; texte: string; visibilite: Visibilite; statut: StatutActualite };
+
+export function validerActualite(corps: Corps): Resultat<ActualiteSaisie> {
+  const c = new Collecteur();
+  const titre = c.requis(corps, 'titre', 'Titre', MAX_TITRE_ACTUALITE);
+  // Texte long : paragraphes séparés par une ligne vide, espaces de fin retirés.
+  const texte =
+    typeof corps.texte === 'string'
+      ? corps.texte
+          .split(/\r?\n/)
+          .map((l) => l.trimEnd())
+          .join('\n')
+          .replace(/\n{3,}/g, '\n\n')
+          .trim()
+      : '';
+  if (!texte) c.erreurs.texte = 'Texte obligatoire';
+  else if (texte.length > MAX_TEXTE_ACTUALITE) c.erreurs.texte = `Texte : ${MAX_TEXTE_ACTUALITE} caractères maximum`;
+  const visibilite = corps.visibilite ?? 'public';
+  if (typeof visibilite !== 'string' || !Object.hasOwn(VISIBILITES, visibilite)) c.erreurs.visibilite = 'Visibilité inconnue';
+  const statut = corps.statut ?? 'brouillon';
+  if (statut !== 'brouillon' && statut !== 'publiee') c.erreurs.statut = 'Statut inconnu';
+  return c.resultat({ titre, texte, visibilite: visibilite as Visibilite, statut: statut as StatutActualite });
 }

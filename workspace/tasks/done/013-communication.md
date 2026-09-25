@@ -17,14 +17,26 @@ nouvelles), WhatsApp et Facebook servant à relayer des liens.
 
 ## Critères d'acceptation
 
-- [ ] Le bureau publie une actualité depuis son téléphone en moins de 2 minutes
-- [ ] Les familles voient les prochains événements sur l'accueil
-- [ ] Une actualité « familles » n'est pas visible sans connexion
-- [ ] Un parent peut ajouter le calendrier du club à son agenda de téléphone
+- [x] Le bureau publie une actualité depuis son téléphone en moins de 2 minutes
+- [x] Les familles voient les prochains événements sur l'accueil
+- [x] Une actualité « familles » n'est pas visible sans connexion
+- [x] Un parent peut ajouter le calendrier du club à son agenda de téléphone
 
 ## Hors périmètre
 
 - Notifications push (proposition PWA), newsletter par e-mail
+
+## Revue (2026-09-25) — décisions
+
+1. **Calendrier** = les événements (spec 021) ; abonnement agenda public (iCal, adresse unique),
+   sans donnée personnelle ; événements annulés marqués comme tels.
+2. **Publication** : rôles bureau, gestion du site (`contenu`) et admin.
+3. **Photo** : une par actualité, réduite dans le navigateur, stockée en base ; avant de publier,
+   case obligatoire « les enfants reconnaissables ont l’accord droit à l’image ».
+4. Tranché sans question : actualité *publique* ou *réservée aux familles* (tout compte
+   connecté) ; brouillon ou publiée ; accueil : trois dernières actualités et trois prochains
+   événements ; page « Actualités » reliée depuis l’accueil (le menu reste celui décidé en 020) ;
+   partage WhatsApp comme pour les événements.
 
 ## Notes
 

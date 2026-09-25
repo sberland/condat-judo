@@ -4,7 +4,7 @@
 import type { Role } from '../lib/api'
 
 /** Profil minimal pour voir une rubrique : famille = tout compte connecté. */
-export type ProfilAide = 'famille' | 'encadrant' | 'bureau' | 'tresorier' | 'contenu' | 'admin'
+export type ProfilAide = 'famille' | 'encadrant' | 'bureau' | 'publication' | 'tresorier' | 'contenu' | 'admin'
 
 export type IdRubrique =
   | 'connexion'
@@ -19,6 +19,7 @@ export type IdRubrique =
   | 'garderie-jour'
   | 'tresorerie'
   | 'contenu'
+  | 'actualites'
   | 'adherents'
   | 'adhesions'
   | 'responsables'
@@ -38,12 +39,13 @@ export type RubriqueAide = {
 const ROLES_DU_PROFIL: Record<Exclude<ProfilAide, 'famille'>, Role[]> = {
   encadrant: ['encadrant', 'bureau', 'admin'],
   bureau: ['bureau', 'admin'],
+  publication: ['bureau', 'contenu', 'admin'],
   tresorier: ['tresorier', 'admin'],
   contenu: ['contenu', 'admin'],
   admin: ['admin'],
 }
 
-export const LIBELLES_PROFIL: Record<ProfilAide, string> = { famille: 'Tous', encadrant: 'Encadrant', bureau: 'Bureau', tresorier: 'Trésorier', contenu: 'Contenu du site', admin: 'Administrateur' }
+export const LIBELLES_PROFIL: Record<ProfilAide, string> = { famille: 'Tous', encadrant: 'Encadrant', bureau: 'Bureau', publication: 'Bureau, site', tresorier: 'Trésorier', contenu: 'Contenu du site', admin: 'Administrateur' }
 
 export const RUBRIQUES_AIDE: RubriqueAide[] = [
   // --- Famille : tout compte connecté ---
@@ -162,6 +164,12 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
         r: [
           'Sur la page de l’événement, bloc « Ma famille » : indiquez le nombre d’adultes et d’enfants avec « + » et « − », puis « Inscrire ma famille ».',
           'Jusqu’à la date limite, vous pouvez changer le nombre (« Mettre à jour ») ou « Annuler l’inscription ».',
+        ],
+      },
+      {
+        q: 'Ajouter le calendrier du club à mon agenda',
+        r: [
+          'Page « Événements » → « S’abonner au calendrier » : sur iPhone ou Mac, « Calendrier (iPhone, Mac, Outlook) » ; sur Android, « Google Agenda ». Les événements du club apparaissent alors dans votre agenda et se mettent à jour tout seuls.',
         ],
       },
       {
@@ -624,6 +632,36 @@ export const RUBRIQUES_AIDE: RubriqueAide[] = [
       {
         q: 'Une erreur de saisie',
         r: ['Sur la fiche de la famille, « Supprimer » le paiement, puis enregistrez-le à nouveau. Un dossier d’adhésion qui porte des paiements ne peut plus être supprimé.'],
+      },
+    ],
+  },
+
+  // --- Actualités : bureau et gestion du site ---
+  {
+    id: 'actualites',
+    titre: 'Actualités',
+    profil: 'publication',
+    questions: [
+      {
+        q: 'Publier une actualité',
+        r: [
+          'Mon espace → « Actualités » → « Nouvelle actualité » : titre et texte (une ligne vide entre deux paragraphes), puis « Créer l’actualité ». Elle reste en brouillon tant que vous ne la passez pas « Publiée ».',
+          '« Publique » : visible de tous ; « Réservée aux familles » : seulement des comptes connectés.',
+          'Publiée, elle apparaît sur l’accueil (les trois dernières) et sur la page « Actualités ».',
+        ],
+      },
+      {
+        q: 'Ajouter une photo',
+        r: [
+          'Sur l’actualité, bloc « Photo » : cochez d’abord que les enfants reconnaissables ont l’accord droit à l’image (voir leurs dossiers), puis « Ajouter une photo ». Elle est réduite sur votre téléphone avant l’envoi.',
+          'En cas de doute, choisissez une photo où les enfants ne sont pas reconnaissables (de dos, de loin).',
+        ],
+      },
+      {
+        q: 'Partager, retirer',
+        r: [
+          '« Envoyer sur WhatsApp » prépare le message avec le lien. Pour retirer une actualité du site sans la perdre, repassez-la en brouillon ; « Supprimer » l’efface.',
+        ],
       },
     ],
   },
