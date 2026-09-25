@@ -16,6 +16,9 @@
 
 DELETE FROM sessions;
 DELETE FROM liens_connexion;
+-- Passkeys (spec 005c) : liées à l'adresse de la prod, sans objet ici ; défis en cours.
+DELETE FROM passkeys;
+DELETE FROM defis_passkey;
 DELETE FROM journal_acces;
 DELETE FROM photos_adherents;  -- visages d'enfants (spec 012b) : les testeurs déposent des photos fictives
 

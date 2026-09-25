@@ -174,6 +174,11 @@ export const TABLES: Record<string, Table> = {
     colonnes: { actualite_id: 'conservee', type: 'conservee', accord: 'conservee', deposee_par: 'conservee', deposee_le: 'conservee' },
   },
   actualites_images_morceaux: { colonnes: { actualite_id: 'conservee', rang: 'conservee', donnees: 'conservee' } },
+  // Passkeys (005c) : liées à l'adresse de la prod, vidées dans la qualif (comme les sessions).
+  passkeys: {
+    colonnes: { id: 'purgee', user_id: 'purgee', cle_publique: 'purgee', compteur: 'purgee', transports: 'purgee', appareil: 'purgee', created_at: 'purgee', derniere_utilisation: 'purgee' },
+  },
+  defis_passkey: { colonnes: { defi: 'purgee', type: 'purgee', user_id: 'purgee', expire_le: 'purgee' } },
   // Photos d'identification de la garderie (012b) : visages d'enfants — jamais dans la qualif.
   photos_adherents: { colonnes: { adherent_id: 'purgee', image: 'purgee', type: 'purgee', deposee_le: 'purgee', deposee_par: 'purgee' } },
   // Journal des accès (019) : qui a consulté quelle famille en prod — vidé dans la qualif.

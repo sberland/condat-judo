@@ -158,6 +158,8 @@ export type Compte = {
   enfants: number
   /** Sessions ouvertes (appareils connectés). */
   sessions: number
+  /** Passkeys enregistrées (Face ID, empreinte — spec 005c). */
+  passkeys: number
 }
 
 export type Enfant = {

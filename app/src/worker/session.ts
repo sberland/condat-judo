@@ -96,9 +96,14 @@ const annulerLiens = (env: Env, userId: number) =>
     "UPDATE liens_connexion SET annule_le = datetime('now') WHERE user_id = ? AND utilise_le IS NULL AND annule_le IS NULL",
   ).bind(userId);
 
-/** Coupe tous les accès d'un compte (sessions fermées, liens en attente annulés) — à placer dans un batch. */
+/** Coupe tous les accès d'un compte (sessions fermées, liens en attente annulés, passkeys
+ * retirées — spec 005c : un téléphone perdu ne doit plus pouvoir se reconnecter) — à placer dans un batch. */
 export function couperAcces(env: Env, userId: number): D1PreparedStatement[] {
-  return [env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(userId), annulerLiens(env, userId)];
+  return [
+    env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(userId),
+    annulerLiens(env, userId),
+    env.DB.prepare('DELETE FROM passkeys WHERE user_id = ?').bind(userId),
+  ];
 }
 
 // --- Liens de connexion ---

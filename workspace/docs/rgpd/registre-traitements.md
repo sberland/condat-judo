@@ -87,8 +87,8 @@
 | --- | --- |
 | Finalités | Accès des familles aux informations de leurs enfants ; gestion du club par le bureau |
 | Base légale | Nécessaire au service demandé (art. 6.1.b) |
-| Données | Compte : identité, e-mail, téléphone, rôles ; connexion : empreinte du jeton de session, dates |
-| Durée | Session : 6 mois après la dernière visite ; lien de connexion : 7 jours ; compte : comme l'adhérent |
+| Données | Compte : identité, e-mail, téléphone, rôles ; connexion : empreinte du jeton de session, dates ; passkey facultative (spec 005c) : clé **publique**, compteur, libellé de l'appareil, dates — aucune donnée biométrique (elle reste dans le téléphone) |
+| Durée | Session : 6 mois après la dernière visite ; lien de connexion : 7 jours ; passkey : jusqu'à son retrait (la personne, le bureau) ou la suppression du compte ; compte : comme l'adhérent |
 | Cookies | Un seul cookie de session, strictement nécessaire (pas de bandeau de consentement) |
 
 ## 4. Sauvegardes
@@ -116,7 +116,8 @@
 - Accès au strict nécessaire par rôle (bureau, trésorier, encadrant…), contrôlé par l'API ; un
   responsable ne voit que les enfants auxquels il est lié.
 - Connexion sans mot de passe (lien personnel à usage unique, session `HttpOnly`) ; jetons stockés
-  sous forme d'empreinte seulement.
+  sous forme d'empreinte seulement. Passkey facultative (WebAuthn) : seule la clé publique est en
+  base, liée à l'adresse du site ; défis à usage unique (5 minutes).
 - Hébergement des données dans l'UE ; sauvegardes chiffrées hors de l'hébergeur.
 - Site de qualification : copie **anonymisée** (spec 008), verrou d'accès Cloudflare Access.
 - **Journal des accès sensibles** : chaque consultation ou modification des coordonnées d'une famille
@@ -140,3 +141,4 @@
 | 2026-09-24 | Garderie : pointage de l'encadrant, suivi par les parents (spec 012c) |
 | 2026-09-24 | Site public : contenu administré par le club, historique des modifications (spec 014) |
 | 2026-09-25 | Site public : actualités avec photo (accord droit à l'image), abonnement agenda aux événements (spec 013) |
+| 2026-09-25 | Espace membres : connexion facultative par passkey (Face ID / empreinte), clé publique seulement (spec 005c) |

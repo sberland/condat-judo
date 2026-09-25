@@ -31,6 +31,7 @@ export const texteConservation = (saisons: number) => `${saisons} saison${saison
 export const DUREES_TECHNIQUES = [
   { quoi: 'Session de connexion (cookie)', duree: '6 mois après la dernière visite' },
   { quoi: 'Lien de connexion', duree: '7 jours, une seule utilisation' },
+  { quoi: 'Connexion par Face ID / empreinte (clé publique)', duree: 'jusqu’à son retrait par vous ou par le bureau, ou la suppression du compte' },
   { quoi: 'Sauvegardes chiffrées de la base', duree: '1 an au plus (30 quotidiennes, puis une par mois)' },
   { quoi: 'Consentements (droit à l’image, WhatsApp, photo pour la garderie)', duree: 'jusqu’à leur retrait, et au plus la durée de conservation de l’adhérent' },
   { quoi: 'Journal des consultations et modifications des coordonnées des familles', duree: '1 an' },
@@ -91,7 +92,11 @@ export const TRAITEMENTS: Traitement[] = [
   },
   {
     titre: 'Espace membres',
-    donnees: ['Compte : nom, e-mail, téléphone, rôle au club', 'Connexion : cookie de session, date de dernière visite'],
+    donnees: [
+      'Compte : nom, e-mail, téléphone, rôle au club',
+      'Connexion : cookie de session, date de dernière visite',
+      'Si vous l’activez, connexion par Face ID / empreinte : une clé publique et le nom de l’appareil (votre visage ou votre empreinte restent dans le téléphone)',
+    ],
     finalite: 'Vous permettre de consulter les informations de vos enfants et, au bureau, de gérer le club.',
     base: 'Nécessaire au service que vous demandez en vous connectant.',
   },

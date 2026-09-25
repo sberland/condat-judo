@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Baby, CalendarCheck, CalendarDays, Megaphone, CalendarRange, FilePenLine, ChevronRight, CircleHelp, ClipboardList, Contact, LogOut, ShieldCheck, Users, UsersRound, Wallet } from 'lucide-react'
 import { useSaisonCourante } from '../../lib/saison'
 import { Espace } from '../../components/espace/Garde'
+import { PropositionPasskey } from '../../components/espace/Passkeys'
 import { Bouton } from '../../components/formulaire'
 import { aUnRole, ROLES, seDeconnecter } from '../../lib/api'
 
@@ -21,6 +22,7 @@ export function EspaceAccueilPage() {
               <span className="text-muted-foreground"> · {me.roles.map((r) => ROLES[r]?.libelle ?? r).join(', ')}</span>
             )}
           </p>
+          <PropositionPasskey />
           <div className="grid gap-4 sm:grid-cols-2">
             <Tuile to="/espace/famille" icone={<UsersRound className="size-6" />} titre="Mes enfants">
               Leurs fiches, leurs responsables et les personnes autorisées à les récupérer.

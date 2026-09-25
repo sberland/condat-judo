@@ -228,6 +228,7 @@ function Connexion({ compte, me, rafraichir }: { compte: Compte; me: Me; rafraic
   // Même règle que l'API : un lien connecte à la place de la personne → admin seul pour un compte qui a un rôle.
   const peutCreerLien = aUnRole(me, 'admin') || compte.roles.length === 0
   const n = compte.sessions
+  const p = compte.passkeys
 
   return (
     <div className="grid gap-3">
@@ -237,10 +238,12 @@ function Connexion({ compte, me, rafraichir }: { compte: Compte; me: Me; rafraic
       ) : (
         <p className="text-sm text-muted-foreground">Seul un administrateur peut créer un lien pour un compte du bureau.</p>
       )}
-      {n > 0 && (
+      {(n > 0 || p > 0) && (
         <div className="grid gap-2">
           <p className="text-sm text-muted-foreground">
-            Connecté·e sur {n} appareil{n > 1 ? 's' : ''}. Téléphone perdu ou changé ? Coupez l’accès :
+            {n > 0 ? `Connecté·e sur ${n} appareil${n > 1 ? 's' : ''}` : 'Aucune session ouverte'}
+            {p > 0 && ` · ${p} passkey${p > 1 ? 's' : ''} (Face ID, empreinte)`}. Téléphone perdu ou changé ? Coupez
+            l’accès :
           </p>
           <Bouton
             variante="danger"

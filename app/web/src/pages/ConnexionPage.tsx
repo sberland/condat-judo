@@ -1,11 +1,13 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { KeyRound, LoaderCircle, TriangleAlert } from 'lucide-react'
+import { Fingerprint, KeyRound, LoaderCircle, TriangleAlert } from 'lucide-react'
+import { browserSupportsWebAuthn } from '@simplewebauthn/browser'
 import { Container } from '../components/ui'
 import { Alerte, Bouton } from '../components/formulaire'
 import { appel, changerUtilisateur, ErreurApi, useMe } from '../lib/api'
 import { usePageMeta } from '../lib/usePageMeta'
+import { annule, choixPasskey, nomDeverrouillage, seConnecterParPasskey } from '../lib/passkey'
 
 // Jeton du lien de connexion : dans le fragment de l'URL (/connexion#…), jamais envoyé au serveur
 // par un aperçu de lien ; lu une seule fois à l'ouverture de la page.
@@ -145,8 +147,11 @@ function CommentSeConnecter() {
       </Carte>
     )
   }
+  // Passkey activée sur ce téléphone : c'est le moyen proposé en premier.
+  const activee = choixPasskey() === 'activee'
   return (
     <Carte titre="Espace membres" icone={<KeyRound className="size-7" />}>
+      {activee && <ConnexionPasskey principale />}
       <p>
         Pour vous connecter, touchez le <strong className="text-foreground">lien personnel</strong> que le bureau du club vous a envoyé
         (WhatsApp ou SMS), depuis votre téléphone. Vous restez ensuite connecté·e pendant 6 mois.
@@ -158,6 +163,47 @@ function CommentSeConnecter() {
         </Link>
         ).
       </p>
+      {!activee && <ConnexionPasskey />}
     </Carte>
+  )
+}
+
+/** Connexion par Face ID / empreinte (spec 005c), si elle a été activée sur ce téléphone. */
+function ConnexionPasskey({ principale = false }: { principale?: boolean }) {
+  const client = useQueryClient()
+  const navigate = useNavigate()
+  const [erreur, setErreur] = useState('')
+  const [info, setInfo] = useState('')
+  const [enCours, setEnCours] = useState(false)
+  if (!browserSupportsWebAuthn()) return null
+
+  async function seConnecter() {
+    setEnCours(true)
+    setErreur('')
+    setInfo('')
+    try {
+      await seConnecterParPasskey()
+      await changerUtilisateur(client)
+      navigate({ to: '/espace' })
+    } catch (err) {
+      // Fenêtre fermée, ou aucune passkey du club sur ce téléphone : le navigateur ne dit pas lequel.
+      if (annule(err)) setInfo('Pas de connexion. Rien ne vous est proposé ? Utilisez votre lien personnel.')
+      else setErreur(err instanceof ErreurApi ? err.message : 'Connexion impossible, réessayez ou utilisez votre lien.')
+      setEnCours(false)
+    }
+  }
+
+  return (
+    <div className={`grid gap-3 ${principale ? '' : 'border-t pt-4'}`}>
+      {!principale && <p className="text-sm">Vous avez activé la connexion sans lien sur ce téléphone ?</p>}
+      <Bouton variante={principale ? 'primaire' : 'secondaire'} enCours={enCours} onClick={seConnecter}>
+        <Fingerprint className="size-5" aria-hidden /> Se connecter avec {nomDeverrouillage()}
+      </Bouton>
+      <Alerte>{erreur}</Alerte>
+      {info && <p className="text-sm">{info}</p>}
+      {principale && (
+        <p className="flex items-center gap-3 text-sm before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">ou</p>
+      )}
+    </div>
   )
 }

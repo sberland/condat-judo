@@ -6,6 +6,26 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.21.0] — 2026-09-25
+
+### Connexion par Face ID ou empreinte
+
+#### Notes client
+
+Après une première connexion par lien, le site propose d'activer Face ID (ou l'empreinte) sur le
+téléphone. Ensuite, un simple déverrouillage suffit pour ouvrir son espace : plus besoin de
+redemander un lien au bureau. C'est facultatif : « Non merci », et le site ne le redemande plus sur
+ce téléphone. Le visage ou l'empreinte ne quittent jamais le téléphone. Téléphone perdu : on retire
+sa connexion depuis « Mes enfants », ou le bureau coupe tous les accès du compte en un geste.
+
+#### Ajouts
+
+- Page Connexion : « Se connecter avec Face ID » (ou l'empreinte)
+- Mon espace : proposition « Activer Face ID », refus mémorisé sur l'appareil
+- Mes enfants : « Connexion par Face ID / empreinte » (appareils, activer, retirer)
+- Comptes (bureau) : nombre de passkeys ; « Déconnecter tous ses appareils » les retire aussi
+- Aide intégrée, page « Données personnelles », registre des traitements
+
 ## [0.20.0] — 2026-09-25
 
 ### Actualités du club et abonnement agenda

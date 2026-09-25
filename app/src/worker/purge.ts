@@ -46,6 +46,7 @@ export function instructionsDurees(maintenant: string): Instruction[] {
     lot("DELETE FROM inscriptions_famille WHERE competition_id IN (SELECT id FROM competitions WHERE date < date(?1, '-1 year'))"),
     lot('DELETE FROM sessions WHERE expire_le < ?1'),
     lot('DELETE FROM liens_connexion WHERE expire_le < ?1'),
+    lot('DELETE FROM defis_passkey WHERE expire_le < ?1'),
   ];
 }
 
@@ -87,6 +88,7 @@ export function instructionsPurge(maintenant: string, seuil: number): Instructio
       WHERE anonymise_le = ?1`),
     lot('DELETE FROM identites WHERE user_id IN (SELECT id FROM users WHERE anonymise_le = ?1)'),
     lot('DELETE FROM sessions WHERE user_id IN (SELECT id FROM users WHERE anonymise_le = ?1)'),
+    lot('DELETE FROM passkeys WHERE user_id IN (SELECT id FROM users WHERE anonymise_le = ?1)'),
     lot('DELETE FROM inscriptions_famille WHERE user_id IN (SELECT id FROM users WHERE anonymise_le = ?1)'),
     lot('DELETE FROM liens_connexion WHERE user_id IN (SELECT id FROM users WHERE anonymise_le = ?1)'),
     lot(`UPDATE users SET prenom = 'Ancien', nom = printf('responsable n° %d', id), email = NULL, telephone = NULL,

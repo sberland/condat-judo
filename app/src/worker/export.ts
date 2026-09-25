@@ -13,7 +13,7 @@ export async function donneesDuCompte(env: Env, userId: number): Promise<Ligne |
     .first<Ligne>();
   if (!compte) return null;
 
-  const [roles, identites, sessions, adherents, evenements] = await env.DB.batch([
+  const [roles, identites, sessions, adherents, evenements, passkeys] = await env.DB.batch([
     env.DB.prepare('SELECT role FROM user_roles WHERE user_id = ?').bind(userId),
     env.DB.prepare('SELECT provider, created_at, last_seen FROM identites WHERE user_id = ?').bind(userId),
     env.DB.prepare('SELECT created_at, expire_le FROM sessions WHERE user_id = ?').bind(userId),
@@ -27,6 +27,7 @@ export async function donneesDuCompte(env: Env, userId: number): Promise<Ligne |
       `SELECT co.nom, co.date, f.adultes, f.enfants, f.inscrit_le FROM inscriptions_famille f JOIN competitions co ON co.id = f.competition_id
        WHERE f.user_id = ? ORDER BY co.date`,
     ).bind(userId),
+    env.DB.prepare('SELECT appareil, created_at, derniere_utilisation FROM passkeys WHERE user_id = ?').bind(userId),
   ]);
 
   const enfants: Ligne[] = [];
@@ -81,6 +82,7 @@ export async function donneesDuCompte(env: Env, userId: number): Promise<Ligne |
       roles: ((roles?.results ?? []) as { role: string }[]).map((r) => r.role),
       connexions: identites?.results ?? [],
       sessions_ouvertes: sessions?.results ?? [],
+      passkeys: passkeys?.results ?? [],
       inscriptions_famille_evenements: evenements?.results ?? [],
     },
     adherents: enfants,
