@@ -16,9 +16,9 @@ Retours du club (2026-09-25) : la grille regroupe « Taïso et yoga », ce qui l
 
 ## Critères d'acceptation
 
-- [ ] La page « Horaires & tarifs » présente trois groupes : Judo, Taïso, Yoga
-- [ ] Chaque article du règlement a son icône ; un nouvel article en reçoit une (d'après son titre, ou choisie)
-- [ ] Utilisable à 360 px
+- [x] La page « Horaires & tarifs » présente trois groupes : Judo, Taïso, Yoga
+- [x] Chaque article du règlement a son icône ; un nouvel article en reçoit une (d'après son titre, ou choisie)
+- [x] Utilisable à 360 px
 
 ## Notes
 

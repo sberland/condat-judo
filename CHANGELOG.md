@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.20.0] — 2026-09-25
+
 ### Actualités du club et abonnement agenda
 
 #### Notes client
@@ -26,6 +28,8 @@ jour tout seul.
 - Espace « Actualités » (bureau, gestion du site) : rédiger, publier, photo, partager, supprimer
 - Page « Événements » : « S'abonner au calendrier » (iPhone, Mac, Outlook, Google Agenda)
 - Aide intégrée ; registre des traitements
+
+## [0.19.0] — 2026-09-25
 
 ### Tarifs du yoga séparés, icônes du règlement
 
