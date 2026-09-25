@@ -4,6 +4,17 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.24.0 — 25 septembre 2026
+
+Pour présenter le site au club et s'entraîner avant une démonstration, le site de test
+(qualification) peut être rempli en une commande avec des données entièrement fictives : une
+famille avec son enfant et sa photo (une illustration dessinée), des dossiers et des paiements
+dans tous les états, des événements, une garderie du mercredi en cours de pointage et des
+actualités. Deux comptes de démonstration — un administrateur et un parent — permettent de
+montrer le site sous chaque angle, en même temps que la vue publique.
+
+---
+
 ## v0.23.0 — 25 septembre 2026
 
 Avec les nouvelles fonctionnalités, l'accueil de l'espace membres devenait une longue suite de

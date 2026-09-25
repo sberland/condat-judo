@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.24.0] — 2026-09-25
+
 ### Données de démonstration en qualification
 
 #### Notes client
