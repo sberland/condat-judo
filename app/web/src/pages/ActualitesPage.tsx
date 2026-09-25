@@ -29,12 +29,16 @@ export function ActualitesPage() {
           </Link>
         )}
         {me?.etat === 'anonyme' && (
-          <p className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Lock className="size-4 shrink-0" aria-hidden /> Certaines actualités sont réservées aux familles :{' '}
-            <Link to="/connexion" className="font-semibold text-brand">
-              connectez-vous
-            </Link>
-            .
+          <p className="flex items-start gap-2 text-sm text-muted-foreground">
+            <Lock className="mt-0.5 size-4 shrink-0" aria-hidden />
+            {/* Texte dans un seul élément : il revient à la ligne normalement à 360 px. */}
+            <span>
+              Certaines actualités sont réservées aux familles :{' '}
+              <Link to="/connexion" className="font-semibold text-brand">
+                connectez-vous
+              </Link>
+              .
+            </span>
           </p>
         )}
         {isPending && <p className="text-muted-foreground">Chargement…</p>}

@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <!-- Illustration fictive (données de démo, spec 024) : le salut sur le tatami, jour de rentrée. -->
+  <defs>
+    <!-- Judoka debout, pieds à l'origine ; le haut du corps pivote autour de la taille (0,-110). -->
+    <g id="jambes">
+      <rect x="-30" y="-118" width="26" height="112" rx="10" fill="#ffffff" stroke="#c9d3dc" stroke-width="3"/>
+      <rect x="4" y="-118" width="26" height="112" rx="10" fill="#ffffff" stroke="#c9d3dc" stroke-width="3"/>
+    </g>
+    <g id="veste">
+      <rect x="-66" y="-208" width="22" height="92" rx="10" fill="#ffffff" stroke="#c9d3dc" stroke-width="3"/>
+      <rect x="44" y="-208" width="22" height="92" rx="10" fill="#ffffff" stroke="#c9d3dc" stroke-width="3"/>
+      <path d="M-50 -100 C-52 -170 -38 -214 0 -214 C38 -214 52 -170 50 -100 Z" fill="#ffffff" stroke="#c9d3dc" stroke-width="3"/>
+      <path d="M-20 -210 L0 -160 L20 -210" fill="none" stroke="#d5dde5" stroke-width="8" stroke-linejoin="round"/>
+    </g>
+  </defs>
+  <rect width="1200" height="675" fill="#f6ecdf"/>
+  <rect y="0" width="1200" height="20" fill="#e7d6c1"/>
+  <path d="M0 70 Q300 150 600 90 Q900 30 1200 110" fill="none" stroke="#8a6f55" stroke-width="3"/>
+  <path d="M60 85 L100 97 L74 140 Z" fill="#d9161c"/>
+  <path d="M170 110 L212 118 L185 162 Z" fill="#f4c20d"/>
+  <path d="M285 124 L328 126 L302 172 Z" fill="#1f7a4d"/>
+  <path d="M405 118 L448 112 L428 160 Z" fill="#2f6fb5"/>
+  <path d="M525 100 L566 92 L550 140 Z" fill="#d9161c"/>
+  <path d="M645 84 L686 76 L672 124 Z" fill="#f4c20d"/>
+  <path d="M765 64 L806 60 L792 108 Z" fill="#1f7a4d"/>
+  <path d="M885 58 L926 62 L905 108 Z" fill="#2f6fb5"/>
+  <path d="M1005 70 L1046 80 L1020 124 Z" fill="#d9161c"/>
+  <path d="M1120 94 L1160 104 L1134 148 Z" fill="#f4c20d"/>
+  <!-- Tatami -->
+  <path d="M0 400 L1200 400 L1200 675 L0 675 Z" fill="#c8102e"/>
+  <path d="M80 420 L1120 420 L1200 675 L0 675 Z" fill="#8fbf6a"/>
+  <g stroke="#79a95a" stroke-width="4">
+    <path d="M340 420 L270 675"/><path d="M600 420 L600 675"/><path d="M860 420 L930 675"/>
+    <path d="M40 530 L1160 530"/>
+  </g>
+  <!-- Professeur (ceinture noire), au fond, face à nous -->
+  <g transform="translate(600 470) scale(1.05)">
+    <use href="#jambes"/>
+    <use href="#veste"/>
+    <rect x="-52" y="-132" width="104" height="14" rx="5" fill="#151315"/>
+    <circle cx="0" cy="-250" r="40" fill="#eab98f"/>
+    <path d="M-40 -258 C-36 -290 -12 -296 0 -296 C20 -296 40 -288 40 -258 C28 -272 -24 -274 -40 -258 Z" fill="#7a7a7a"/>
+  </g>
+  <!-- Judoka de gauche (ceinture jaune), qui salue vers la droite -->
+  <g transform="translate(380 600) scale(.9)">
+    <use href="#jambes"/>
+    <g transform="rotate(16 0 -110)">
+      <use href="#veste"/>
+      <rect x="-52" y="-132" width="104" height="14" rx="5" fill="#f4c20d"/>
+      <circle cx="0" cy="-250" r="40" fill="#f2c9a0"/>
+      <path d="M-40 -252 C-42 -290 -14 -298 0 -298 C24 -298 42 -286 40 -252 C30 -268 16 -272 2 -270 C-8 -282 -26 -278 -34 -266 Z" fill="#3b2a1e"/>
+    </g>
+  </g>
+  <!-- Judoka de droite (ceinture orange), qui salue vers la gauche -->
+  <g transform="translate(820 600) scale(.9)">
+    <use href="#jambes"/>
+    <g transform="rotate(-16 0 -110)">
+      <use href="#veste"/>
+      <rect x="-52" y="-132" width="104" height="14" rx="5" fill="#f08a24"/>
+      <circle cx="0" cy="-250" r="40" fill="#d9a066"/>
+      <path d="M-40 -250 C-42 -292 -12 -300 2 -298 C28 -296 44 -280 40 -250 C34 -270 18 -276 0 -274 C-16 -276 -34 -266 -40 -250 Z" fill="#1d1d1d"/>
+    </g>
+  </g>
+</svg>

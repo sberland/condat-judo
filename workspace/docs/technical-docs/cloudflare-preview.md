@@ -27,6 +27,33 @@ feature/NNN ─PR▶ preview ─(preview.yml)▶ deploy --env preview + copie D1
             (validé) ─PR preview→main + tag vX.Y.Z─(deploy.yml)▶ deploy prod
 ```
 
+### Données de démonstration (spec 024)
+
+Pour présenter le site (ou s'y entraîner) : `.\deploy\demo-qualif.ps1` charge le jeu **fictif**
+`app/src/db/demo-qualif.sql` dans la qualif, puis affiche les liens de connexion de deux comptes :
+**Alex Durand** (administrateur) et **Camille Martin** (parent de Léo). `-Cible local` pour la D1
+locale ; la production n'est pas proposée.
+
+- **Contenu** : une famille complète (Léo, photo pour la garderie, second responsable, personne
+  autorisée), cinq autres familles sans connexion ; dossiers de la saison dans tous les états,
+  paiements (3 fois avec chèques à encaisser, un chèque pour deux dossiers, espèces à remettre en
+  banque, reste dû) ; événements (compétition ouverte avec inscrits, stage, repas avec familles
+  inscrites, fête, compétition passée ressaisie) ; garderie du prochain mercredi en cours de
+  pointage, le suivant demandé, un mercredi passé terminé ; actualités (publique avec photo,
+  réservée aux familles, brouillon).
+- **Fictif** : comptes en `@demo.test` (domaine réservé), adresses inventées, licences
+  `DEMO-000x`, photos = illustrations dessinées (`app/src/db/demo/*.svg`, rendues en JPEG dans le
+  SQL). Distinct des comptes anonymisés de la copie de prod (`compte<id>@exemple.test`).
+- **Relançable** : le script supprime d'abord tout ce qui est rattaché aux comptes `@demo.test`
+  (y compris ce que les comptes de démo ont créé pendant un essai) et efface leurs mentions
+  « fait par » ailleurs (contenus, saisons…).
+- **À relancer** après chaque déploiement de la qualif (recopiée de la prod à chaque push sur
+  `preview`) et le jour de la démo : dates relatives au jour du chargement ; liens à usage
+  unique, valables 7 jours.
+- **Trois vues sur un poste** : un profil de navigateur par vue (« Démo admin », « Démo parent »,
+  « Démo public ») ; chaque profil passe une fois le verrou Access. Garderie : hors production,
+  « Mercredi du jour » propose les prochains mercredis.
+
 ## Points de vigilance
 
 - **Jeton CI de COMPTE, pas utilisateur** ⚠️ — `wrangler d1 export` refuse un jeton *utilisateur*
@@ -58,6 +85,7 @@ feature/NNN ─PR▶ preview ─(preview.yml)▶ deploy --env preview + copie D1
 ## Références
 
 - Config : `app/wrangler.toml` (`[env.preview]`), `app/package.json` (`deploy:preview`, `db:migrate:preview`)
+- Démo : `deploy/demo-qualif.ps1`, `app/src/db/demo-qualif.sql`, `app/src/db/demo/` (spec 024)
 - CI : `.github/workflows/preview.yml`
 - Script : `deploy/refresh-preview-db.ps1`
 - Mode opératoire : [`workflow-deploy-spe.md`](../../workflow-deploy-spe.md)

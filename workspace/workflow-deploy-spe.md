@@ -121,7 +121,7 @@ Prérequis : `npx wrangler login` (OAuth) ou `CLOUDFLARE_API_TOKEN` dans l'envir
   **chiffré** (age) chaque nuit et avant toute migration, dans le dépôt **privé**
   `sberland/condat-judo-sauvegardes` (30 quotidiennes + une par mois sur un an) ; restauration
   testable vers la qualif par `deploy/restaurer-sauvegarde.ps1`. En plus : D1 **Time Travel**
-  (30 jours, chez Cloudflare). ⚠️ Un déploiement qui migre **échoue** si la sauvegarde n'est pas
+  (chez Cloudflare : 7 jours sur l'offre gratuite, 30 jours sur l'offre payante). ⚠️ Un déploiement qui migre **échoue** si la sauvegarde n'est pas
   configurée (secrets) — c'est voulu.
 - **Premier administrateur** : aucun compte n'est promu automatiquement (pas d'email magique dans
   le code). Création par SQL puis lien de connexion par `deploy/lien-connexion.ps1 -Cible production`
@@ -149,6 +149,8 @@ branche `preview` ──Actions(preview.yml)──▶ deploy --env preview
 - **Un push sur `preview`** recopie la D1 de prod (`wrangler d1 export`, **lecture seule sur la
   prod**) dans la D1 de preview, applique les migrations, puis déploie `condat-judo-preview`.
 - Les saisies faites en preview sont **écrasées** à chaque push (D1 preview jetable).
+- **Démo** (spec 024) : `.\deploy\demo-qualif.ps1` recharge les données fictives de démonstration
+  et affiche les liens des comptes de démo — à relancer après chaque push sur `preview`.
 - **Bascule en prod** = PR `preview` → `main` + tag `vX.Y.Z`. Pas de « bouton » Cloudflare.
 
 ### Convention de déploiement (qualif d'abord)

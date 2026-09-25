@@ -3,7 +3,7 @@
 ## Contexte
 
 La D1 de prod porte les données des familles (dont des mineurs). La fonction Time Travel de D1
-(restauration à un instant des 30 derniers jours) reste chez Cloudflare : une sauvegarde
+(restauration à un instant des 7 derniers jours sur l'offre gratuite, 30 sur l'offre payante) reste chez Cloudflare : une sauvegarde
 **indépendante** est exigée avant d'héberger des données réelles (décision du 2026-09-24). Le
 dépôt du projet étant **public**, ni ses artefacts ni ses Releases ne peuvent recevoir un export.
 
