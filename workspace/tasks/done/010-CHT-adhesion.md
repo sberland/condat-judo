@@ -12,7 +12,7 @@ Pour la saison en cours, les formulaires papier sont déjà remis : le bureau le
 
 ## Sous-specs (dans l'ordre)
 
-- [x] [`010a-dossier-saisie-bureau.md`](../done/010a-dossier-saisie-bureau.md) — le bureau ressaisit les
+- [x] [`010a-dossier-saisie-bureau.md`](010a-dossier-saisie-bureau.md) — le bureau ressaisit les
   dossiers papier 2026/2027 : dossier complet, montant calculé, suivi des dossiers incomplets
 - [x] [`010b-dossier-en-ligne-familles.md`](010b-dossier-en-ligne-familles.md) — les familles
   remplissent le dossier en ligne (inscriptions 2027/2028), pré-rempli d'une saison sur l'autre
@@ -85,7 +85,7 @@ Résumé chantier pour CHANGELOG (Notes client + liste des ajouts/modifications)
   inscriptions — reprise de l'an dernier, consentements explicites à chaque saison, attestation
   de santé, engagements, nouvel enfant à vérifier ; le bureau valide
 
-Niveau de version retenu : MINEUR (proposé)
+Niveau de version retenu : MINEUR (v0.22.0)
 
 ## Notes
 

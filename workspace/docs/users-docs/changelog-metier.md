@@ -4,6 +4,22 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.22.0 — 25 septembre 2026
+
+Fini les formulaires papier : quand le bureau ouvre les inscriptions de la saison suivante, chaque
+famille remplit le dossier de ses enfants depuis son téléphone, en quelques étapes. Les
+coordonnées sont déjà connues du club et les choix de l'an dernier (formule, paiement, adresse)
+sont proposés : il suffit de vérifier. Le montant est calculé tout seul (hors commune, réduction
+famille). Pour un enfant, pas de certificat médical : le parent atteste que le questionnaire de
+santé est négatif, sans jamais transmettre ses réponses. Les autorisations (photos, WhatsApp,
+soins d'urgence, photo pour la garderie) sont redemandées chaque saison, sans rien cocher à la
+place des parents, et restent modifiables à tout moment. Un enfant nouveau au club peut être
+inscrit par ses parents : le bureau vérifie sa fiche. Le bureau retrouve les dossiers envoyés
+dans l'écran « Dossiers », sur la saison des inscriptions, et les valide. Ce dossier complète la
+ressaisie des formulaires papier par le bureau : le chantier « dossier d'adhésion » est terminé.
+
+---
+
 ## v0.21.0 — 25 septembre 2026
 
 Après une première connexion par lien, le site propose d'activer Face ID (ou l'empreinte) sur le
