@@ -6,6 +6,25 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+### Données de démonstration en qualification
+
+#### Notes client
+
+Pour présenter le site au club et s'entraîner avant une démonstration, le site de test
+(qualification) peut être rempli en une commande avec des données entièrement fictives : une
+famille avec son enfant et sa photo (une illustration dessinée), des dossiers et des paiements
+dans tous les états, des événements, une garderie du mercredi en cours de pointage et des
+actualités. Deux comptes de démonstration — un administrateur et un parent — permettent de
+montrer le site sous chaque angle, en même temps que la vue publique.
+
+#### Ajouts
+
+- Script de chargement des données de démonstration et des liens de connexion des comptes de démo
+
+#### Corrections
+
+- Actualités : la mention « connectez-vous » revient à la ligne correctement sur téléphone
+
 ## [0.23.0] — 2026-09-25
 
 ### Mon espace rangé par rubriques, journal des accès filtrable
