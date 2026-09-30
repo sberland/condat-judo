@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.26.0] — 2026-09-30
+
 ### Site vitrine : le jujitsu retiré
 
 #### Notes client
