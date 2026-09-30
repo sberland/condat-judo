@@ -62,6 +62,7 @@ export const CONTENU_INITIAL: Contenus = {
       },
     ],
   },
+  // Jujitsu retiré : le club ne le propose plus (migration 0019, spec 027).
   disciplines: {
     disciplines: [
       {
@@ -81,30 +82,6 @@ export const CONTENU_INITIAL: Contenus = {
           texte:
             'Une pédagogie adaptée, qui permet le développement physique et intellectuel des très jeunes pratiquants. Le programme éveil judo est délibérément construit autour de l’intérêt de l’enfant, pour faciliter ses futurs apprentissages du judo et des activités sportives et artistiques en général.',
         },
-      },
-      {
-        id: 'jujitsu',
-        nom: 'Jujitsu',
-        accroche: 'Science, art de la souplesse.',
-        enBref: 'le jujitsu pour la self-défense',
-        public: 'Art martial et self-défense',
-        paragraphes: [
-          'Le jujitsu vise essentiellement à vaincre un adversaire par tous les moyens, en utilisant le minimum de force. De ce fait, les adeptes du jujitsu doivent se conformer à diverses disciplines.',
-        ],
-        liste: {
-          intro: 'Il leur faut :',
-          items: [
-            'savoir juger et utiliser la force de l’adversaire ;',
-            'esquiver ses attaques le plus possible ;',
-            'déséquilibrer l’adversaire ;',
-            'savoir attaquer ses points faibles ;',
-            'savoir le renverser à l’aide de la technique du levier ;',
-            'être capable de l’immobiliser à terre ;',
-            'savoir le frapper.',
-          ],
-        },
-        conclusion:
-          'Le jujitsu est proposé comme art martial : une véritable méthode de self-défense, efficace et attrayante, qui permet d’améliorer l’ensemble des qualités physiques et mentales.',
       },
       {
         id: 'taiso',

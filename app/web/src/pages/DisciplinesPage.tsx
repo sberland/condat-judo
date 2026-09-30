@@ -71,12 +71,12 @@ function Valeurs() {
       <Container className="grid gap-16">
         <div>
           <div className="mb-4 flex gap-2" aria-hidden>
-            {['judo', 'jujitsu', 'taiso'].map((id) => (
+            {['judo', 'taiso'].map((id) => (
               <IllustrationDiscipline key={id} id={id} className="size-12" />
             ))}
           </div>
-          <SectionTitle surtitre="Judo, jujitsu et taïso" titre="Le code moral : huit valeurs">
-            Le code moral de France Judo guide la pratique du judo, du jujitsu et du taïso au club : il aide chacun à grandir, sur le
+          <SectionTitle surtitre="Judo et taïso" titre="Le code moral : huit valeurs">
+            Le code moral de France Judo guide la pratique du judo et du taïso au club : il aide chacun à grandir, sur le
             tatami comme dans la vie.
           </SectionTitle>
           <CartesValeurs valeurs={CODE_MORAL} />

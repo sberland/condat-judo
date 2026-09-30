@@ -23,7 +23,7 @@ describe('disciplines : énumérations déduites de la liste', () => {
   })
 
   it('cite toutes les disciplines publiques, yoga compris', () => {
-    expect(listeDisciplines(CONTENU_INITIAL.disciplines.disciplines)).toBe('judo, jujitsu, taïso et yoga')
+    expect(listeDisciplines(CONTENU_INITIAL.disciplines.disciplines)).toBe('judo, taïso et yoga')
   })
 
   // index.html est lu avant le JavaScript (moteurs de recherche, aperçus de liens WhatsApp) :
