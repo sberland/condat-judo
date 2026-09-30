@@ -6,6 +6,20 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.26.0] — 2026-09-30
+
+### Site vitrine : le jujitsu retiré
+
+#### Notes client
+
+Le club ne propose plus le jujitsu : il n'apparaît plus sur le site (page Disciplines, code
+moral, en-tête et pied de page, description du site). Le club peut le rétablir lui-même depuis
+« Contenu du site » si l'activité reprend.
+
+#### Modifications
+
+- Disciplines : judo (dont éveil judo), taïso et yoga
+
 ## [0.25.0] — 2026-09-30
 
 ### Site vitrine : horaires du club, nom du dojo, Instagram

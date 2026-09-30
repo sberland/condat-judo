@@ -7,7 +7,7 @@ Le site est accessible à tous, sans compte : <https://condat-judo.sebastien-ber
 | Page | Contenu |
 | --- | --- |
 | **Accueil** | Présentation du club, les quatre disciplines, les valeurs du code moral, les infos pratiques |
-| **Disciplines** | Judo (et éveil judo pour les 4-5 ans), jujitsu, taïso, yoga — accès direct à chaque discipline par les boutons en haut de page |
+| **Disciplines** | Judo (et éveil judo pour les 4-5 ans), taïso, yoga — accès direct à chaque discipline par les boutons en haut de page |
 | **Le club** | Le professeur et le bureau, le dojo et l'itinéraire, le code moral complet, les partenaires, les liens utiles |
 | **Règlement** | Le règlement intérieur, article par article : touchez un titre pour l'ouvrir |
 | **Événements** | Les prochains événements du club (compétitions, stages, rencontres, repas, fêtes…), filtrables par type : date et heure, lieu (avec itinéraire), informations pratiques et, s'il y a lieu, inscription (enfants, ou famille avec le nombre de participants). S'inscrire demande d'être connecté |

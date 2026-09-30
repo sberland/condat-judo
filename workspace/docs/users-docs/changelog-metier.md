@@ -4,6 +4,14 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.26.0 — 30 septembre 2026
+
+Le club ne propose plus le jujitsu : il n'apparaît plus sur le site (page Disciplines, code
+moral, en-tête et pied de page, description du site). Le club peut le rétablir lui-même depuis
+« Contenu du site » si l'activité reprend.
+
+---
+
 ## v0.25.0 — 30 septembre 2026
 
 Le site affiche désormais les vrais horaires de la saison 2026/2027 transmis par le club : judo
