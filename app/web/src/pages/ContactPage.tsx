@@ -2,7 +2,7 @@ import { IdCard, Mail, MapPin, Navigation, Phone } from 'lucide-react'
 import { itineraire, type Contact } from '../content/contenu'
 import { Provisoire } from '../components/Provisoire'
 import { useContenu } from '../lib/contenu'
-import { BoutonExterne, Card, Container, FacebookIcon, PageHeader } from '../components/ui'
+import { BoutonExterne, Card, Container, FacebookIcon, InstagramIcon, PageHeader } from '../components/ui'
 import { usePageMeta } from '../lib/usePageMeta'
 
 export function ContactPage() {
@@ -42,6 +42,16 @@ export function ContactPage() {
           <div className="mt-6">
             <BoutonExterne href={c.club.facebook}>Écrire au club</BoutonExterne>
           </div>
+          {c.club.instagram && (
+            <a
+              href={c.club.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex w-fit items-center gap-2 font-semibold text-brand"
+            >
+              <InstagramIcon className="size-4" /> Aussi sur Instagram
+            </a>
+          )}
         </Card>
 
         <Card className="flex flex-col">
