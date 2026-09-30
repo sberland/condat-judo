@@ -27,7 +27,10 @@ describe('migration du contenu du site', () => {
     }
   })
 
-  it('première version de chaque contenu dans l’historique', () => {
-    expect(db.prepare('SELECT count(*) AS n FROM contenus_versions').get()).toEqual({ n: CLES_CONTENU.length })
+  it('chaque contenu a une version dans l’historique, la dernière étant celle en vigueur', () => {
+    for (const cle of CLES_CONTENU) {
+      const derniere = db.prepare('SELECT valeur FROM contenus_versions WHERE cle = ? ORDER BY id DESC LIMIT 1').get(cle) as { valeur: string } | undefined
+      expect(derniere && JSON.parse(derniere.valeur), cle).toEqual(CONTENU_INITIAL[cle])
+    }
   })
 })

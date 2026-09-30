@@ -10,11 +10,13 @@ export const CONTENU_INITIAL: Contenus = {
     telephone: '05 00 00 00 00',
   },
   club: {
-    nomDojo: 'Dojo de Condat-sur-Vienne',
+    // Nom du dojo et Instagram : réponses du club (migration 0018, spec 026).
+    nomDojo: 'Dojo Alice Milliat',
     adresse: '9 rue Jules Ferry',
     codePostal: '87920',
     ville: 'Condat-sur-Vienne',
     facebook: 'https://www.facebook.com/p/Judo-Condat-100010470662307/',
+    instagram: 'https://www.instagram.com/judo_condat/',
     saisonResume: 'De septembre à juin',
     saisonDetail:
       'Les cours sont assurés pendant toute la saison sportive, de septembre à juin. Ils ne sont pas assurés pendant les vacances scolaires et les jours fériés.',

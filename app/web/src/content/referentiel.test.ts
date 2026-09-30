@@ -106,6 +106,7 @@ describe('affichage des horaires', () => {
   it('heures à la française, cours triés par jour puis heure', () => {
     expect(heure('18:30')).toBe('18 h 30')
     expect(heure('09:00')).toBe('9 h')
-    expect(coursTries(R.horaires.cours).map((c) => `${c.jour} ${c.debut}`).slice(0, 3)).toEqual(['lundi 18:30', 'mardi 19:00', 'mercredi 16:00'])
+    const desordre = [...R.horaires.cours].reverse()
+    expect(coursTries(desordre).map((c) => `${c.jour} ${c.debut}`).slice(0, 3)).toEqual(['lundi 18:00', 'mercredi 15:00', 'mercredi 16:00'])
   })
 })

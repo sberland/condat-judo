@@ -15,6 +15,8 @@ export type Club = {
   codePostal: string
   ville: string
   facebook: string
+  /** Compte Instagram du club (facultatif, spec 026). */
+  instagram?: string
   /** « De septembre à juin » (pied de page, contact). */
   saisonResume: string
   saisonDetail: string
@@ -155,7 +157,7 @@ export const DEFINITIONS: Record<CleContenu, Definition> = {
   },
   club: {
     titre: 'Dojo, réseaux et saison',
-    description: 'Adresse du dojo (accueil, contact, itinéraire), page Facebook, période des cours.',
+    description: 'Adresse du dojo (accueil, contact, itinéraire), réseaux (Facebook, Instagram), période des cours.',
     statut: false,
     champs: [
       texte('nomDojo', 'Nom du lieu de pratique'),
@@ -163,6 +165,7 @@ export const DEFINITIONS: Record<CleContenu, Definition> = {
       texte('codePostal', 'Code postal', { max: 10 }),
       texte('ville', 'Ville'),
       { type: 'url', cle: 'facebook', libelle: 'Page Facebook', requis: true },
+      { type: 'url', cle: 'instagram', libelle: 'Compte Instagram (facultatif)' },
       texte('saisonResume', 'Période des cours, en bref', { aide: 'Ex. « De septembre à juin »' }),
       long('saisonDetail', 'Période des cours, en détail'),
     ],

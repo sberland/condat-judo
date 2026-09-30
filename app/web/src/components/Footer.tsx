@@ -4,7 +4,7 @@ import { CLUB } from '../content/club'
 import { disciplinesPubliques, itineraire } from '../content/contenu'
 import { useContenu } from '../lib/contenu'
 import { useAccesEspace, useNavigation } from './navigation'
-import { Container, FacebookIcon } from './ui'
+import { Container, FacebookIcon, InstagramIcon } from './ui'
 
 export function Footer() {
   const navigation = useNavigation()
@@ -76,6 +76,16 @@ export function Footer() {
           >
             <FacebookIcon className="size-4" /> Facebook
           </a>
+          {c.club.instagram && (
+            <a
+              href={c.club.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 flex w-fit items-center gap-2 text-sm hover:text-white"
+            >
+              <InstagramIcon className="size-4" /> Instagram
+            </a>
+          )}
           <a
             href="https://www.ffjudo.com/"
             target="_blank"

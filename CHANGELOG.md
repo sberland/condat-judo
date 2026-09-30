@@ -6,6 +6,24 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.25.0] — 2026-09-30
+
+### Site vitrine : horaires du club, nom du dojo, Instagram
+
+#### Notes client
+
+Le site affiche désormais les vrais horaires de la saison 2026/2027 transmis par le club : judo
+le mercredi et le vendredi par tranche d'âge, taïso le mercredi et le vendredi, judo adulte le
+vendredi, yoga le lundi et le jeudi. Le dojo porte son nom, « Dojo Alice Milliat », et le compte
+Instagram du club apparaît à côté de la page Facebook. Le club peut modifier ces informations
+lui-même depuis son espace.
+
+#### Modifications
+
+- Horaires & tarifs : horaires 2026/2027 du club (plus « à confirmer »)
+- Dojo Alice Milliat ; lien Instagram dans le pied de page et sur la page Contact
+- Contenu du site : champ « Compte Instagram » (facultatif)
+
 ## [0.24.0] — 2026-09-25
 
 ### Données de démonstration en qualification

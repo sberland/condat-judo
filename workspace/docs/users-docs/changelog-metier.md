@@ -4,6 +4,16 @@ Historique des versions, destiné aux utilisateurs et équipes support.
 
 ---
 
+## v0.25.0 — 30 septembre 2026
+
+Le site affiche désormais les vrais horaires de la saison 2026/2027 transmis par le club : judo
+le mercredi et le vendredi par tranche d'âge, taïso le mercredi et le vendredi, judo adulte le
+vendredi, yoga le lundi et le jeudi. Le dojo porte son nom, « Dojo Alice Milliat », et le compte
+Instagram du club apparaît à côté de la page Facebook. Le club peut modifier ces informations
+lui-même depuis son espace.
+
+---
+
 ## v0.24.0 — 25 septembre 2026
 
 Pour présenter le site au club et s'entraîner avant une démonstration, le site de test

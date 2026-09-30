@@ -92,16 +92,19 @@ export const REFERENTIEL_2026_2027: Referentiel = {
     modesPaiement: ['Chèque', 'Espèces', 'Carte bancaire', 'Chèques vacances et autres'],
   },
   echeances3Fois: { dates: ['2027-01-05', '2027-04-05'], provisoire: true },
+  // Horaires 2026/2027 donnés par le club (migration 0018, spec 026).
   horaires: {
-    provisoire: true,
+    provisoire: false,
     cours: [
-      { jour: 'lundi', debut: '18:30', fin: '19:45', cours: 'Yoga', public: 'Adultes' },
-      { jour: 'mardi', debut: '19:00', fin: '20:00', cours: 'Taïso', public: 'Adultes' },
-      { jour: 'mercredi', debut: '16:00', fin: '16:45', cours: 'Éveil judo', public: '4-5 ans' },
-      { jour: 'mercredi', debut: '17:00', fin: '18:00', cours: 'Judo enfants', public: '6-9 ans' },
-      { jour: 'jeudi', debut: '18:00', fin: '19:15', cours: 'Yoga', public: 'Adultes' },
-      { jour: 'jeudi', debut: '19:30', fin: '21:00', cours: 'Jujitsu', public: 'Ados et adultes' },
-      { jour: 'vendredi', debut: '18:00', fin: '19:30', cours: 'Judo jeunes', public: '10-15 ans' },
+      { jour: 'lundi', debut: '18:00', fin: '19:00', cours: 'Yoga', public: 'Adultes' },
+      { jour: 'mercredi', debut: '15:00', fin: '16:00', cours: 'Judo mini-poussins', public: 'Nés en 2019 et 2020' },
+      { jour: 'mercredi', debut: '16:00', fin: '17:00', cours: 'Judo micro-poussins', public: 'Nés en 2021 et 2022' },
+      { jour: 'mercredi', debut: '17:00', fin: '18:00', cours: 'Judo poussins à juniors', public: 'Nés de 2007 à 2018' },
+      { jour: 'mercredi', debut: '18:00', fin: '19:00', cours: 'Taïso', public: 'Tout public' },
+      { jour: 'jeudi', debut: '18:15', fin: '19:15', cours: 'Yoga', public: 'Adultes' },
+      { jour: 'vendredi', debut: '18:30', fin: '19:30', cours: 'Judo poussins à juniors', public: 'Nés de 2007 à 2018' },
+      { jour: 'vendredi', debut: '19:30', fin: '20:30', cours: 'Taïso', public: 'Tout public' },
+      { jour: 'vendredi', debut: '20:30', fin: '21:30', cours: 'Judo adulte', public: 'Adultes' },
     ],
   },
   // Ajouté par la migration 0009 (spec 012a) : réglages à confirmer avec le club.

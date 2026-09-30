@@ -119,6 +119,17 @@ export function Pastille({ ton, className = '', children }: { ton: keyof typeof 
   return <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${TONS[ton]} ${className}`}>{children}</span>
 }
 
+/** Logo Instagram (contour), aux couleurs du texte (spec 026). */
+export function InstagramIcon({ className = 'size-5' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" />
+      <circle cx="12" cy="12" r="4.2" />
+      <circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
 export function FacebookIcon({ className = 'size-5' }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>
