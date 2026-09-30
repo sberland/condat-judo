@@ -6,6 +6,8 @@ Versioning : [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.25.0] — 2026-09-30
+
 ### Site vitrine : horaires du club, nom du dojo, Instagram
 
 #### Notes client
